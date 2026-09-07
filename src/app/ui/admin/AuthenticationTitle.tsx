@@ -12,6 +12,8 @@ import {
   Text,
   Center,
   Flex,
+	getFontSize,
+	rgba,
 } from '@mantine/core';
 import {useForm} from "@mantine/form";
 import {zod4Resolver} from "mantine-form-zod-resolver";
@@ -19,6 +21,7 @@ import {LoginForm, LoginFormSchema} from "@/lib/schemas";
 import {authClient} from "@/lib/auth-client";
 import {useState} from "react";
 import Link from "next/link";
+
 
 export function AuthenticationTitle() {
 
@@ -45,82 +48,104 @@ export function AuthenticationTitle() {
   }
 
   return (
-    <Flex mih={"100vh"}>
-      <Flex
-        style={{
-          flex: "0 0 40%",
-          backgroundImage: "linear-gradient(135deg, #c3c3c3, #9d9d9d)",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover"
-        }}
-        align={"center"}
-        justify={"center"}
-      >
-      <Flex>
-        <Container size={420} w={420} h={420} my={40} ml={0}>
-          <Title ta="center">
-            Welcome back!
-          </Title>
+    <Flex mih={"100vh"}
+      w = "100%"
+			pos= "relative"
+      align="center"
+      justify="center"
+      style={{
+        overflow: "hidden",
+				backgroundImage: 'url(/img/admission.jpg)',
+				backgroundRepeat: "no-repeat",
+				backgroundSize: "cover",
+				backgroundPosition: "center"
+      }}>
+			<img
+				src={"/img/white_logo_transparent_background.png"}
+				alt={"Unreel Take"}
+				width={180}
+				height="auto"
+				loading={"eager"}
+				style={{
+					position: "absolute",
+					top: 30,
+					left: 25,
+					marginBottom: 25,
+				}}
+			/>
+			<Container w= "100%"
+				maw={480}
+				px = {25}>	
+				
+				<Paper withBorder shadow="md" p={45} mt={10} radius={"md"} pos={"relative"}>
+					<Title ta="center"
+						style={{
+							fontSize: 42,
+							lineHeight: 1.1,
+							marginBottom: 55,
+						}}>
+							Welcome back!
+						</Title>
+					<LoadingOverlay visible={loginForm.submitting} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
 
-          <Paper withBorder shadow="sm" p={22} mt={30} radius={"md"} pos={"relative"}>
+					{errorMessage ? <Text c={"red"}>{errorMessage}</Text> : null }
 
-            <LoadingOverlay visible={loginForm.submitting} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
+					<form onSubmit={loginForm.onSubmit(handleSignIn)}>
 
-            {errorMessage ? <Text c={"red"}>{errorMessage}</Text> : null }
+						<TextInput
+							size='xl'
+							label={"Email"}
+							placeholder={"Email"}
+							radius={"lg"}
+							key={"email"}
+							{...loginForm.getInputProps("email")}
+						/>
 
-            <form onSubmit={loginForm.onSubmit(handleSignIn)}>
+						<PasswordInput
+							size='xl'
+							label={"Password"}
+							placeholder={"Your password"}
+							mt={"lg"}
+							radius={"md"}
+							key={"password"}
+							{...loginForm.getInputProps("password")}
+						/>
 
-              <TextInput
-                label={"Email"}
-                placeholder={"someuser@domain.com"}
-                radius={"md"}
-                key={"email"}
-                {...loginForm.getInputProps("email")}
-              />
+						<Group justify="space-between" mt="lg">
 
-              <PasswordInput
-                label={"Password"}
-                placeholder={"Your password"}
-                mt={"md"}
-                radius={"md"}
-                key={"password"}
-                {...loginForm.getInputProps("password")}
-              />
+							<Anchor
+								size={"md"}
+								href={"/reset-password"}
+								c="dark"
+							>
+								Forgot password?
+							</Anchor>
 
-              <Group justify="space-between" mt="lg">
+						</Group>
 
-                <Anchor
-                  size={"sm"}
-                  href={"/reset-password"}
-                  c="dark"
-                >
-                  Forgot password?
-                </Anchor>
+						<Button fullWidth size = "lg" mt={"xl"} radius={"md"} type={"submit"} color="dark">
+							Sign in
+						</Button>
 
-              </Group>
+					</form>
+				</Paper>
 
-              <Button fullWidth mt={"xl"} radius={"md"} type={"submit"} color="dark">
-                Sign in
-              </Button>
+				<Center m={"lg"}>
+					<Anchor component={Link} href={"/"} c={"white"}
+						style={{
+							padding: "10px 24px",
+							borderRadius: "999px",
+							border: "1px solid white",
+							display: "inline-block"
+						}}
+					>
+						Back to Home
+					</Anchor>
+				</Center>
 
-            </form>
-          </Paper>
-
-          <Center m={"lg"}>
-            <Anchor component={Link} href={"/"} c={"dark"}>Back to Home</Anchor>
-          </Center>
-
-        </Container>
-      </Flex>
-    </Flex>
+			</Container>
 
     {/* - Can insert picture or branding for the login page here*/}
-    <Flex
-      style={{
-        flex: "0 0 60%",
-        backgroundColor: "#ffffff"
-      }}
-    />
     </Flex>
   );
 }
