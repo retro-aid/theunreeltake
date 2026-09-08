@@ -12,8 +12,6 @@ import {
   Text,
   Center,
   Flex,
-	getFontSize,
-	rgba,
 } from '@mantine/core';
 import {useForm} from "@mantine/form";
 import {zod4Resolver} from "mantine-form-zod-resolver";
@@ -21,6 +19,8 @@ import {LoginForm, LoginFormSchema} from "@/lib/schemas";
 import {authClient} from "@/lib/auth-client";
 import {useState} from "react";
 import Link from "next/link";
+import Image from 'next/image'
+
 
 
 export function AuthenticationTitle() {
@@ -60,19 +60,23 @@ export function AuthenticationTitle() {
 				backgroundSize: "cover",
 				backgroundPosition: "center"
       }}>
-			<img
+			<Image
 				src={"/img/white_logo_transparent_background.png"}
-				alt={"Unreel Take"}
-				width={180}
-				height="auto"
-				loading={"eager"}
+				width={3050}
+				height = {1138}
+				placeholder='blur'
+				blurDataURL='/img/white_logo_transparent_background.png'
+				alt = "Unreel Take"
+				loading = {"eager"}
 				style={{
 					position: "absolute",
+					width: 180,
+					height:"auto",
 					top: 30,
 					left: 25,
-					marginBottom: 25,
 				}}
 			/>
+			
 			<Container w= "100%"
 				maw={480}
 				px = {25}>	
@@ -93,7 +97,7 @@ export function AuthenticationTitle() {
 					<form onSubmit={loginForm.onSubmit(handleSignIn)}>
 
 						<TextInput
-							size='xl'
+							size='lg'
 							label={"Email"}
 							placeholder={"Email"}
 							radius={"lg"}
@@ -102,7 +106,7 @@ export function AuthenticationTitle() {
 						/>
 
 						<PasswordInput
-							size='xl'
+							size='lg'
 							label={"Password"}
 							placeholder={"Your password"}
 							mt={"lg"}
