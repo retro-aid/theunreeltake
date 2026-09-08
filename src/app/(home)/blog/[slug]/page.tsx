@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { redirect } from 'next/navigation';
+import { ViewTracker } from "@/app/ui/home/ViewTracker";
 import {
   Title,
   Grid,
@@ -58,6 +59,7 @@ export default async function BlogPostPage(
 
   return (
     <Flex bg={"gray.0"}>
+      <ViewTracker slug={slug} />
       <Container px={{ base: 0, md: "md"}}>
         <Paper shadow={"sm"} p={{ base: "md", sm: "xl"}} bdrs={0}>
           <Stack>
