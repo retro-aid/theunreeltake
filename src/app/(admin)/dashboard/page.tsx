@@ -4,6 +4,7 @@ import {useContext} from "react";
 import {AuthContext} from "@/app/ui/admin/AuthContext";
 import {redirect} from "next/navigation";
 import {Flex, Group} from '@mantine/core';
+import { ViewsCard } from "@/app/ui/admin/ViewsCard";
 
 export default function DashboardPage() {
 
@@ -29,10 +30,7 @@ export default function DashboardPage() {
         gap="xl"
         direction="row"
         wrap="wrap" >
-          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"75%"}
-          style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
-            Box 1
-          </Group>
+          <ViewsCard />
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"20%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
             Box 2

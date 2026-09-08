@@ -493,3 +493,16 @@ export async function getAllTags(tagType: AllowedTagType | undefined) {
     return { error: "Failed to fetch tags", data: null }
   }
 }
+
+export async function getTotalViews(days: number = 30) {
+  try {
+    const totalViews = await prisma.post.aggregate({
+      _sum: { views: true },
+    });
+
+    return { success: true, total: totalViews._sum.views ?? 0 };
+  } catch (error) {
+    console.error("Failed to fetch total views:", error);
+    return { success: false, total: 0 };
+  }
+}
