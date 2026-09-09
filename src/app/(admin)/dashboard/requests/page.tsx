@@ -2,12 +2,14 @@
 
 import {Box, Title, Text, Button, Paper, Stack, Group, Pagination, ActionIcon, Flex} from "@mantine/core"
 import {useState, useEffect, useTransition, useCallback} from "react"
-import { Funnel, Filter, ArrowClockwise } from "react-bootstrap-icons"
 import GridReview from "./gridReview";
 import Link from "next/link"
 import { getMediaRequests } from "@/lib/actions";
 import {HomeSearchBar} from "@/app/ui/home/HomeSearchBar";
+import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
+import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
 import {Request} from "@/generated/prisma/client";
+
 const limit = 10;
 
 export default function DashboardRequestsPage() {
@@ -16,6 +18,8 @@ export default function DashboardRequestsPage() {
 	const [requests, setRequests] = useState<Request[]>([]);
 	const selectedItem = requests.find((item) => item.id === selectedId);
 	const [page, setPage] = useState(1);
+	const [type, setType] = useState("");
+	const [sort, setSort] = useState("");
 	const [search, setSearch] = useState("");
 	const [total, setTotal] = useState(0);
 
@@ -26,24 +30,27 @@ export default function DashboardRequestsPage() {
 		setPage(1);
 	}
 
-	const handlePage = (newPage: number) => setPage(newPage);
+	const handleFilter = (value: string) => {
+		setType(value);
+		setPage(1);
+	};
+
+	const handleSort = (value: string) => {
+		setSort(value);
+		setPage(1);
+	};
+
+
 
 	const refresh = useCallback(() => {
 		startTransition(async () => {
-
-			try {
-
-				const res: Request[] = await getMediaRequests({page, limit, search});
-				const count = res.length;
-
-				setRequests(res);
-				setTotal(Math.ceil(count / limit));
-
-			} catch (error) {
-				console.log("Failed to fetch requests", error);
+			const res = await getMediaRequests({ page, limit, search, type, sort });
+			if (res.success) {
+				setRequests(res.data);
+				setTotal(Math.ceil(res.total / limit));
 			}
-		})
-	}, [page, search]);
+		});
+	}, [page, search, type, sort]);
 
 	useEffect(() => {
 		refresh();
@@ -62,7 +69,15 @@ export default function DashboardRequestsPage() {
 						{selectedItem.message}
 					</Text>
 					<Group>
-					<Button size="xs" variant="light" component= {Link} href={"/dashboard/posts/create"}>
+					<Button size="xs" variant="light" component= {Link} 
+						href={{
+							pathname: "/dashboard/posts/create",
+							query: {
+								title: selectedItem.title,
+								message: selectedItem.message ?? "",
+								type: selectedItem.type ?? "",
+							},
+						}}>
 						Create Post
 					</Button>
 					<Button size="xs" variant="light">
@@ -80,34 +95,13 @@ export default function DashboardRequestsPage() {
 
 			<Group mb="md">
 				<Flex miw={500}>
-					<HomeSearchBar
-						onSearchAction={(value: string) => handleSearch(value)}
-					/>
+				<HomeSearchBar onSearchAction={handleSearch} />
 				</Flex>
-
-				<ActionIcon
-					size={"lg"}
-					variant={"light"}
-					color={"gray"}
-					aria-label={"Filter Button"}>
-					<Funnel size={24}/>
-				</ActionIcon>
-				<ActionIcon
-					size={"lg"}
-					variant={"light"}
-					color={"gray"}
-					aria-label={"Sort Button"}>
-					<Filter size={24}/>
-				</ActionIcon>
-				<ActionIcon
-					size={"lg"}
-					variant={"light"}
-					color={"gray"}
-					aria-label={"Refresh Button"}
-					onClick={refresh}
-				>
-					<ArrowClockwise size={24}/>
-				</ActionIcon>
+				<RequestActionButtons
+				onSortByAction={handleSort}
+				onFilterByTypeAction={handleFilter}
+				/>
+				<RefreshDataButton updateData={refresh} />
 			</Group>
 
 			{!isLoading ?
@@ -118,7 +112,7 @@ export default function DashboardRequestsPage() {
 						onSelectAction={(id) => setSelectedId(id)}
 					/>
 					<Group mt="xl">
-						<Pagination total={total} value={page} onChange={handlePage}/>
+						<Pagination total={total} value={page} onChange={setPage}/>
 					</Group>
 				</>
 				: null
