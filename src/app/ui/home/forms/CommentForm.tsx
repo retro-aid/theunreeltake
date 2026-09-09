@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {zod4Resolver} from "mantine-form-zod-resolver";
-import {CommentSchema} from "@/lib/schemas";
+import {AnonymousCommentFormSchema} from "@/lib/schemas/comment-schemas";
 import {postAnonymousCommentAction} from "@/lib/actions/comment-actions";
 
 
@@ -22,7 +22,7 @@ export default function CommentForm() {
       email: "",
       message: ""
     },
-    validate: zod4Resolver(CommentSchema)
+    validate: zod4Resolver(AnonymousCommentFormSchema)
   });
 
   const handleSubmit =

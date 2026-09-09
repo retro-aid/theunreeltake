@@ -1,8 +1,8 @@
 import 'server-only';
-import {CommentFormValues} from "@/lib/schemas";
+import {AnonymousCommentForm} from "@/lib/schemas/comment-schemas";
 
 export async function createComment(
-  formData: CommentFormValues
+  formData: AnonymousCommentForm
 ) {
 
 }

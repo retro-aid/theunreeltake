@@ -17,7 +17,6 @@ export type ResetPasswordForm = z.infer<typeof ResetPasswordSchema>;
 export type InviteUserForm = z.infer<typeof InviteUserSchema>;
 export type RegisterUserForm = z.infer<typeof RegisterUserSchema>;
 export type CreateTagFom = z.infer<typeof CreateTagSchema>;
-export type CommentFormValues = z.infer<typeof CommentSchema>;
 
 const httpUrl = z.url({
   protocol: /^https?$/,
@@ -152,9 +151,3 @@ export const EditUserSchema = z.object({
   role: z
     .enum(["Admin", "User"])
 })
-
-export const CommentSchema = z.object({
-  username: z.string().optional(),
-  email: z.string().optional(),
-  message: z.string().nonempty().max(500)
-});
