@@ -28,16 +28,19 @@ export default function DashboardRequestsPage() {
 	const handleSearch = (value: string) => {
 		setSearch(value);
 		setPage(1);
+		setSelectedId(undefined);
 	}
 
 	const handleFilter = (value: string) => {
 		setType(value);
 		setPage(1);
+		setSelectedId(undefined);
 	};
 
 	const handleSort = (value: string) => {
 		setSort(value);
 		setPage(1);
+		setSelectedId(undefined);
 	};
 
 
@@ -112,7 +115,10 @@ export default function DashboardRequestsPage() {
 						onSelectAction={(id) => setSelectedId(id)}
 					/>
 					<Group mt="xl">
-						<Pagination total={total} value={page} onChange={setPage}/>
+						<Pagination total={total}
+						value={page}
+						onChange={(p) => { setPage(p); setSelectedId(undefined); }}
+					/>
 					</Group>
 				</>
 				: null
