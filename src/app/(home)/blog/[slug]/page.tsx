@@ -8,12 +8,14 @@ import {
   Text,
   Group,
   Stack,
-  Textarea,
   Flex,
   Paper,
-  Button, Container, Box
+  Button,
+  Container,
+  Box
 } from "@mantine/core";
 import dayjs from "dayjs";
+import CommentForm from "@/app/ui/home/forms/CommentForm";
 
 export default async function BlogPostPage(
   {
@@ -113,12 +115,7 @@ export default async function BlogPostPage(
               {tagElements}
             </Group>
 
-            <Textarea
-              label="Leave a comment"
-              placeholder="Your comment"
-              autosize
-              minRows={4}
-            />
+            <CommentForm/>
 
           </Stack>
         </Paper>
