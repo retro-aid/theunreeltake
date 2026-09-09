@@ -395,24 +395,6 @@ export async function submitRequestForm(data: RequestForm){
 
 }
 
-export async function getAllMediaRequests() {
-  return prisma.request.findMany({
-    orderBy: { name: "desc" },
-  });
-}
-
-export async function searchMediaRequests(query: string) {
-  return prisma.request.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: "insensitive" } },
-        { message: { contains: query, mode: "insensitive" } },
-        { email: { contains: query, mode: "insensitive" } },
-      ],
-    },
-    orderBy: { name: "desc" },
-  });
-}
 
 export async function getMediaRequests({
   page = 1,
@@ -437,19 +419,6 @@ export async function getMediaRequests({
   });
 }
 
-export async function getMediaRequestCount(search = "") {
-  return prisma.request.count({
-    where: search
-      ? {
-          OR: [
-            { title: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } },
-            { name: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {},
-  });
-}
 export async function updateUser(id:string, name:string, role:string)
 {
   try{
