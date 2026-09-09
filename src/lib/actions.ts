@@ -11,6 +11,14 @@ import { sendInvitationEmail } from "@/lib/emailer";
 import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import {revalidatePath} from "next/cache";
 import {AllowedTagType, PostItem} from "./constants";
+import { RequestWhereInput, RequestOrderByWithRelationInput } from "@/generated/prisma/models/Request";
+
+const REQUEST_ORDER_BY: Record<string, RequestOrderByWithRelationInput> = {
+  title: { title: "asc" },
+  name:  { name: "asc" },
+  email: { email: "asc" },
+};
+
 
 function generateInvitationToken(): string {
 
@@ -400,23 +408,42 @@ export async function getMediaRequests({
   page = 1,
   limit = 12,
   search = "",
+  type = "",
+  sort = "",
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  type?: string;
+  sort?: string;
 }) {
-  const skip = (page - 1) * limit;
-
-  return prisma.request.findMany({
-    where: search
-      ? {
-          OR: [
+  try {
+    const where: RequestWhereInput = {
+      type: type || undefined,
+      OR: search
+        ? [
             { title: { contains: search, mode: "insensitive" } },
             { email: { contains: search, mode: "insensitive" } },
-            { name: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {},
-    skip,
-    take: limit,
-    orderBy: { name: "desc" },
-  });
+            { name:  { contains: search, mode: "insensitive" } },
+          ]
+        : undefined,
+    };
+
+    const [data, total] = await Promise.all([
+      prisma.request.findMany({
+        where,
+        orderBy: REQUEST_ORDER_BY[sort] ?? { name: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.request.count({ where }),
+    ]);
+
+    return { success: true, data, total };
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: [] as [], total: 0 };
+  }
 }
 
 export async function updateUser(id:string, name:string, role:string)
