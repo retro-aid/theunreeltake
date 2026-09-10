@@ -1,13 +1,13 @@
 'use client';
 
-import { Card, CardSection, Group, Text, Menu, ActionIcon, Image, Button } from "@mantine/core";
+import { Card, CardSection, Group, Text, Menu, ActionIcon, Image, Button, Title, Container } from "@mantine/core";
 import { ThreeDots, Trash, PencilSquare, PlusSquare } from "react-bootstrap-icons";
 
 export default function TemplatePage() {
 
     return (
-        <div style={{ padding: "0 40px"}}>
-            <h1>Templates</h1>
+        <Container fluid p="md">
+            <Title>Templates</Title>
                 <Group justify="flex-end">
                     <Button leftSection={<PlusSquare size={16}></PlusSquare>}>
                         New Template
@@ -39,19 +39,8 @@ export default function TemplatePage() {
                             </Menu>
                         </Group>
                     </CardSection>
-
-                    {/* Image of Movie or book */}
-                    <CardSection mt="sm">
-                        <Image src="https://t4.ftcdn.net/jpg/06/57/37/01/360_F_657370150_pdNeG5pjI976ZasVbKN9VqH1rfoykdYU.jpg"></Image>
-                    </CardSection>
-
-                    <CardSection>
-                        {/* Add Movie Name:, Rating:, Summary:, Review: */}
-                        <Text>Movie Name:</Text>
-                    </CardSection>
-
                 </Card>
                 </Group>
-        </div>
+        </Container>
     );
 }
