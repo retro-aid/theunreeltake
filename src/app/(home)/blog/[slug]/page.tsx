@@ -15,7 +15,7 @@ import {
   Box
 } from "@mantine/core";
 import dayjs from "dayjs";
-import CommentForm from "@/app/ui/home/forms/CommentForm";
+import {VisitorCommentForm} from "@/components/comments";
 
 export default async function BlogPostPage(
   {
@@ -115,7 +115,7 @@ export default async function BlogPostPage(
               {tagElements}
             </Group>
 
-            <CommentForm/>
+            <VisitorCommentForm/>
 
           </Stack>
         </Paper>

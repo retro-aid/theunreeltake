@@ -13,7 +13,8 @@ import {AnonymousCommentFormSchema} from "@/lib/schemas/comment-schemas";
 import {postAnonymousCommentAction} from "@/lib/actions/comment-actions";
 
 
-export default function CommentForm() {
+
+export function VisitorCommentForm() {
 
   const commentForm = useForm({
     mode: "uncontrolled",
@@ -80,5 +81,4 @@ export default function CommentForm() {
 
     </form>
   );
-
 }
