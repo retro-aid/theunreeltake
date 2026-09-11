@@ -88,7 +88,10 @@ model Post {
   authorId    String
   tags        TagsOnPost[]
   author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    Comment[]
 
+
+  @@unique([id, slug])
   @@map("post")
 }
 
@@ -125,4 +128,25 @@ model Request {
   type    String?
   name    String?
   message String?
+}
+
+model Comment {
+  id              String @id @default(uuid(7))
+  username        String?
+  email           String?
+  messageContent  String
+
+  userId          String
+
+  post            Post @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
+  postId          String
+  postSlug        String
+
+  repliesToId     String?
+  repliesTo       Comment? @relation("replies", fields: [repliesToId], references: [id])
+  repliesReceived Comment[] @relation("replies")
+
+  createdAt       DateTime @default(now())
+
+  @@map("comment")
 }
