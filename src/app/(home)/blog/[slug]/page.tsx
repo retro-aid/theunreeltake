@@ -117,7 +117,7 @@ export default async function BlogPostPage(
               {tagElements}
             </Group>
 
-            <VisitorCommentForm/>
+            <VisitorCommentForm slug={slug}/>
 
           </Stack>
         </Paper>

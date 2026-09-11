@@ -14,7 +14,9 @@ import {postAnonymousCommentAction} from "@/lib/actions/comment-actions";
 
 
 
-export function VisitorCommentForm() {
+export function VisitorCommentForm(
+  { slug }: { slug: string }
+) {
 
   const commentForm = useForm({
     mode: "uncontrolled",
@@ -28,7 +30,7 @@ export function VisitorCommentForm() {
 
   const handleSubmit =
     async (formData: typeof commentForm.values) => {
-      await postAnonymousCommentAction(formData);
+      await postAnonymousCommentAction(slug, formData);
       commentForm.reset();
     }
 
