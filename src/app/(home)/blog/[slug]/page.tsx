@@ -16,7 +16,8 @@ import {
   Box
 } from "@mantine/core";
 import dayjs from "dayjs";
-import {VisitorCommentForm} from "@/components/comments";
+import CommentGrid, {VisitorCommentForm} from "@/components/comments";
+import {getCommentsOnPostAction} from "@/lib/actions/comment-actions";
 
 export default async function BlogPostPage(
   {
@@ -57,6 +58,8 @@ export default async function BlogPostPage(
       </Button>
     );
   });
+
+  const comments = await getCommentsOnPostAction(slug);
 
 
   return (
@@ -118,6 +121,10 @@ export default async function BlogPostPage(
             </Group>
 
             <VisitorCommentForm slug={slug}/>
+
+            <Title order={4}>Recent Comments</Title>
+
+            <CommentGrid comments={comments}/>
 
           </Stack>
         </Paper>

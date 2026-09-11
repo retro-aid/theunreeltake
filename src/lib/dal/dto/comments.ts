@@ -3,6 +3,13 @@ import {AnonymousCommentForm} from "@/lib/schemas/comment-schemas";
 import prisma from "@/lib/prisma";
 import {headers} from "next/headers";
 import * as crypto from "node:crypto";
+import {getCurrentSession} from "@/lib/dal/utils";
+import {Comment} from "@/generated/prisma/client";
+
+
+
+export type CulledComment = Pick<Comment, "username" | "createdAt" | "email" | "messageContent" | "userId">
+export type CulledAdminComment = Omit<Comment, "repliesToId">;
 
 async function generateAnonymousUserID() {
 
@@ -13,6 +20,8 @@ async function generateAnonymousUserID() {
 
   return crypto.createHash("sha256").update(`${ip}:${userAgent}`).digest("hex");
 }
+
+
 
 export async function createComment(
   postSlug: string,
@@ -32,8 +41,8 @@ export async function createComment(
 
     return await prisma.comment.create({
       data: {
-        username: username ?? "Anonymous User",
-        email: email ?? null,
+        username: (!username) ? "Anonymous User" : username,
+        email: (!email) ? null : email,
         messageContent: message,
         userId: anonUserId,
         postSlug: associatedPost.slug,
@@ -44,4 +53,71 @@ export async function createComment(
   } catch(e) {
     console.error(e);
   }
+}
+
+
+
+export async function deleteComment(
+  id: string
+) {
+
+  try {
+
+    const session = await getCurrentSession();
+
+    if(session.user.role !== "admin") {
+      console.error("Unauthorized");
+      return;
+    }
+
+    return await prisma.comment.delete({
+      where: { id: id }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+
+
+export async function getAdminComments(): Promise<CulledAdminComment[]> {
+
+  const session = await getCurrentSession();
+
+  if(session.user.role === "user") {
+
+    return prisma.comment.findMany({
+      where: {
+        post: {
+          author: {
+            id: session.user.id
+          }
+        }
+      },
+      omit: { repliesToId: true },
+      orderBy: { createdAt: "desc" }
+    });
+
+  } else if(session.user.role === "admin") {
+
+    return prisma.comment.findMany({
+      omit: {repliesToId: true},
+      orderBy: { createdAt: "desc" }
+    });
+
+  }else {
+    return [];
+  }
+}
+
+
+
+export async function getCommentsOnPost(
+  postSlug: string
+) {
+
+  return prisma.comment.findMany({
+    where: { postSlug: postSlug },
+    orderBy: { createdAt: "desc" }
+  });
 }

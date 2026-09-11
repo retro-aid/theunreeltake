@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Flex,
   Pagination,
@@ -7,12 +5,12 @@ import {
   Stack,
   Title
 } from "@mantine/core";
-import {DashboardCard} from "@/components/comments";
-import {useState} from "react";
+import {AdminCommentCard} from "@/components/comments";
+import {getAdminCommentsAction} from "@/lib/actions/comment-actions";
 
-export default function CommentsPage() {
+export default async function CommentsPage() {
 
-  const [page, setPage] = useState(1);
+  const comments = await getAdminCommentsAction();
 
   return (
     <Flex direction={"column"} h={"calc(100vh - 32px)"}>
@@ -21,8 +19,8 @@ export default function CommentsPage() {
 
       <ScrollArea bd={"1px solid gray.3"} p={"lg"} bdrs={"md"}>
         <Stack>
-          {[...Array(10).keys()].map((value) =>
-            <DashboardCard key={value}/>
+          {comments.map((item, index) =>
+            <AdminCommentCard key={index} comment={item}/>
           )}
         </Stack>
       </ScrollArea>
