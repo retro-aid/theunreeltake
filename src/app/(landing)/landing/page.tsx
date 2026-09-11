@@ -7,13 +7,13 @@ import {
   Container,
   Stack, Text,
   TextInput,
-  Title, Tooltip
+  Title, Tooltip, Box, Group, Paper, Image
 } from "@mantine/core";
 
 import {useForm} from "@mantine/form";
 import {useState} from "react";
 import Link from "next/link";
-import {XCircle} from "react-bootstrap-icons";
+import {ArrowRight, X, XCircle} from "react-bootstrap-icons"; //for the arrow on the guess button and the x on the give up button
 import {createTriviaCookie} from "@/lib/actions";
 
 const MAX_ATTEMPTS = 3;
@@ -44,6 +44,13 @@ export default function LandingPage() {
     if((attempts + 1) >= MAX_ATTEMPTS)
       await createTriviaCookie();
   }
+
+  //Handles for the give up scenario instead of the submit/validate form
+  //Set the max attempts to 3 so it goes straight to the "thanks for trying" part before proceeding
+  const handleGiveUp = async() => {
+    setAttempts(MAX_ATTEMPTS);
+    await createTriviaCookie();
+  };
 
   const triviaForm = useForm({
     mode: "controlled",
@@ -84,17 +91,48 @@ export default function LandingPage() {
 
       <Center mih={"100vh"}>
 
-        <Stack>
+      <Paper shadow="xl" radius="lg" p={40} w="100%" maw={620} bg="white">
 
-          <Title ta={"center"}>{TEST_QUESTION}</Title>
+        <Stack gap="lg" align="center">
+
+        <Center w="100%" h={88} bg="#2B2B2B" style={{borderRadius:12, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden"}}>
+              <Image
+                src="/img/white_logo_transparent_background.png"
+                alt="Logo"
+                h={52}
+                w="auto"
+                fit="contain"
+              />
+            </Center>
+
+        {/*Added the main title*/}
+        <Stack gap={6} align="center" ta="center">
+          <Title order={1} fw={700} fz={36}>
+            Welcome!
+          </Title>
+          <Text fw={500} fz={22} c="dark.7">
+            It looks like you're new here
+          </Text>
+        </Stack>
+
+        {/*Added the intro for first time users */}
+        <Text size="sm" ta="center" lh={1.6} px="xs">
+          We here at The Unreel Take like to have fun. We don't take ourselves too seriously, but we
+          want our reviews to be seen by other fans of movies, not just robots. So we've made a small
+          minigame to really put your knowledge to the test! Don't worry about passing it, you will still
+          be able to see everything that we have to offer; but indulge us for a second and test your own 
+          movie knowledge. We want to see what you're made out of! Who knows, you might even surprise yourself.
+        </Text>
+
+        <Box w="100%" maw={740}>
+          <Title order={3} ta={"center"} fw={600} fz={18} mb="md">{TEST_QUESTION}</Title>
 
           <form onSubmit={triviaForm.onSubmit(handleSubmit)}>
 
-            <Stack align={"center"}>
+            <Stack gap="md" align={"center"}>
 
               <TextInput
-                label={`You have ${MAX_ATTEMPTS - attempts} guesses left`}
-                placeholder={"Your Answer"}
+                placeholder={"Type Your Answer Here"}
                 w={"100%"}
                 rightSection={
                   triviaForm.values.answer !== "" ?
@@ -104,15 +142,31 @@ export default function LandingPage() {
                 {...triviaForm.getInputProps("answer")}
               />
 
-              <Button w={"50%"} type={"submit"} loading={triviaForm.submitting}>
-                Guess
+              <Text size="sm" fw={600}>
+                  {MAX_ATTEMPTS - attempts} Guesses Remaining
+              </Text>
+
+              <Group justify="center" gap="md" w="100%">
+                  <Button type="submit" color="blue" radius="sm" w={140} rightSection={<ArrowRight size={14} />} loading={triviaForm.submitting}>
+                    Guess
+                  </Button>
+               {/*added the give up button that when clicked, the attempt tries = 3 and striaght to 
+                "thanks fo trying page"*/}   
+              <Button type="submit" color="red" radius="sm" w={140} rightSection={<X size={14} />} onClick={handleGiveUp}>
+                    Give Up
               </Button>
+
+              </Group>
 
             </Stack>
 
           </form>
 
+          </Box>
+
         </Stack>
+        
+        </Paper>
 
       </Center>
 
