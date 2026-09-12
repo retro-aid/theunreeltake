@@ -39,3 +39,47 @@ export async function deleteQuestion(id : string){
     return {data: null, error: "Question not found"};
   }
 }
+
+export async function updateQuestion(id:string, question:string, answer:string, category: string)
+{
+  try{
+    await prisma.trivia.update({
+      where:{
+        id:id,
+      },
+      data: {
+        question: question,
+        answer: answer,
+        category: category
+      }
+    });
+
+    revalidatePath("/dashboard/trivia");
+    console.log("success");
+    return {error: null, success: true};
+  } catch (error) {
+    console.log("oops");
+    return {error: "Failed to update question",success:false};
+  }
+}
+
+export async function publishQuestion(id:string)
+{
+  try{
+    await prisma.trivia.update({
+      where:{
+        id:id,
+      },
+      data: {
+        published: true
+      }
+    });
+
+    revalidatePath("/dashboard/trivia");
+    console.log("success");
+    return {error: null, success: true};
+  } catch (error) {
+    console.log("oops");
+    return {error: "Failed to publish question",success:false};
+  }
+}

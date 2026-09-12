@@ -1,7 +1,7 @@
 "use client"
 
 import { Trivia } from "@/generated/prisma/client";
-import { createTriviaQuestionAction, deleteQuestionAction } from "@/lib/actions/trivia-actions";
+import { createTriviaQuestionAction, deleteQuestionAction, publishQuestionAction, updateQuestionAction } from "@/lib/actions/trivia-actions";
 import { TriviaQuestionSchema } from "@/lib/schemas";
 import { Badge, Box, Button, Checkbox, Group, Modal, Pagination, Paper, Select, Stack, Table, TextInput, Title } from "@mantine/core"
 import { useForm } from "@mantine/form";
@@ -23,9 +23,6 @@ export function TriviaTable({data}: {data: Trivia[]})
     const form = useForm({
     mode: 'uncontrolled',
     initialValues: { question: "", answer: "", category: ""},
-    onValuesChange: (values) => {
-      console.log(values);
-    },
     validate: zod4Resolver(TriviaQuestionSchema),
   });
 
@@ -34,7 +31,7 @@ export function TriviaTable({data}: {data: Trivia[]})
 
   const handleSubmit = async (values: typeof form.values) => {
     setServerError(""); 
-  
+
     setIsSuccess(true);
     setModalOpened(false);
     setActiveModal(null);
@@ -47,8 +44,21 @@ export function TriviaTable({data}: {data: Trivia[]})
     {
       if (selectedQuestionId) await deleteQuestionAction(selectedQuestionId);
     }
-    
+    else if(activeModal == "edit")
+    {
+      if (selectedQuestionId) await updateQuestionAction(selectedQuestionId, values.question, values.answer, values.category)
+    }
+    else if(activeModal == "publish")
+    {
+      if (selectedQuestionId) await publishQuestionAction(selectedQuestionId)
+    }
+
     form.reset();
+    form.setInitialValues({
+        question: "",
+        answer: "",
+        category: ""
+    });
     };
   
     const handleClose = () => {
@@ -57,6 +67,12 @@ export function TriviaTable({data}: {data: Trivia[]})
       setServerError("");
       setModalOpened(false);
       setActiveModal(null);
+
+      form.setInitialValues({
+        question: "",
+        answer: "",
+        category: ""
+      });
     };
 
 
@@ -105,11 +121,25 @@ export function TriviaTable({data}: {data: Trivia[]})
               <Button size="xs" variant="light"
               onClick={() => {
                 setSelectedQuestionId(item.id)
+
+                // Auto-populate attempt; Always one form behind.
+                /*form.setInitialValues({
+                  question: item.question,
+                  answer: item.answer,
+                  category: item.category
+                })*/
+
                 setModalOpened(true);
                 setActiveModal("edit");
               }}
               >Edit</Button>
-              <Button size="xs" variant="light">Publish</Button>
+              <Button size="xs" variant="light"
+              onClick={() => {
+                setSelectedQuestionId(item.id)
+                setModalOpened(true);
+                setActiveModal("publish");
+              }}
+              >Publish</Button>
               <Button size="xs" color="red" variant="light"
               onClick={() => {
                 setSelectedQuestionId(item.id)
@@ -125,7 +155,7 @@ export function TriviaTable({data}: {data: Trivia[]})
     return (
     <>
     {activeModal == "delete" && (
-      <Modal 
+      <Modal
         opened={modalOpened} onClose={handleClose} title={"Delete a trivia question"} centered radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
         {serverError && (
@@ -185,6 +215,68 @@ export function TriviaTable({data}: {data: Trivia[]})
                 </Group>
               </form>
           </Modal>
+    )}
+    {activeModal == "edit" && (
+      <Modal
+        opened={modalOpened} onClose={handleClose} title={"Edit a trivia question"} centered radius="md">
+              <form onSubmit={form.onSubmit(handleSubmit)}>
+                {serverError && (
+                  serverError
+                )}
+
+                <TextInput
+                  label="Question"
+                  description="The trivia question"
+                  placeholder="What studio made Spirited Away?"
+                  radius="md"
+                  key={form.key("question")}
+                  {...form.getInputProps("question")}
+                />
+                <TextInput
+                  label="Answer"
+                  description="The trivia question's answer"
+                  placeholder="Studio Ghibli"
+                  radius="md"
+                  key={form.key("answer")}
+                  {...form.getInputProps("answer")}
+                />
+                <TextInput
+                  label="Category"
+                  description="The trivia question's category"
+                  placeholder="Animated films"
+                  radius="md"
+                  key={form.key("category")}
+                  {...form.getInputProps("category")}
+                />
+                <Group justify="space-between" mt="xl">
+                  <Button color="dark" radius="md" type="submit" loading={form.submitting}>
+                    Finish Editing
+                  </Button>
+                  <Button variant="default" radius="md" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </Group>
+              </form>
+          </Modal>
+    )}
+    {activeModal == "publish" && (
+      <Modal
+        opened={modalOpened} onClose={handleClose} title={"Publish a trivia question"} centered radius="md">
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+        {serverError && (
+          serverError
+        )}
+        Are you sure you want to publish this question?
+        <Group mt="md">
+          <Button variant="default" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button color="green" type="submit" loading={form.submitting}>
+              Confirm
+            </Button>
+          </Group>
+          </form>
+      </Modal>
     )}
     <Box p="lg" style={{ minHeight: "95vh", display: "flex", flexDirection: "column" }}>
       <Stack gap="lg" style={{ flex: 1 }}>
