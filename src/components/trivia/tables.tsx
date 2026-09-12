@@ -1,7 +1,11 @@
 "use client"
 
 import { Trivia } from "@/generated/prisma/client";
-import { Badge, Box, Button, Checkbox, Group, Pagination, Paper, Select, Stack, Table, TextInput, Title } from "@mantine/core"
+import { createTriviaQuestionAction } from "@/lib/actions/trivia-actions";
+import { TriviaQuestionSchema } from "@/lib/schemas";
+import { Badge, Box, Button, Checkbox, Group, Modal, Pagination, Paper, Select, Stack, Table, TextInput, Title } from "@mantine/core"
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useState } from "react";
 
 export function TriviaTable({data}: {data: Trivia[]})
@@ -11,7 +15,41 @@ export function TriviaTable({data}: {data: Trivia[]})
     const [difficulty, setDifficulty] = useState<string | null>(null);
     const [published, setStatus] = useState<boolean | null>(null);
     const [search, setSearch] = useState("");
-      
+
+    const [modalOpened, setModalOpened] = useState(false);
+    const [activeModal, setActiveModal] = useState<string | null>(null);
+
+    const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: { question: "", answer: "", category: ""},
+    onValuesChange: (values) => {
+      console.log(values);
+    },
+    validate: zod4Resolver(TriviaQuestionSchema),
+  });
+
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [serverError, setServerError] = useState("");
+
+  const handleSubmit = async (values: typeof form.values) => {
+    setServerError(""); 
+  
+    await createTriviaQuestionAction(values.question, values.answer, values.category);
+  
+    setIsSuccess(true);
+    setModalOpened(false);
+    setActiveModal(null);
+    };
+  
+    const handleClose = () => {
+      form.reset();
+      setIsSuccess(false);
+      setServerError("");
+      setModalOpened(false);
+      setActiveModal(null);
+    };
+
+
     const filteredData = data.filter((item) => {
        return(
         (!category || item.category === category) &&
@@ -63,6 +101,51 @@ export function TriviaTable({data}: {data: Trivia[]})
       ));
 
     return (
+    <>
+    
+    {activeModal == "new" && (
+      <Modal
+        opened={modalOpened} onClose={handleClose} title={isSuccess ? "" : "Create a new trivia question"} centered radius="md">
+              <form onSubmit={form.onSubmit(handleSubmit)}>
+                {serverError && (
+                  serverError
+                )}
+      
+                <TextInput
+                  label="Question"
+                  description="The trivia question"
+                  placeholder="What studio made Spirited Away?"
+                  radius="md"
+                  key={form.key("question")}
+                  {...form.getInputProps("question")}
+                />
+                <TextInput
+                  label="Answer"
+                  description="The trivia question's answer"
+                  placeholder="Studio Ghibli"
+                  radius="md"
+                  key={form.key("answer")}
+                  {...form.getInputProps("answer")}
+                />
+                <TextInput
+                  label="Category"
+                  description="The trivia question's category"
+                  placeholder="Animated films"
+                  radius="md"
+                  key={form.key("category")}
+                  {...form.getInputProps("category")}
+                />
+                <Group justify="space-between" mt="xl">
+                  <Button color="dark" radius="md" type="submit" loading={form.submitting}>
+                    Create Question
+                  </Button>
+                  <Button variant="default" radius="md" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </Group>
+              </form>
+          </Modal>
+    )}
     <Box p="lg" style={{ minHeight: "95vh", display: "flex", flexDirection: "column" }}>
       <Stack gap="lg" style={{ flex: 1 }}>
         <Title order={2}>Trivia</Title>
@@ -96,7 +179,10 @@ export function TriviaTable({data}: {data: Trivia[]})
            value={search}
            onChange={(e) => setSearch(e.currentTarget.value)}
           />
-          <Button>Add Questions</Button>
+          <Button onClick={() => {
+            setModalOpened(true);
+            setActiveModal("new")
+          }}>Add Questions</Button>
         </Group>
 
         {/* Bulk Actions */}
@@ -151,5 +237,6 @@ export function TriviaTable({data}: {data: Trivia[]})
         </Box>
       </Group>
     </Box>
+  </>
   );  
 }
