@@ -7,7 +7,6 @@ import { Badge, Box, Button, Checkbox, Group, Modal, Pagination, Paper, Select, 
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useState } from "react";
-import { id } from "zod/v4/locales";
 
 export function TriviaTable({data}: {data: Trivia[]})
 {
@@ -32,7 +31,7 @@ export function TriviaTable({data}: {data: Trivia[]})
 
   const handleSubmit = async (values: typeof form.values) => {
     setServerError(""); 
-  
+
     setIsSuccess(true);
     setModalOpened(false);
     setActiveModal(null);
@@ -53,7 +52,7 @@ export function TriviaTable({data}: {data: Trivia[]})
     {
       if (selectedQuestionId) await publishQuestionAction(selectedQuestionId)
     }
-    
+
     form.reset();
     form.setInitialValues({
         question: "",
@@ -122,7 +121,7 @@ export function TriviaTable({data}: {data: Trivia[]})
               <Button size="xs" variant="light"
               onClick={() => {
                 setSelectedQuestionId(item.id)
-                
+
                 // Auto-populate attempt; Always one form behind.
                 /*form.setInitialValues({
                   question: item.question,
@@ -156,7 +155,7 @@ export function TriviaTable({data}: {data: Trivia[]})
     return (
     <>
     {activeModal == "delete" && (
-      <Modal 
+      <Modal
         opened={modalOpened} onClose={handleClose} title={"Delete a trivia question"} centered radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
         {serverError && (
@@ -176,7 +175,7 @@ export function TriviaTable({data}: {data: Trivia[]})
     )}
     {activeModal == "new" && (
       <Modal
-        opened={modalOpened} onClose={handleClose} title={"Create a new trivia question"} centered radius="md">
+        opened={modalOpened} onClose={handleClose} title={isSuccess ? "" : "Create a new trivia question"} centered radius="md">
               <form onSubmit={form.onSubmit(handleSubmit)}>
                 {serverError && (
                   serverError
@@ -224,7 +223,7 @@ export function TriviaTable({data}: {data: Trivia[]})
                 {serverError && (
                   serverError
                 )}
-      
+
                 <TextInput
                   label="Question"
                   description="The trivia question"
@@ -261,7 +260,7 @@ export function TriviaTable({data}: {data: Trivia[]})
           </Modal>
     )}
     {activeModal == "publish" && (
-      <Modal 
+      <Modal
         opened={modalOpened} onClose={handleClose} title={"Publish a trivia question"} centered radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
         {serverError && (

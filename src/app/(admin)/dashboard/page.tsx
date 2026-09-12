@@ -3,8 +3,9 @@
 import {useContext} from "react";
 import {AuthContext} from "@/app/ui/admin/AuthContext";
 import {redirect} from "next/navigation";
-import {Flex, Group} from '@mantine/core';
+import {Flex, Group, Text, Stack} from '@mantine/core';
 import { ViewsCard } from "@/app/ui/admin/ViewsCard";
+import {People} from "react-bootstrap-icons";
 
 export default function DashboardPage() {
 
@@ -31,9 +32,23 @@ export default function DashboardPage() {
         direction="row"
         wrap="wrap" >
           <ViewsCard />
-          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"20%"}
-          style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
-            Box 2
+          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"20%"} maw={440}
+          style={{
+							'borderStyle': 'solid', 
+							'borderWidth': '3px', 
+							padding: '5px', 
+							borderRadius: "12px", 
+							boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
+					}}>
+          	<Stack gap = {5} align = "center">
+							<People size={40}/>
+							<Text size = "xl" fw = {500}>
+								100
+							</Text>
+							<Text size = "xl" fw = {400}>
+								Active Members
+							</Text>
+						</Stack>
           </Group>
         </Flex>
 
