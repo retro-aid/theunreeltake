@@ -1,7 +1,7 @@
 "use client"
 
 import { Trivia } from "@/generated/prisma/client";
-import { createTriviaQuestionAction } from "@/lib/actions/trivia-actions";
+import { createTriviaQuestionAction, deleteQuestionAction } from "@/lib/actions/trivia-actions";
 import { TriviaQuestionSchema } from "@/lib/schemas";
 import { Badge, Box, Button, Checkbox, Group, Modal, Pagination, Paper, Select, Stack, Table, TextInput, Title } from "@mantine/core"
 import { useForm } from "@mantine/form";
@@ -14,6 +14,7 @@ export function TriviaTable({data}: {data: Trivia[]})
     const [type, setType] = useState<string | null>(null);
     const [difficulty, setDifficulty] = useState<string | null>(null);
     const [published, setStatus] = useState<boolean | null>(null);
+    const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
     const [search, setSearch] = useState("");
 
     const [modalOpened, setModalOpened] = useState(false);
@@ -34,11 +35,20 @@ export function TriviaTable({data}: {data: Trivia[]})
   const handleSubmit = async (values: typeof form.values) => {
     setServerError(""); 
   
-    await createTriviaQuestionAction(values.question, values.answer, values.category);
-  
     setIsSuccess(true);
     setModalOpened(false);
     setActiveModal(null);
+
+    if(activeModal == "new")
+    {
+      await createTriviaQuestionAction(values.question, values.answer, values.category);
+    }
+    else if(activeModal == "delete")
+    {
+      if (selectedQuestionId) await deleteQuestionAction(selectedQuestionId);
+    }
+    
+    form.reset();
     };
   
     const handleClose = () => {
@@ -92,9 +102,21 @@ export function TriviaTable({data}: {data: Trivia[]})
           <Table.Td>{item.sucrate}</Table.Td>
           <Table.Td>
             <Group gap="xs">
-              <Button size="xs" variant="light">Edit</Button>
+              <Button size="xs" variant="light"
+              onClick={() => {
+                setSelectedQuestionId(item.id)
+                setModalOpened(true);
+                setActiveModal("edit");
+              }}
+              >Edit</Button>
               <Button size="xs" variant="light">Publish</Button>
-              <Button size="xs" color="red" variant="light">Delete</Button>
+              <Button size="xs" color="red" variant="light"
+              onClick={() => {
+                setSelectedQuestionId(item.id)
+                setModalOpened(true);
+                setActiveModal("delete");
+              }}
+              >Delete</Button>
             </Group>
           </Table.Td>
         </Table.Tr>
@@ -102,7 +124,25 @@ export function TriviaTable({data}: {data: Trivia[]})
 
     return (
     <>
-    
+    {activeModal == "delete" && (
+      <Modal 
+        opened={modalOpened} onClose={handleClose} title={"Delete a trivia question"} centered radius="md">
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+        {serverError && (
+          serverError
+        )}
+        Are you sure you want to delete this question?
+        <Group mt="md">
+          <Button variant="default" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button color="red" type="submit" loading={form.submitting}>
+              Confirm
+            </Button>
+          </Group>
+          </form>
+      </Modal>
+    )}
     {activeModal == "new" && (
       <Modal
         opened={modalOpened} onClose={handleClose} title={isSuccess ? "" : "Create a new trivia question"} centered radius="md">
