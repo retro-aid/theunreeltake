@@ -5,6 +5,7 @@ import { PostGrid } from "@/app/ui/admin/AdminPostGrid";
 import { Title, Box, Loader, Center } from "@mantine/core";
 import { PencilSquare, Chat, BarChart, Trash } from "react-bootstrap-icons";
 import { getDraftPosts } from "@/lib/actions";
+import { Post } from "@/generated/prisma/client";
 
 const GRID_ICONS = {
   Edit: PencilSquare,
@@ -15,7 +16,7 @@ const GRID_ICONS = {
 
 export default function DraftsPage() {
 
-  const [drafts, setDrafts] = useState<{ id: string; imageSrc: string }[]>([]);
+  const [drafts, setDrafts] = useState<Post[]>([]);
   const [isLoading, startTransition] = useTransition();
 
   useEffect(() => {
