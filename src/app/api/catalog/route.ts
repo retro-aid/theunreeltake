@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma"; 
 import { allowedPostsPerPage } from "@/lib/constants";
 import {PostOrderByWithRelationInput} from "@/generated/prisma/models/Post";
+import { CatalogItemSchema } from "@/lib/schemas";
 
 interface CatalogParams {
   search: string;
@@ -60,8 +61,6 @@ export async function GET(request: NextRequest) {
         } : undefined
       },
       orderBy: orderByList,
-      skip: offset,
-      take: catalogParams.postsPerPage,
       omit: {
         id: true,
         htmlContent: true,
@@ -79,9 +78,12 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Returns the match posts and put them into a small amount into each page.
+    const postsMatch = posts.slice(offset, offset + catalogParams.postsPerPage); 
+
     // Return successfully fetched and optionally sorted records
     return NextResponse.json(
-      { totalCount: posts.length, pageItems: posts } as PostPageData,
+      { totalCount: posts.length, pageItems: postsMatch } as PostPageData,
       { status: 200 }
     );
   } catch (error) {

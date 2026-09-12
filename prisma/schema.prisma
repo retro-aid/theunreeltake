@@ -85,9 +85,12 @@ model Post {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   authorId    String
+  views       Int          @default(0)
   tags        TagsOnPost[]
+  comment     Comment[]
   author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
+  @@unique([id, slug])
   @@map("post")
 }
 
@@ -110,15 +113,18 @@ model TagsOnPost {
 }
 
 model Trivia {
-  id          String    @id
-  question    String
-  answer      String
-  category    String
-  published   Boolean   @default(false)
-
+  id         String  @id
+  question   String
+  answer     String
+  category   String
+  published  Boolean @default(false)
+  difficulty String
+  sucrate    String
+  type       String
 }
+
 model Request {
-  id      String    @id @default(uuid(7))
+  id      String  @id @default(uuid(7))
   email   String
   title   String
   type    String?
@@ -126,11 +132,19 @@ model Request {
   message String?
 }
 
-model NewsletterSubscriber {
-  id                String      @id @default(uuid(7))
-  email             String      @unique
-  subscribedAt      DateTime    #default(now())
-  unsubscribedAt    DateTime?
+model Comment {
+  id              String    @id @default(uuid(7))
+  username        String?
+  email           String?
+  messageContent  String
+  userId          String
+  postId          String
+  postSlug        String
+  repliesToId     String?
+  createdAt       DateTime  @default(now())
+  post            Post      @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
+  repliesTo       Comment?  @relation("replies", fields: [repliesToId], references: [id])
+  repliesReceived Comment[] @relation("replies")
 
-  @@map("newsletter_subscriber")
+  @@map("comment")
 }

@@ -151,3 +151,12 @@ export const EditUserSchema = z.object({
   role: z
     .enum(["Admin", "User"])
 })
+
+export const TriviaQuestionSchema = z.object({
+  question: z
+  .string(),
+  answer: z
+  .string(),
+  category: z
+  .string()
+})

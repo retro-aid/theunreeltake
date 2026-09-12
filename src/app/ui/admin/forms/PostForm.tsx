@@ -23,7 +23,9 @@ interface PostProp {
   mediaTagId: number;
 }
 
-export function PostForm({ post }: { post?: PostProp | null }) {
+type Prefill = { title: string; message: string; mediaTagId: number };
+
+export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: Prefill }) {
 
   const [mediaTags, setMediaTags] = useState(new Array<Tag>());
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,11 +46,11 @@ export function PostForm({ post }: { post?: PostProp | null }) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      title: post?.title || "",
+      title: post?.title || prefill?.title || "",
       slug: post?.slug || "",
-      mediaTagId: post?.mediaTagId ?? 0,
+      mediaTagId: post?.mediaTagId ?? prefill?.mediaTagId ?? 0,
       posterUrl: post?.posterUrl ?? null,
-      pageContent: post?.htmlContent || ""
+      pageContent: post?.htmlContent || (prefill?.message ? "<p>" + prefill.message + "</p>" : ""),
     },
     validate: zod4Resolver(CreatePostSchema),
   });
