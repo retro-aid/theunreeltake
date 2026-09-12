@@ -33,7 +33,7 @@ export async function deleteQuestion(id : string){
         where: {id},
       });
     revalidatePath("/dashboard/trivia");
-    return {data: deleteQuestion, error: "none"};
+    return {data: deleteUser, error: "none"};
   } catch(e){
     console.error("Database Error: ", e);
     return {data: null, error: "Question not found"};

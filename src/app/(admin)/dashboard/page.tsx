@@ -34,10 +34,10 @@ export default function DashboardPage() {
           <ViewsCard />
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"20%"} maw={440}
           style={{
-							'borderStyle': 'solid', 
-							'borderWidth': '3px', 
-							padding: '5px', 
-							borderRadius: "12px", 
+							'borderStyle': 'solid',
+							'borderWidth': '3px',
+							padding: '5px',
+							borderRadius: "12px",
 							boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
 					}}>
           	<Stack gap = {5} align = "center">

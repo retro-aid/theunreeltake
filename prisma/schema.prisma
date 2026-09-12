@@ -87,7 +87,7 @@ model Post {
   authorId    String
   views       Int          @default(0)
   tags        TagsOnPost[]
-  comment     comment[]
+  comment     Comment[]
   author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@unique([id, slug])
@@ -113,14 +113,14 @@ model TagsOnPost {
 }
 
 model Trivia {
-  id          String    @id
-  question    String
-  answer      String
-  category    String
-  difficulty  String
-  type        String
-  sucrate     String
-  published   Boolean   @default(false)
+  id         String  @id
+  question   String
+  answer     String
+  category   String
+  published  Boolean @default(false)
+  difficulty String
+  sucrate    String
+  type       String
 }
 
 model Request {
@@ -132,17 +132,19 @@ model Request {
   message String?
 }
 
-model comment {
-  id             String    @id
-  username       String?
-  email          String?
-  messageContent String
-  userId         String
-  postId         String
-  postSlug       String
-  repliesToId    String?
-  createdAt      DateTime  @default(now())
-  post           Post      @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
-  comment        comment?  @relation("commentTocomment", fields: [repliesToId], references: [id])
-  other_comment  comment[] @relation("commentTocomment")
+model Comment {
+  id              String    @id @default(uuid(7))
+  username        String?
+  email           String?
+  messageContent  String
+  userId          String
+  postId          String
+  postSlug        String
+  repliesToId     String?
+  createdAt       DateTime  @default(now())
+  post            Post      @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
+  repliesTo       Comment?  @relation("replies", fields: [repliesToId], references: [id])
+  repliesReceived Comment[] @relation("replies")
+
+  @@map("comment")
 }

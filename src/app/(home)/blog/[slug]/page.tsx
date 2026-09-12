@@ -9,12 +9,15 @@ import {
   Text,
   Group,
   Stack,
-  Textarea,
   Flex,
   Paper,
-  Button, Container, Box
+  Button,
+  Container,
+  Box
 } from "@mantine/core";
 import dayjs from "dayjs";
+import CommentGrid, {VisitorCommentForm} from "@/components/comments";
+import {getCommentsOnPostAction} from "@/lib/actions/comment-actions";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
 
 export default async function BlogPostPage(
@@ -46,7 +49,7 @@ export default async function BlogPostPage(
       id: { not: data.id },
       tags: { some: { tag: { id: { in: currentTagIds } } } },
     },
-    include: { 
+    include: {
       author: { select: { name: true } },
       tags: { include: { tag: true }, omit: { postId: true, tagId: true } }
     },
@@ -64,7 +67,7 @@ export default async function BlogPostPage(
     .map(({ post }) => post);
 
   const remainingSlots = 4 - relatedPosts.length;
-  
+
   if (remainingSlots > 0) {
     const relatedPostsIds = new Set(relatedPosts.map((post) => post.id));
 
@@ -106,6 +109,8 @@ export default async function BlogPostPage(
       </Button>
     );
   });
+
+  const comments = await getCommentsOnPostAction(slug);
 
 
   return (
@@ -182,12 +187,11 @@ export default async function BlogPostPage(
               {tagElements}
             </Group>
 
-            <Textarea
-              label="Leave a comment"
-              placeholder="Your comment"
-              autosize
-              minRows={4}
-            />
+            <VisitorCommentForm slug={slug}/>
+
+            <Title order={4}>Recent Comments</Title>
+
+            <CommentGrid comments={comments}/>
 
           </Stack>
         </Paper>
