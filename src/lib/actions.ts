@@ -502,3 +502,21 @@ export async function getTotalViews(days: number = 30) {
     return { success: false, total: 0 };
   }
 }
+
+export async function createTriviaQuestion(question: string, answer: string, category: string) {
+
+  const data = {
+    id: crypto.randomUUID(),
+    question: question,
+    answer: answer,
+    category: category,
+    difficulty: "Medium",
+    type: "Fill in the blank",
+    sucrate: "50%",
+    published: false
+  }
+
+  await prisma.trivia.create({
+    data: data
+  });
+}
