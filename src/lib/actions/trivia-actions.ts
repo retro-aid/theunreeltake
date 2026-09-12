@@ -1,6 +1,6 @@
 "use server"
 
-import { createTriviaQuestion, deleteQuestion, getAllQuestions } from "../dal/dto/trivia"
+import { createTriviaQuestion, deleteQuestion, getAllQuestions, publishQuestion, updateQuestion } from "../dal/dto/trivia"
 
 export async function getAllQuestionsAction()
 {
@@ -15,4 +15,14 @@ export async function createTriviaQuestionAction(question: string, answer: strin
 export async function deleteQuestionAction(id: string)
 {
     return deleteQuestion(id);
+}
+
+export async function updateQuestionAction(id: string, question: string, answer: string, category: string)
+{
+    return updateQuestion(id,question,answer,category);
+}
+
+export async function publishQuestionAction(id: string)
+{
+    return publishQuestion(id);
 }
