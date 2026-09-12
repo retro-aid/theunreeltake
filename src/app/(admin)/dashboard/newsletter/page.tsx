@@ -3,7 +3,7 @@
 import { Container, Title, Text, Card, SimpleGrid, Grid, TextInput, Textarea, Button, Table, Badge, Group, Stack, Divider, } from '@mantine/core';
 import { useState } from 'react';
 
-// Mock data 
+{/*Mock data */}
 const MOCK_STATS = {
     totalSubscribers: 1284,
     sentThisMonth: 3,
