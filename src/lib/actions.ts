@@ -11,6 +11,7 @@ import { sendInvitationEmail } from "@/lib/emailer";
 import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import {revalidatePath} from "next/cache";
 import {AllowedTagType, PostItem} from "./constants";
+import { Post } from "@/generated/prisma/client";
 
 function generateInvitationToken(): string {
 
@@ -305,12 +306,14 @@ export async function getDraftPosts() {
       }
     });
 
-    const formattedDrafts = draftPosts.map((post) => ({
+    /*const formattedDrafts = draftPosts.map((post:Post) => ({
       id: post.id,
       imageSrc: post.posterUrl || "https://placehold.co/600x400?text=No+Poster",
-    }));
+      title: post.title,
+      published: post.published,
+    }));*/
 
-    return { success: true, data: formattedDrafts };
+    return { success: true, data: draftPosts };
   } catch (error) {
     console.error("Failed to fetch drafts:", error);
     return { success: false, data: [] };
@@ -355,15 +358,16 @@ export async function getPostAction({
       },
     });
 
-    const formatted: PostItem[] = posts.map((post) => ({
+    /*const formatted: PostItem[] = posts.map((post:Post) => ({
       id: post.id,
       title: post.title,
       imageSrc: post.posterUrl ?? "https://placehold.co/600x400?text=No+Poster",
-    }));
+      published: post.published,
+    }));*/
 
     return {
       success: true,
-      data: formatted,
+      data: posts,
       total,
     };
   } catch (err) {
