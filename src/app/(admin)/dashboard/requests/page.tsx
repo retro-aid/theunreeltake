@@ -1,10 +1,11 @@
 "use client";
 
-import {Box, Title, Text, Button, Paper, Stack, Group, Pagination, ActionIcon, Flex} from "@mantine/core"
+import {Box, Title, Text, Button, Paper, Stack, Group, Pagination, ActionIcon, Flex, Modal, TextInput,Textarea} from "@mantine/core"
+import { useDisclosure } from '@mantine/hooks';
 import {useState, useEffect, useTransition, useCallback} from "react"
 import GridReview from "./gridReview";
 import Link from "next/link"
-import { getMediaRequests } from "@/lib/actions";
+import { getMediaRequests,replyToRequest } from "@/lib/actions";
 import {HomeSearchBar} from "@/app/ui/home/HomeSearchBar";
 import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
@@ -22,6 +23,10 @@ export default function DashboardRequestsPage() {
 	const [sort, setSort] = useState("");
 	const [search, setSearch] = useState("");
 	const [total, setTotal] = useState(0);
+	const [deleteOpened, { open:openDelete, close: closeDelete }] = useDisclosure(false);
+	const [replyOpened, { open:openReply, close: closeReply }] = useDisclosure(false);
+	const [message, setMessage] = useState("");
+	const [sending, setSending] = useState(false);
 
 	const [isLoading, startTransition] = useTransition();
 
@@ -43,7 +48,24 @@ export default function DashboardRequestsPage() {
 		setSelectedId(undefined);
 	};
 
+	const handleDelete = async () => {
+    	await fetch(`/api/requests/${selectedItem?.id}`, { method: 'DELETE' });
+    	close();
+  	};
 
+	const handleSend = async () => {
+  		if (!selectedItem || !message.trim()) return;
+  		setSending(true);
+ 	 	try {
+    		await replyToRequest(selectedItem.id, message);
+    		close();
+    		setMessage('');
+  		} catch (error) {
+    	console.error('Send failed:', error);
+  		} finally {
+    	setSending(false);
+ 	 	}
+	};
 
 	const refresh = useCallback(() => {
 		startTransition(async () => {
@@ -83,10 +105,48 @@ export default function DashboardRequestsPage() {
 						}}>
 						Create Post
 					</Button>
-					<Button size="xs" variant="light">
+
+					<Modal opened={replyOpened} onClose={closeReply} title={`Reply to ${selectedItem.name ?? selectedItem.email}`} centered>
+						<Stack>
+							<TextInput label="To" value={selectedItem.email} disabled />
+							<Textarea
+								label="Your response"
+								placeholder="Type your reply..."
+								value={message}
+								onChange={(e) => setMessage(e.currentTarget.value)}
+								minRows={5}
+								autosize
+							/>
+							<Group justify="flex-end">
+								<Button variant="default" onClick={close}>Cancel</Button>
+								<Button onClick={handleSend} loading={sending} disabled={!message.trim()}>
+									Send
+								</Button>
+							</Group>
+						</Stack>
+					</Modal>
+
+					<Button size="xs" variant="light" onClick={openReply}>
 						Reply To User
 					</Button>
-					<Button size="xs" variant="light" color="red">
+
+
+					<Modal opened={deleteOpened} onClose={closeDelete} title="Delete Request" centered>
+        				<Text size="sm">
+         					 Are you sure you want to delete this request?
+        				</Text>
+
+       					<Group justify="flex-end" mt="md">
+          					<Button variant="default" onClick={close}>
+            					Cancel
+          					</Button>
+          					<Button color="red" onClick={handleDelete}>
+           						 Delete
+          					</Button>
+       					</Group>
+      				</Modal>
+
+					<Button size="xs" variant="light" color="red" onClick={openDelete}>
 						Delete Request
 					</Button>
 					</Group>
@@ -95,6 +155,7 @@ export default function DashboardRequestsPage() {
 				<Text c="dimmed"> Select a card to view details </Text>
 				)}
 			</Paper>
+
 
 			<Group mb="md">
 				<Flex miw={500}>
