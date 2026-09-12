@@ -1,6 +1,6 @@
 "use client";
 
-import {Box, Title, Text, Button, Paper, Stack, Group, Pagination, ActionIcon, Flex, Modal, TextInput,Textarea} from "@mantine/core"
+import {Box, Title, Text, Button, Paper, Stack, Group, Pagination, Flex, Modal, TextInput,Textarea} from "@mantine/core"
 import { useDisclosure } from '@mantine/hooks';
 import {useState, useEffect, useTransition, useCallback} from "react"
 import GridReview from "./gridReview";
@@ -118,7 +118,7 @@ export default function DashboardRequestsPage() {
 								autosize
 							/>
 							<Group justify="flex-end">
-								<Button variant="default" onClick={close}>Cancel</Button>
+								<Button variant="default" onClick={closeReply}>Cancel</Button>
 								<Button onClick={handleSend} loading={sending} disabled={!message.trim()}>
 									Send
 								</Button>
@@ -137,7 +137,7 @@ export default function DashboardRequestsPage() {
         				</Text>
 
        					<Group justify="flex-end" mt="md">
-          					<Button variant="default" onClick={close}>
+          					<Button variant="default" onClick={closeDelete}>
             					Cancel
           					</Button>
           					<Button color="red" onClick={handleDelete}>
