@@ -113,14 +113,14 @@ model TagsOnPost {
 }
 
 model Trivia {
-  id          String    @id
-  question    String
-  answer      String
-  category    String
-  difficulty  String
-  type        String
-  sucrate     String
-  published   Boolean   @default(false)
+  id         String  @id
+  question   String
+  answer     String
+  category   String
+  published  Boolean @default(false)
+  difficulty String
+  sucrate    String
+  type       String
 }
 
 model Request {
@@ -133,22 +133,18 @@ model Request {
 }
 
 model Comment {
-  id              String @id @default(uuid(7))
+  id              String    @id @default(uuid(7))
   username        String?
   email           String?
   messageContent  String
-
   userId          String
-
-  post            Post @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
   postId          String
   postSlug        String
-
   repliesToId     String?
-  repliesTo       Comment? @relation("replies", fields: [repliesToId], references: [id])
+  createdAt       DateTime  @default(now())
+  post            Post      @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
+  repliesTo       Comment?  @relation("replies", fields: [repliesToId], references: [id])
   repliesReceived Comment[] @relation("replies")
-
-  createdAt       DateTime @default(now())
 
   @@map("comment")
 }
