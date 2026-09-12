@@ -82,13 +82,15 @@ model Post {
   htmlContent String
   published   Boolean      @default(false)
   imageUrls   String[]
-  views       Int          @default(0)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   authorId    String
+  views       Int          @default(0)
   tags        TagsOnPost[]
+  comment     comment[]
   author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
+  @@unique([id, slug])
   @@map("post")
 }
 
@@ -115,14 +117,32 @@ model Trivia {
   question    String
   answer      String
   category    String
+  difficulty  String
+  type        String
+  sucrate     String
   published   Boolean   @default(false)
-
 }
+
 model Request {
-  id      String    @id @default(uuid(7))
+  id      String  @id @default(uuid(7))
   email   String
   title   String
   type    String?
   name    String?
   message String?
+}
+
+model comment {
+  id             String    @id
+  username       String?
+  email          String?
+  messageContent String
+  userId         String
+  postId         String
+  postSlug       String
+  repliesToId    String?
+  createdAt      DateTime  @default(now())
+  post           Post      @relation(fields: [postId, postSlug], references: [id, slug], onDelete: Cascade)
+  comment        comment?  @relation("commentTocomment", fields: [repliesToId], references: [id])
+  other_comment  comment[] @relation("commentTocomment")
 }
