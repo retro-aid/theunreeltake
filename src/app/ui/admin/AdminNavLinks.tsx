@@ -13,7 +13,8 @@ import {
   People,
   Send,
   Tag,
-  Postcard
+  Postcard,
+  Newspaper 
 } from "react-bootstrap-icons";
 import {usePathname} from "next/navigation";
 
@@ -28,6 +29,7 @@ const data = [
   { link: '/dashboard/analytics', label: 'Analytics', icon: BarChartLine, disabled: true},
   { link: '/dashboard/tags', label: 'Tags', icon: Tag, disabled: false},
   { link: '/dashboard/users', label: 'Users', icon: People, disabled: false},
+  { link: '/dashboard/newsletter', label: 'Newsletter', icon: Newspaper, disabled: false}
 ];
 
 export default function AdminNavLinks() {
