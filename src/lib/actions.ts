@@ -12,6 +12,13 @@ import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import {revalidatePath} from "next/cache";
 import {AllowedTagType, PostItem} from "./constants";
 import { Post } from "@/generated/prisma/client";
+import { RequestWhereInput, RequestOrderByWithRelationInput } from "@/generated/prisma/models/Request";
+
+const REQUEST_ORDER_BY: Record<string, RequestOrderByWithRelationInput> = {
+  title: { title: "asc" },
+  name:  { name: "asc" },
+  email: { email: "asc" },
+};
 
 function generateInvitationToken(): string {
 
@@ -399,61 +406,49 @@ export async function submitRequestForm(data: RequestForm){
 
 }
 
-export async function getAllMediaRequests() {
-  return prisma.request.findMany({
-    orderBy: { name: "desc" },
-  });
-}
-
-export async function searchMediaRequests(query: string) {
-  return prisma.request.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: "insensitive" } },
-        { message: { contains: query, mode: "insensitive" } },
-        { email: { contains: query, mode: "insensitive" } },
-      ],
-    },
-    orderBy: { name: "desc" },
-  });
-}
 
 export async function getMediaRequests({
   page = 1,
   limit = 12,
   search = "",
+  type = "",
+  sort = "",
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  type?: string;
+  sort?: string;
 }) {
-  const skip = (page - 1) * limit;
-
-  return prisma.request.findMany({
-    where: search
-      ? {
-          OR: [
+  try {
+    const where: RequestWhereInput = {
+      type: type || undefined,
+      OR: search
+        ? [
             { title: { contains: search, mode: "insensitive" } },
             { email: { contains: search, mode: "insensitive" } },
-            { name: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {},
-    skip,
-    take: limit,
-    orderBy: { name: "desc" },
-  });
+            { name:  { contains: search, mode: "insensitive" } },
+          ]
+        : undefined,
+    };
+
+    const [data, total] = await Promise.all([
+      prisma.request.findMany({
+        where,
+        orderBy: REQUEST_ORDER_BY[sort] ?? { name: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.request.count({ where }),
+    ]);
+
+    return { success: true, data, total };
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: [] as [], total: 0 };
+  }
 }
 
-export async function getMediaRequestCount(search = "") {
-  return prisma.request.count({
-    where: search
-      ? {
-          OR: [
-            { title: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } },
-            { name: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {},
-  });
-}
 export async function updateUser(id:string, name:string, role:string)
 {
   try{
@@ -495,5 +490,18 @@ export async function getAllTags(tagType: AllowedTagType | undefined) {
 
   } catch (error) {
     return { error: "Failed to fetch tags", data: null }
+  }
+}
+
+export async function getTotalViews(days: number = 30) {
+  try {
+    const totalViews = await prisma.post.aggregate({
+      _sum: { views: true },
+    });
+
+    return { success: true, total: totalViews._sum.views ?? 0 };
+  } catch (error) {
+    console.error("Failed to fetch total views:", error);
+    return { success: false, total: 0 };
   }
 }

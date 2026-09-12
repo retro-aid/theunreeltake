@@ -1,6 +1,6 @@
 "use client";
 
-import {Button, TextInput, Text, Stack, Modal, Group, Anchor} from "@mantine/core";
+import {Button, TextInput, Text, Stack, Modal, Group} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -55,15 +55,15 @@ export function ChangeUsername() {
   return (
     <>
       <form onSubmit={usernameForm.onSubmit(handleInitialSubmit)}>
-        <Stack gap={8} align="flex-start">
+        <Stack gap={8} align="left">
           <TextInput
-            pl="lg" w={200} size="sm" radius="lg" label="Username" placeholder="New Username" mb="md"
+            maw = {"300"} w={"100%"} size="md" radius="md" label="Username" placeholder="New Username" mb="md"
             {...usernameForm.getInputProps("username")}
           />
           
-          <Anchor component="button" type="submit" size="sm" fw={500} mt={4}>
+          <Button color = "black" type="submit" radius="xl" size="md" w="fit-content">
             Change
-          </Anchor>
+          </Button>
         </Stack>
       </form>
 
