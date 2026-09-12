@@ -15,6 +15,7 @@ import {
   Button, Container, Box
 } from "@mantine/core";
 import dayjs from "dayjs";
+import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
 
 export default async function BlogPostPage(
   {
@@ -36,6 +37,56 @@ export default async function BlogPostPage(
   });
 
   if (!data || !data.published) redirect ("/catalog");
+
+  const currentTagIds = data.tags.map(({ tag }) => tag.id)
+
+  const relatedTaggedPosts = await prisma.post.findMany({
+    where: {
+      published: true,
+      id: { not: data.id },
+      tags: { some: { tag: { id: { in: currentTagIds } } } },
+    },
+    include: { 
+      author: { select: { name: true } },
+      tags: { include: { tag: true }, omit: { postId: true, tagId: true } }
+    },
+    omit: {
+      authorId: true
+    },
+  });
+
+  const currentTagIdsSet = new Set(currentTagIds);
+
+  const relatedPosts = relatedTaggedPosts
+    .map((post) => ({ post, sharedTagcount: post.tags.filter(( { tag }) => currentTagIdsSet.has(tag.id)).length}))
+    .sort((a, b) => b.sharedTagcount - a.sharedTagcount)
+    .slice(0, 4)
+    .map(({ post }) => post);
+
+  const remainingSlots = 4 - relatedPosts.length;
+  
+  if (remainingSlots > 0) {
+    const relatedPostsIds = new Set(relatedPosts.map((post) => post.id));
+
+    const recentPosts = await prisma.post.findMany({
+      where: {
+        published: true,
+        id: { notIn: [data.id, ...relatedPostsIds] },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: remainingSlots,
+      include: {
+        author: { select: { name: true } },
+        tags: { include: { tag: true }, omit: { postId: true, tagId: true } },
+      },
+      omit: {
+        authorId: true,
+      },
+    });
+    relatedPosts.push(...recentPosts);
+  }
 
   const tagElements = data.tags.map((value, index) => {
     return(
@@ -109,6 +160,22 @@ export default async function BlogPostPage(
             <Box>
               <div dangerouslySetInnerHTML={{__html: data.htmlContent}}></div>
             </Box>
+
+            {relatedPosts.length > 0 && (
+              <Box>
+                <Text component={"span"} size={"lg"} fw={700}>
+                  Related Posts:
+                </Text>
+
+                <Grid>
+                  {relatedPosts.map((post) => (
+                    <GridCol key={post.slug} span={{base: 12, sm: 6, md: 3}}>
+                      <MoviePostCard postData={post}></MoviePostCard>
+                    </GridCol>
+                  ))}
+                </Grid>
+              </Box>
+            )}
 
             <Text size="sm" ta="left" fw={500}>Tags:</Text>
             <Group>
