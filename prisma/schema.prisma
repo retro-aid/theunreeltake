@@ -87,7 +87,7 @@ model Post {
   authorId    String
   views       Int          @default(0)
   tags        TagsOnPost[]
-  comment     comment[]
+  comment     Comment[]
   author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@unique([id, slug])
