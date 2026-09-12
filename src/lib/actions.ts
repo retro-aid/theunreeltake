@@ -12,6 +12,7 @@ import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import {revalidatePath} from "next/cache";
 import {AllowedTagType, PostItem} from "./constants";
 import { RequestWhereInput, RequestOrderByWithRelationInput } from "@/generated/prisma/models/Request";
+import { Resend } from 'resend';
 
 const REQUEST_ORDER_BY: Record<string, RequestOrderByWithRelationInput> = {
   title: { title: "asc" },
@@ -501,4 +502,22 @@ export async function getTotalViews(days: number = 30) {
     console.error("Failed to fetch total views:", error);
     return { success: false, total: 0 };
   }
+}
+
+// Resend email service setup
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function replyToRequest(requestId: string, message: string) {
+  const request = await prisma.request.findUnique({
+    where: { id: requestId },
+  });
+
+  if (!request) throw new Error('Request not found');
+
+  await resend.emails.send({
+    from: 'you@yourdomain.com',
+    to: request.email,
+    subject: `Re: ${request.title}`,
+    text: message,
+  });
 }
