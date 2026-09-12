@@ -125,3 +125,12 @@ model Request {
   name    String?
   message String?
 }
+
+model NewsletterSubscriber {
+  id                String      @id @default(uuid(7))
+  email             String      @unique
+  subscribedAt      DateTime    #default(now())
+  unsubscribedAt    DateTime?
+
+  @@map("newsletter_subscriber")
+}
