@@ -7,9 +7,10 @@ import {getCurrentSession} from "@/lib/dal/utils";
 import {Comment} from "@/generated/prisma/client";
 
 
+type CommentWithPostTitle = Awaited<ReturnType<typeof getAdminComments>>[number];
 
 export type CulledComment = Pick<Comment, "username" | "createdAt" | "email" | "messageContent" | "userId">
-export type CulledAdminComment = Omit<Comment, "repliesToId">;
+export type CulledAdminComment = Omit<CommentWithPostTitle, "repliesToId">;
 
 async function generateAnonymousUserID() {
 
@@ -80,7 +81,7 @@ export async function deleteComment(
 
 
 
-export async function getAdminComments(): Promise<CulledAdminComment[]> {
+export async function getAdminComments() {
 
   const session = await getCurrentSession();
 
@@ -94,6 +95,11 @@ export async function getAdminComments(): Promise<CulledAdminComment[]> {
           }
         }
       },
+      include: {
+        post: {
+          select: { title: true }
+        }
+      },
       omit: { repliesToId: true },
       orderBy: { createdAt: "desc" }
     });
@@ -102,6 +108,9 @@ export async function getAdminComments(): Promise<CulledAdminComment[]> {
 
     return prisma.comment.findMany({
       omit: {repliesToId: true},
+      include: {
+        post: { select: { title: true } }
+      },
       orderBy: { createdAt: "desc" }
     });
 

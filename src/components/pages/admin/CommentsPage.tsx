@@ -1,12 +1,9 @@
 import {
   Flex,
-  Pagination,
-  ScrollArea,
-  Stack,
   Title
 } from "@mantine/core";
-import {AdminCommentCard} from "@/components/comments";
 import {getAdminCommentsAction} from "@/lib/actions/comment-actions";
+import {AdminCommentGrid} from "@/components/comments";
 
 export default async function CommentsPage() {
 
@@ -17,15 +14,7 @@ export default async function CommentsPage() {
 
       <Title mb={"lg"}>Recent Comments</Title>
 
-      <ScrollArea bd={"1px solid gray.3"} p={"lg"} bdrs={"md"}>
-        <Stack>
-          {comments.map((item, index) =>
-            <AdminCommentCard key={index} comment={item}/>
-          )}
-        </Stack>
-      </ScrollArea>
-
-      <Pagination py={"lg"} siblings={1} total={10}/>
+      <AdminCommentGrid comments={comments}/>
 
     </Flex>
   );
