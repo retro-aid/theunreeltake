@@ -8,6 +8,7 @@ import React, {useState, useEffect, useTransition, useCallback, useContext} from
 import { HomeSearchBar } from "@/app/ui/home/HomeSearchBar";
 import { getPostAction} from "@/lib/actions";
 import {AuthContext} from "@/app/ui/admin/AuthContext";
+import { Post } from "@/generated/prisma/client";
 
 const postsPerPage = 10;
 
@@ -31,7 +32,7 @@ export default function DashboardPostsPage() {
   const [isLoading, startTransition] = useTransition();
 
   const [page, setPage] = useState(1);
-  const [posts, setPosts] = useState<CatalogItem[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
 
