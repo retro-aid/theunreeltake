@@ -1,1 +1,2 @@
-export { default } from "./CommentsPage";
+export * from "./CommentsPage";
+export * from "./PostCreatePage";
