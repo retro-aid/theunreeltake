@@ -2,7 +2,7 @@ import {CulledComment} from "@/lib/dal/dto/comments";
 import {ScrollArea, Stack} from "@mantine/core";
 import {CommentCard} from "@/components/comments/cards";
 
-export default function CommentGrid(
+export function CommentGrid(
   { comments }: { comments: CulledComment[] }
 ) {
 
