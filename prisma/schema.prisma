@@ -123,6 +123,12 @@ model Trivia {
   type       String
 }
 
+enum RequestStatus {
+  pending
+  replied
+  deleted
+}
+
 model Request {
   id      String  @id @default(uuid(7))
   email   String
@@ -130,6 +136,7 @@ model Request {
   type    String?
   name    String?
   message String?
+  status RequestStatus @default(pending)
 }
 
 model Comment {

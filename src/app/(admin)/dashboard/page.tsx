@@ -9,6 +9,7 @@ import {Flex, Group, Text, Stack, Card,
   Image,
   Button,} from '@mantine/core';
 import { ViewsCard } from "@/app/ui/admin/ViewsCard";
+import { PendingRequestsCard } from "@/components/dashboard/PendingRequestsCard";
 import {People, CalendarDate, PersonFill} from "react-bootstrap-icons";
 import Link from "next/link";
 import { getRecentUserReviews } from "@/lib/actions";
@@ -92,7 +93,7 @@ export default function DashboardPage() {
           <AmountCommentsCard/>
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
-            Box 4
+            <PendingRequestsCard/>
           </Group>
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
@@ -124,7 +125,7 @@ export default function DashboardPage() {
                 justifyContent: "space-between",
               }}
             >
-              
+
                 <Image
                   src={
                     post.posterUrl ??
@@ -137,7 +138,7 @@ export default function DashboardPage() {
                   alt={post.title}
                   fit="cover"
                 />
-              
+
 
               <Stack gap="xs" mt="sm" style={{ flexGrow: 1 }}>
                 <Text fw={600} size="sm" lineClamp={1} title={post.title}>
