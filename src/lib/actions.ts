@@ -11,7 +11,6 @@ import { sendInvitationEmail } from "@/lib/emailer";
 import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import {revalidatePath} from "next/cache";
 import {AllowedTagType, PostItem} from "./constants";
-import { Post } from "@/generated/prisma/client";
 import { RequestWhereInput, RequestOrderByWithRelationInput } from "@/generated/prisma/models/Request";
 import { Resend } from 'resend';
 
@@ -34,6 +33,29 @@ function generateInvitationToken(): string {
   });
 
   return code;
+}
+
+export async function getAllTags(tagType: AllowedTagType | undefined) {
+
+  try {
+
+    let result: Tag[];
+
+    if(!tagType) {
+      result = await prisma.tag.findMany();
+    } else {
+      result = await prisma.tag.findMany({
+        where: {
+          type: tagType
+        }
+      });
+    }
+
+    return { error: null, data: result };
+
+  } catch (error) {
+    return { error: "Failed to fetch tags", data: null }
+  }
 }
 
 export async function createInvitationVerification(email: string) {
@@ -123,49 +145,6 @@ export async function notifyPasswordChanged() {
   }
 }
 
-export async function createNewPost(
-  formData: {
-    title: string,
-    slug: string,
-    mediaTagId: number,
-    pageContent: string,
-    published: boolean,
-    posterUrl: string | null
-  }
-){
-  try {
-
-    const session = await auth.api.getSession({
-      headers: await headers()
-    });
-
-    if(!session || !session.user) {
-      return { error: "You must be logged in to create a post.", success: false };
-    }
-    const result = await prisma.post.create({
-      data: {
-        title: formData.title,
-        slug: formData.slug,
-        htmlContent: formData.pageContent,
-        posterUrl: formData.posterUrl,
-        published: formData.published,
-        authorId: session.user.id,
-      }
-    });
-
-    await prisma.tagsOnPost.create({
-      data: {
-        tagId: formData.mediaTagId,
-        postId: result.id
-      }
-    })
-
-    return { error: null, success: true };
-  } catch (error) {
-    console.error("PRISMA DATABASE ERROR:", error);
-    return { error: "Failed to save post", success: false };
-  }
-}
 
 export async function createTriviaCookie() {
 
@@ -205,64 +184,6 @@ export async function getAllUsers(Id?: string) {
   }
 }
 
-export async function deletePost(id:string)
-{
-  try
-  {
-    await prisma.post.delete({
-      where:{
-        id: id,
-      }
-    });
-
-    return { error: null, success: true};
-  } catch (error) {
-    return { error: "Failed to delete post", success: false };
-  }
-}
-
-export async function savePost(
-  id: string,
-  title: string,
-  slug: string,
-  content: string,
-  published: boolean,
-  posterUrl: string | null,
-  mediaTagId: number
-)
-{
-  try
-  {
-
-    await prisma.tagsOnPost.deleteMany({
-      where: {
-        postId: id
-      }
-    });
-
-    await prisma.post.update({
-      where: {
-        id: id,
-      },
-      data: {
-        title: title,
-        slug: slug,
-        posterUrl: posterUrl,
-        htmlContent: content,
-        published: published,
-        tags: {
-          create: {
-            tag: { connect: { id: mediaTagId }}
-          }
-        }
-      }
-    });
-
-    return { error: null, success: true};
-  } catch (error) {
-    return { error: "Failed to save post", success: false };
-  }
-}
 
 export async function deleteTag(id: number) {
 
@@ -294,99 +215,6 @@ export async function createTag(tag: CreateTagFom) {
   }
 }
 
-export async function getDraftPosts() {
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers()
-    });
-
-    if (!session || !session.user) {
-      return { success: false, data: [] };
-    }
-
-    const draftPosts = await prisma.post.findMany({
-      where: {
-        authorId: session.user.id,
-        published: false,
-      },
-      orderBy: {
-        updatedAt: 'desc'
-      }
-    });
-
-    /*const formattedDrafts = draftPosts.map((post:Post) => ({
-      id: post.id,
-      imageSrc: post.posterUrl || "https://placehold.co/600x400?text=No+Poster",
-      title: post.title,
-      published: post.published,
-    }));*/
-
-    return { success: true, data: draftPosts };
-  } catch (error) {
-    console.error("Failed to fetch drafts:", error);
-    return { success: false, data: [] };
-  }
-}
-
-export async function getPostAction({
-  authorId,
-  page = 1,
-  limit = 10,
-  search = ""
-}: {
-  authorId: string,
-  page?: number,
-  limit?: number,
-  search?: string,
-}) {
-
-  try {
-    const posts = await prisma.post.findMany({
-      where: {
-        title: {
-          contains: search,
-          mode: "insensitive",
-        },
-        published: true,
-        authorId: authorId
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-
-    const total = await prisma.post.count({
-      where: {
-        title: {
-          contains: search,
-          mode: "insensitive",
-        },
-      },
-    });
-
-    /*const formatted: PostItem[] = posts.map((post:Post) => ({
-      id: post.id,
-      title: post.title,
-      imageSrc: post.posterUrl ?? "https://placehold.co/600x400?text=No+Poster",
-      published: post.published,
-    }));*/
-
-    return {
-      success: true,
-      data: posts,
-      total,
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      success: false,
-      data: [],
-      total: 0,
-    };
-  }
-}
 
 export async function submitRequestForm(data: RequestForm){
   try{
@@ -468,29 +296,6 @@ export async function updateUser(id:string, name:string, role:string)
     return {error: null, success: true};
   } catch (error) {
     return {error: "Failed to update user",success:false};
-  }
-}
-
-export async function getAllTags(tagType: AllowedTagType | undefined) {
-
-  try {
-
-    let result: Tag[];
-
-    if(!tagType) {
-      result = await prisma.tag.findMany();
-    } else {
-      result = await prisma.tag.findMany({
-        where: {
-          type: tagType
-        }
-      });
-    }
-
-    return { error: null, data: result };
-
-  } catch (error) {
-    return { error: "Failed to fetch tags", data: null }
   }
 }
 
