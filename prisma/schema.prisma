@@ -126,7 +126,6 @@ model Trivia {
 enum RequestStatus {
   pending
   replied
-  deleted
 }
 
 model Request {
