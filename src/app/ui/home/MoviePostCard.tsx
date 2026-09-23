@@ -67,7 +67,7 @@ export function MoviePostCard(
             <Flex direction={"column"} w={"100%"} h={"100%"}>
 
               <Stack align={"stretch"} h={"100%"} pb={"xs"} px={rem(width / 20)} gap={6}>
-
+                
                 <Text
                   lh={{ base: "18px", sm: "20px", md: "22px", lg: "24px"}}
                   fz={{base: 16, sm: 18, md: 20, lg: 22}}
@@ -76,7 +76,25 @@ export function MoviePostCard(
                 >
                   {postData.title}
                 </Text>
-                <Badge bdrs={"sm"} color={"blue"} variant={"light"} style={{fontSize: rem(width / 24), height: rem(width / 12), width: rem(width / 5), padding: 0}}>{postData.tags[0].tag.displayName}</Badge>
+
+                {/*applied here to map over all tags without crashing */}
+                <Group gap={4} wrap="wrap">
+                  {postData.tags?.map((t) => (
+                    <Badge 
+                      key={t.tag.id}
+                      bdrs="sm" 
+                      color="blue" 
+                      variant="light" 
+                      style={{
+                        fontSize: rem(width / 24), 
+                        height: rem(width / 12), 
+                        padding: `0 ${rem(8)}` 
+                      }}
+                    >
+                      {t.tag.displayName}
+                    </Badge>
+                  ))}
+                </Group>
 
                 <Text size={rem(width / 16)}>Written By: {postData.author.name}</Text>
                 <Text size={rem(width / 16)}>Posted: {dayjs(postData.createdAt).format("MMM D, YYYY")}</Text>
