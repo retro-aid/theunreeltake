@@ -243,7 +243,7 @@ export async function savePost(
         htmlContent: content,
         published: published,
         tags: {
-          deleteMany: {}, 
+          deleteMany: {},
           create: mediaTagId.map((tagId) => ({
             tag: { connect: { id: tagId } }
           }))
@@ -539,6 +539,13 @@ export async function replyToRequest(requestId: string, message: string) {
     to: request.email,
     subject: `Re: ${request.title}`,
     text: message,
+  });
+
+  await prisma.request.update({
+    where: { id: requestId },
+    data: {
+      status: "replied"
+    }
   });
 }
 
