@@ -3,9 +3,10 @@
 import { Text, Card, Image, Box, Group, ActionIcon, Grid, Badge, Tooltip, Button } from "@mantine/core";
 import Link from "next/link";
 import React, { useState } from "react";
-import { DeletePostModal } from "./DeletePostModal";
-import { deletePost } from "@/lib/actions";
-import { Post } from "@/generated/prisma/client";
+import { DeletePostModal } from "../../app/ui/admin/DeletePostModal";
+import { deletePostAction, togglePublishedAction } from "@/lib/actions/post-actions";
+import type { PostDTO } from "@/lib/dal/dto/posts";
+
 
 /*export type Post = {
     id: string;
@@ -15,8 +16,9 @@ import { Post } from "@/generated/prisma/client";
 }*/
 
 type GridProps = {
-    data: Post[];
+    data: PostDTO[];
     icons: Icons;
+    onPostUpdated: () => void;
 };
 
 type Icons = {
@@ -26,11 +28,23 @@ type Icons = {
     Delete: React.ElementType;
 }
 
-export function PostCard({post, icons}: {post: Post; icons: Icons}) {
+export function PostCard({post, icons, onPostUpdated}: {post: PostDTO; icons: Icons; onPostUpdated: () => void;}) {
     const [opened, setOpened] = useState(false);
     const onConfirm = async () => {
-        await deletePost(post.id);
+        await deletePostAction(post.id);
         setOpened(false);
+    }
+    const [isPublishing, setIsPublishing] = useState(false);
+    const handlePublish = async ()=> {
+        setIsPublishing(true);
+        const result = await togglePublishedAction(post.id);
+        if (!result.success) {
+            console.error(result.error);
+            setIsPublishing(false);
+            return;
+        }
+        onPostUpdated();
+        setIsPublishing(false);
     }
     return (
         <>
@@ -42,7 +56,8 @@ export function PostCard({post, icons}: {post: Post; icons: Icons}) {
                 withBorder>
                 <Card.Section>
                     <Box
-                        p="xs">
+                        p="xs"
+                        pos="relative">
                         <Text
                             fz="18"
                             fw="700"
@@ -51,16 +66,15 @@ export function PostCard({post, icons}: {post: Post; icons: Icons}) {
                             truncate='end'>
                             {post.title}
                         </Text>
-                    {!post.published && (
                         <Badge
-                            color="red"
+                            color={post.published ? "green" : "red"}
                             pos="absolute"
-                            mt={"10"}
-                            ml={"160"}
+                            mt={10}
+                            right={20}
                             variant="filled"
                             >
-                                DRAFT
-                        </Badge>)}
+                            {post.published ? "PUBLISHED" : "DRAFT"}
+                        </Badge>
                         <Image
                             alt={"Post Card"}
                             bdrs={"xs"}
@@ -124,8 +138,11 @@ export function PostCard({post, icons}: {post: Post; icons: Icons}) {
                             variant="filled"
                             mt={"8"}
                             bdrs="xs"
+                            onClick={handlePublish}
+                            loading = {isPublishing}
                             color={post.published ? "red" : "green"}>
                                 {post.published ? "Unpublish" : "Publish"}
+                            
                         </Button>
                     </Box>
                 </Card.Section>
@@ -140,7 +157,7 @@ export function PostCard({post, icons}: {post: Post; icons: Icons}) {
     );
 }
 
-export function PostGrid({ data, icons }: GridProps) {
+export function PostGrid({ data, icons , onPostUpdated}: GridProps) {
     return (
         <Grid>
             {data.map((post) => (
@@ -148,7 +165,7 @@ export function PostGrid({ data, icons }: GridProps) {
                     key={post.id}
                     style={{ minWidth: 300 }}
                     span={{ base: 12, sm: 6, md: 3}}>
-                        <PostCard post={post} icons={icons}/>
+                        <PostCard post={post} icons={icons} onPostUpdated={onPostUpdated}/>
                 </Grid.Col>
             ))}
         </Grid>

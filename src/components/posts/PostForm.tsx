@@ -6,12 +6,10 @@ import {useRouter} from "next/navigation";
 import {DeletePostModal} from "@/app/ui/admin/DeletePostModal";
 import {zod4Resolver} from "mantine-form-zod-resolver";
 import {Button, Group, Input, Paper, Select, Stack, TextInput, Title} from "@mantine/core";
-import {createNewPost, deletePost, getAllTags, savePost} from "@/lib/actions";
+import {createNewPostAction, deletePostAction, savePostAction} from "@/lib/actions/post-actions";
 import {CreatePostSchema} from "@/lib/schemas";
 import {SiteTextEditor} from "@/app/ui/admin/SiteTextEditor"
-import {AllowedTagType} from "@/lib/constants";
-import {useEffect, useState} from "react";
-import {Tag} from "@/generated/prisma/client";
+import type {TagDTO} from "@/lib/dal/dto/tags";
 
 interface PostProp {
   id: string;
@@ -25,21 +23,18 @@ interface PostProp {
 
 type Prefill = { title: string; message: string; mediaTagId: number };
 
-export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: Prefill }) {
+export function PostForm({
+  post,
+  prefill,
+  mediaTags,
+}: {
+  post?: PostProp | null;
+  prefill?: Prefill;
+  mediaTags: TagDTO[];
+}) {
 
-  const [mediaTags, setMediaTags] = useState(new Array<Tag>());
   const [opened, { open, close }] = useDisclosure(false);
   const router = useRouter();
-
-  useEffect(() => {
-
-    getAllTags(AllowedTagType.Media)
-      .then(result => {
-        if(result.data) {
-          setMediaTags(result.data);
-        }});
-
-  }, []);
 
   const isEditMode = !!post;
 
@@ -64,7 +59,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
 
-      const { error, success } = await savePost(
+      const { error, success } = await savePostAction(
         post.id,
         values.title,
         values.slug,
@@ -82,14 +77,14 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
 
     } else {
       const isPublishing = action === "publish";
-      await createNewPost({...values, published: isPublishing });
+      await createNewPostAction({...values, published: isPublishing });
       router.push('/dashboard/posts');
     }
   };
 
   const handleDeleteConfirm = async () => {
     if (isEditMode && post) {
-      await deletePost(post.id);
+      await deletePostAction(post.id);
     }
     close();
     router.push('/dashboard/posts');
@@ -119,7 +114,10 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
               label="Media Type"
               allowDeselect={false}
               placeholder="Select media type"
-              data={mediaTags.map((tag) => {return { value: tag.id, label: tag.displayName }; })}
+              data={mediaTags.map((tag) => ({
+                value: tag.id,
+                label: tag.displayName,
+            	}))}
               key="mediaTagId"
               {...form.getInputProps('mediaTagId')}
             />
