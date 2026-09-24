@@ -21,6 +21,7 @@ model User {
   role          String?
   accounts      Account[]
   posts         Post[]
+  posttemplate  posttemplate[]
   sessions      Session[]
   postTemplates PostTemplate[]
 
