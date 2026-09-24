@@ -16,7 +16,7 @@ export async function updateTagAction (
             success: true
         };
     } catch (error) {
-        console.error("Gailed to update tag:", error);
+        console.error("Failed to update tag:", error);
     return {
         error: error,
         sucess: false

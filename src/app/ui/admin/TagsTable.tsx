@@ -53,7 +53,7 @@ export default function TagsTable(
 
       const isEditing = editTag === tag.id;
       const nameColumn = isEditing ? (<TextInput value={editName} onChange={(event) => setEditName(event.currentTarget.value)}></TextInput>) : (tag.displayName);
-      const typeColumn = isEditing ? (<Select value={editType} onChange={(value) => setEditType(value ?? "")} data={tagTypeOptions}></Select>) : (tag.type);
+      const typeColumn = isEditing ? (<Select value={editType} onChange={(value) => setEditType(value ?? "")} data={tagTypeOptions} allowDeselect={false}></Select>) : (tag.type);
 
       const actionButtons = (
         <Group>

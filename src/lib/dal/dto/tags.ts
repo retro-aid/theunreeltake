@@ -8,6 +8,6 @@ export async function updateTag(
 ) {
     return prisma.tag.update({
         where: {id}, 
-        data: {displayName, type}
+        data: {displayName: displayName, type: type}
     });
 }
