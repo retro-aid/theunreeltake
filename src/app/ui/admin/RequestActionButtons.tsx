@@ -4,18 +4,27 @@ import { useEffect, useState } from "react";
 import { ActionIcon, Menu, Text, Tooltip } from "@mantine/core";
 import { Funnel, Filter } from "react-bootstrap-icons";
 import type { TagDTO } from "@/lib/dal/dto/tags";
+import { getAllTagsAction } from "@/lib/actions/post-actions";
 
 
 export default function RequestActionButtons({
-    mediaTags,
     onSortByAction,
     onFilterByTypeAction,
 }: {
-    mediaTags: TagDTO[];
     onSortByAction: (value: string) => void;
     onFilterByTypeAction: (value: string) => void;
 }) {
+		const [mediaTags, setMediaTags] = useState<TagDTO[]>([]);
+		useEffect(() => {
+    const loadTags = async () => {
+        const res = await getAllTagsAction();
 
+        if (res.success) {
+            setMediaTags(res.data);
+        }
+    	};
+    	loadTags();
+		}, []);
     return (
     <>
       <Menu transitionProps={{ transition: "pop-top-left" }} position="bottom-start">

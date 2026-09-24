@@ -134,25 +134,36 @@ export async function getPostForEdit(id: string): Promise<PostEditDTO | null> {
 }
 
 export async function getAllPosts({
-  authorId,
   page = 1,
   limit = 10,
   search = "",
 }: {
-  authorId: string;
   page?: number;
   limit?: number;
   search?: string;
 }) {
   try {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+    
+     if (!session?.user) {
+      return {
+        success: false,
+        data: [],
+        total: 0,
+        error: "You must be logged in.",
+      };
+    }
     const where = {
-      authorId,
       title: {
         contains: search,
         mode: "insensitive" as const,
       },
+      ...(session.user.role !== "Admin" && {
+        authorId: session.user.id,
+      }),
     };
-
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
         where,
@@ -167,6 +178,7 @@ export async function getAllPosts({
         where,
       }),
     ]);
+
     const data: PostDTO[] = posts.map((post) => ({
       id: post.id,
       title: post.title,

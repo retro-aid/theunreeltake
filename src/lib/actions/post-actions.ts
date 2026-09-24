@@ -5,9 +5,11 @@ import {
     deletePost,
     getPostForEdit,
     getAllPosts,
-		togglePublished,
+	togglePublished,
 
 } from "@/lib/dal/posts";
+
+import { getAllTags } from "@/lib/dal/tags";
 
 export async function savePostAction(id: string,
   title: string,
@@ -43,19 +45,16 @@ export async function getPostForEditAction(id: string)
 }
 
 export async function getAllPostsAction({
-  authorId,
   page = 1,
   limit = 10,
   search = "",
 }: {
-  authorId: string;
   page?: number;
   limit?: number;
   search?: string;
 })
 {
 	return getAllPosts({
-		authorId,
 		page,
 		limit,
 		search,
@@ -65,4 +64,8 @@ export async function getAllPostsAction({
 export async function togglePublishedAction(id:string)
 {
 	return togglePublished(id);
+}
+
+export async function getAllTagsAction() {
+    return await getAllTags();
 }
