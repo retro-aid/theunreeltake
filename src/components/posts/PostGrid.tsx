@@ -159,11 +159,14 @@ export function PostCard({post, icons, onPostUpdated}: {post: PostDTO; icons: Ic
 
 export function PostGrid({ data, icons , onPostUpdated}: GridProps) {
     return (
-        <Grid>
+        <Grid >
             {data.map((post) => (
                 <Grid.Col
                     key={post.id}
-                    style={{ minWidth: 300 }}
+                    style = {{
+                        minWidth: 249,
+                        maxWidth: 249
+                    } }
                     span={{ base: 12, sm: 6, md: 3}}>
                         <PostCard post={post} icons={icons} onPostUpdated={onPostUpdated}/>
                 </Grid.Col>

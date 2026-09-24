@@ -36,7 +36,6 @@ export default function DashboardPostsPage() {
   const refresh = useCallback(() => startTransition(async () => {
 
     const res = await getAllPostsAction({
-      authorId: authContext.user.id,
       page: page,
       limit: postsPerPage,
       search: search
