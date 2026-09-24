@@ -10,7 +10,7 @@ import {SearchBar} from "@/components/generic/SearchBar";
 import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
 import {Request} from "@/generated/prisma/client";
-
+import {getAllTags} from "@/lib/dal/tags";  
 const limit = 10;
 
 export default function DashboardRequestsPage() {
