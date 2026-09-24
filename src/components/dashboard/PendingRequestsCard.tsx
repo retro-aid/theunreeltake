@@ -24,10 +24,10 @@ export function PendingRequestsCard() {
             <Stack gap={4} align={"center"}>
                 <Send size={28}></Send>
                 <Text fw={700} size={"2rem"}>
-                    {count !== null ? count.toLocaleString() : "Loading..."}
+                    {count !== null ? count.toLocaleString() : "No requests available"}
                 </Text>
                 <Text size={"sm"} c={"dimmed"}>
-                    Requets Pending
+                    Requests Pending
                 </Text>
             </Stack>
     )
