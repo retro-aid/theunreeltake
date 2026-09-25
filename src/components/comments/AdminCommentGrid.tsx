@@ -78,7 +78,7 @@ export function AdminCommentGrid(
 
   return (
     <>
-      <Group mb={"md"}>
+      <Group mb={"md"} justify={"flex-end"}>
         <ActionButtons
           sort={{ label: "Sort By", options: sortOptions, onSelect: handleSort }}
           onRefresh={() => router.refresh()}
