@@ -146,7 +146,7 @@ export async function getAllPosts({
     const session = await auth.api.getSession({
         headers: await headers(),
     });
-    
+
      if (!session?.user) {
       return {
         success: false,
@@ -160,7 +160,7 @@ export async function getAllPosts({
         contains: search,
         mode: "insensitive" as const,
       },
-      ...(session.user.role !== "Admin" && {
+      ...(session.user.role?.toLowerCase() !== "admin" && {
         authorId: session.user.id,
       }),
     };
