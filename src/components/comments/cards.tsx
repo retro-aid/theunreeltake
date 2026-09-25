@@ -1,12 +1,14 @@
 "use client";
 
-import {Button, Card, Group, Text, Title} from "@mantine/core";
-import {deleteCommentAction} from "@/lib/actions/comment-actions";
+import {Button, Card, Group, Loader, Stack, Text, Title} from "@mantine/core";
+import {deleteCommentAction, getAmountOfCommentsAction} from "@/lib/actions/comment-actions";
 import {redirect} from "next/navigation";
 import {CulledAdminComment, CulledComment} from "@/lib/dal/dto/comments";
 import dayjs from "dayjs";
 import {DeleteActionModal} from "@/components/generic/modals";
 import {useDisclosure} from "@mantine/hooks";
+import {useEffect, useState, useTransition} from "react";
+import {Chat} from "react-bootstrap-icons";
 
 
 
@@ -73,6 +75,38 @@ export function CommentCard(
         </Text>
       </Card.Section>
 
+    </Card>
+  );
+}
+
+
+
+export function AmountCommentsCard() {
+
+  const [isLoading, startTransition] = useTransition();
+  const [amountComments, setAmountComments] = useState(0);
+
+  useEffect(() => {
+
+    startTransition(async () => {
+      const amount = await getAmountOfCommentsAction("month");
+      setAmountComments(amount);
+    });
+
+  }, []);
+
+
+  return (
+    <Card withBorder bd={"1px solid gray.6"} shadow={"sm"} w={250} mah={150}>
+      <Stack gap={4} align={"center"} justify={"center"} h={"100%"}>
+        <Chat size={28}/>
+        <Text fw={700} size={"2rem"}>
+          {isLoading ? <Loader size={"sm"}/> : amountComments}
+        </Text>
+        <Text size={"sm"} c={"dimmed"}>
+          Comments in the last month
+        </Text>
+      </Stack>
     </Card>
   );
 }

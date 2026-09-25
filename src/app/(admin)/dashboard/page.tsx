@@ -89,10 +89,7 @@ export default function DashboardPage() {
         gap="xl"
         direction="row"
         wrap="wrap" >
-          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"33%"}
-          style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
-            Box 3
-          </Group>
+          <AmountCommentsCard/>
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
             Box 4
