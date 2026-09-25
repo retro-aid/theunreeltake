@@ -5,6 +5,7 @@ import {headers} from "next/headers";
 import * as crypto from "node:crypto";
 import {getCurrentSession} from "@/lib/dal/utils";
 import {Comment} from "@/generated/prisma/client";
+import dayjs from "dayjs";
 
 
 type CommentWithPostTitle = Awaited<ReturnType<typeof getAdminComments>>[number];
@@ -128,5 +129,23 @@ export async function getCommentsOnPost(
   return prisma.comment.findMany({
     where: { postSlug: postSlug },
     orderBy: { createdAt: "desc" }
+  });
+}
+
+
+export async function getAmountOfComments(
+  period: "month" | "year" | "day"
+) {
+
+  const now = new Date();
+  const prev = dayjs(now).subtract(1, period).toDate();
+
+  return prisma.comment.count({
+    where: {
+      createdAt: {
+        lte: now,
+        gte: prev
+      }
+    }
   });
 }

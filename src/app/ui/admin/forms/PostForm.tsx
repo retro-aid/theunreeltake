@@ -6,12 +6,13 @@ import {useRouter} from "next/navigation";
 import {DeletePostModal} from "@/app/ui/admin/DeletePostModal";
 import {zod4Resolver} from "mantine-form-zod-resolver";
 import {Button, Group, Input, Paper, Select, Stack, TextInput, Title} from "@mantine/core";
-import {createNewPost, deletePost, getAllTags, savePost} from "@/lib/actions";
+import {createNewPost, deletePost, getAllTags} from "@/lib/actions";
 import {CreatePostSchema} from "@/lib/schemas";
 import {SiteTextEditor} from "@/app/ui/admin/SiteTextEditor"
 import {AllowedTagType} from "@/lib/constants";
 import {useEffect, useState} from "react";
 import {Tag} from "@/generated/prisma/client";
+import {updatePostAction} from "@/lib/actions/post-actions";
 
 interface PostProp {
   id: string;
@@ -64,19 +65,16 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
 
-      const { error, success } = await savePost(
-        post.id,
-        values.title,
-        values.slug,
-        values.pageContent,
-        isPublishing,
-        values.posterUrl ? values.posterUrl : null,
-        (values.mediaTagId < 0) ? mediaTags[0].id : values.mediaTagId);
-
-      if(!success) {
-        console.log(error);
-        return;
-      }
+      await updatePostAction({
+        id: post.id,
+        slug: values.slug,
+        title: values.title,
+        posterUrl: values.posterUrl,
+        htmlContent: values.pageContent,
+        imageUrls: [],
+        published: isPublishing,
+        tags: [ {tagId: values.mediaTagId} ]
+      });
 
       router.push('/dashboard/posts');
 
