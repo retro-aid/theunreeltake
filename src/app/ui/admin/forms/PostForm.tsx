@@ -7,10 +7,13 @@ import {DeletePostModal} from "@/app/ui/admin/DeletePostModal";
 import {zod4Resolver} from "mantine-form-zod-resolver";
 import {Button, Group, Input, Paper, MultiSelect, Stack, TextInput, Title} from "@mantine/core";
 import {createNewPost, deletePost, getAllTags, savePost} from "@/lib/actions";
+import {Button, Group, Input, Paper, Select, Stack, TextInput, Title} from "@mantine/core";
+import {createNewPost, deletePost, getAllTags} from "@/lib/actions";
 import {CreatePostSchema} from "@/lib/schemas";
 import {SiteTextEditor} from "@/app/ui/admin/SiteTextEditor"
 import {useEffect, useState} from "react";
 import {Tag} from "@/generated/prisma/client";
+import {updatePostAction} from "@/lib/actions/post-actions";
 
 interface PostProp {
   id: string;
@@ -77,6 +80,17 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
         console.log(error);
         return;
       }
+      await updatePostAction({
+        id: post.id,
+        slug: values.slug,
+        title: values.title,
+        posterUrl: values.posterUrl,
+        htmlContent: values.pageContent,
+        imageUrls: [],
+        published: isPublishing,
+        tags: [ {tagId: values.mediaTagId} ]
+      });
+
       router.push('/dashboard/posts');
 
     } else {

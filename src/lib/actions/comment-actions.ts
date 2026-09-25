@@ -4,6 +4,7 @@ import {
   createComment,
   deleteComment,
   getAdminComments,
+  getAmountOfComments,
   getCommentsOnPost
 } from "@/lib/dal/dto/comments";
 import {AnonymousCommentForm} from "@/lib/schemas/comment-schemas";
@@ -32,4 +33,10 @@ export async function getCommentsOnPostAction(
   postSlug: string
 ) {
   return getCommentsOnPost(postSlug);
+}
+
+export async function getAmountOfCommentsAction(
+  period: "day" | "month" | "year"
+) {
+  return getAmountOfComments(period);
 }
