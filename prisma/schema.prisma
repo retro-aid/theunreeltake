@@ -8,20 +8,21 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String         @id
   name          String
-  email         String    @unique
+  email         String         @unique
   emailVerified Boolean
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
   banExpires    DateTime?
   banReason     String?
-  banned        Boolean?  @default(false)
+  banned        Boolean?       @default(false)
   role          String?
   accounts      Account[]
   posts         Post[]
   sessions      Session[]
+  postTemplates PostTemplate[]
 
   @@map("user")
 }
@@ -124,12 +125,13 @@ model Trivia {
 }
 
 model Request {
-  id      String  @id @default(uuid(7))
+  id      String        @id @default(uuid(7))
   email   String
   title   String
   type    String?
   name    String?
   message String?
+  status  RequestStatus @default(pending)
 }
 
 model Comment {
@@ -147,4 +149,24 @@ model Comment {
   repliesReceived Comment[] @relation("replies")
 
   @@map("comment")
+}
+
+enum RequestStatus {
+  pending
+  replied
+  deleted
+}
+
+model PostTemplate {
+  id          String   @id @default(uuid(7))
+  title       String
+  description String 
+  htmlContent String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isPublic    Boolean @default(false)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("posttemplate")
 }
