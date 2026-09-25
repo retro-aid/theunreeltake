@@ -20,6 +20,7 @@ interface PostProp {
   slug: string;
   htmlContent: string;
   posterUrl: string | null;
+  imageUrls: string[];
   published: boolean;
   mediaTagId: number;
 }
@@ -51,6 +52,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
       slug: post?.slug || "",
       mediaTagId: post?.mediaTagId ?? prefill?.mediaTagId ?? 0,
       posterUrl: post?.posterUrl ?? null,
+      imageUrls: [post?.imageUrls[0] ?? "", post?.imageUrls[1] ?? ""],
       pageContent: post?.htmlContent || (prefill?.message ? "<p>" + prefill.message + "</p>" : ""),
     },
     validate: zod4Resolver(CreatePostSchema),
@@ -61,6 +63,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
     if (hasErrors) return;
 
     const values = form.getValues();
+    const imageUrls = values.imageUrls.filter(Boolean);
 
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
@@ -71,7 +74,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
         title: values.title,
         posterUrl: values.posterUrl,
         htmlContent: values.pageContent,
-        imageUrls: [],
+        imageUrls,
         published: isPublishing,
         tags: [ {tagId: values.mediaTagId} ]
       });
@@ -80,7 +83,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
 
     } else {
       const isPublishing = action === "publish";
-      await createNewPost({...values, published: isPublishing });
+      await createNewPost({...values, imageUrls, published: isPublishing });
       router.push('/dashboard/posts');
     }
   };
@@ -122,6 +125,11 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
               {...form.getInputProps('mediaTagId')}
             />
             <TextInput label="Poster Url" placeholder="https://www.example.com" key={"posterUrl"} {...form.getInputProps("posterUrl")} />
+          </Group>
+
+          <Group grow align="flex-start">
+            <TextInput label="Image 1 Url" placeholder="https://www.example.com" key={form.key("imageUrls.0")} {...form.getInputProps("imageUrls.0")} />
+            <TextInput label="Image 2 Url" placeholder="https://www.example.com" key={form.key("imageUrls.1")} {...form.getInputProps("imageUrls.1")} />
           </Group>
 
           <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
