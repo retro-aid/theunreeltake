@@ -150,6 +150,7 @@ export async function createNewPost(
         posterUrl: formData.posterUrl,
         published: formData.published,
         authorId: session.user.id,
+        updatedAt: new Date(),
       }
     });
 

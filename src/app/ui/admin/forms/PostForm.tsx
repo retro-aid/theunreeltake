@@ -13,6 +13,7 @@ import {AllowedTagType} from "@/lib/constants";
 import {useEffect, useState} from "react";
 import {Tag} from "@/generated/prisma/client";
 import {updatePostAction} from "@/lib/actions/post-actions";
+import { getPostTemplatesAction } from "@/lib/actions/template-actions";
 
 interface PostProp {
   id: string;
@@ -24,12 +25,20 @@ interface PostProp {
   mediaTagId: number;
 }
 
+interface PostTemplate {
+  id:string;
+  title:string;
+  htmlContent:string;
+}
+
 type Prefill = { title: string; message: string; mediaTagId: number };
 
 export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: Prefill }) {
 
   const [mediaTags, setMediaTags] = useState(new Array<Tag>());
   const [opened, { open, close }] = useDisclosure(false);
+  const [templates, setTemplate] = useState<PostTemplate[]>([]);
+ // const [templateOpened, {open:openTemplatePicker, close: closeTemplatePicker}] = useDisclosure(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,6 +53,18 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
 
   const isEditMode = !!post;
 
+  const [pageContent, setPageContent] = useState(
+    post?.htmlContent || (prefill?.message ? "<p>" + prefill.message + "</p>" : "")
+  );
+
+    useEffect(() => {
+    if (isEditMode) return;
+
+  getPostTemplatesAction().then((result) => {
+    if (result.data) setTemplate(result.data);
+    });
+  }, [isEditMode]);
+
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -55,6 +76,34 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
     },
     validate: zod4Resolver(CreatePostSchema),
   });
+
+    const handlePageContentChange = (html: string) => {
+    setPageContent(html);
+    form.setFieldValue('pageContent', html);
+  };
+
+  const [appliedTemplateHtml, setAppliedTemplateHtml] = useState<string | null>(null);
+
+  const selectTemplate = (templateId: string | null) => {
+    if (!templateId)
+    {
+      if(appliedTemplateHtml !== null && pageContent === appliedTemplateHtml)
+      {
+      setPageContent('');
+      form.setFieldValue('pageContent', '');
+      }
+      setAppliedTemplateHtml(null);
+      return;
+    }
+
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+
+    setPageContent(template.htmlContent);
+    form.setFieldValue('pageContent', template.htmlContent);
+    setAppliedTemplateHtml(template.htmlContent);
+  };
+
 
   const handleSubmit= async (action: "publish" | "draft" | "save") => {
     const { hasErrors } = form.validate();
@@ -124,9 +173,23 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
             <TextInput label="Poster Url" placeholder="https://www.example.com" key={"posterUrl"} {...form.getInputProps("posterUrl")} />
           </Group>
 
+          {!isEditMode && (
+            <Select
+              label="Start from a template"
+              placeholder={templates.length ? "Choose a template" : "No templates available"}
+              data={templates.map(t => ({ value: t.id, label: t.title }))}
+              onChange={selectTemplate}
+              disabled={!templates.length}
+              clearable
+            />
+          )}
+
+
+          
           <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
-            <SiteTextEditor value={form.getInputProps('pageContent').defaultValue} onChange={form.getInputProps('pageContent').onChange} />
+            <SiteTextEditor value={pageContent} onChange={handlePageContentChange} />
           </Input.Wrapper>
+          
 
           <Group justify="flex-end" mt="md">
             {!isEditMode && (
