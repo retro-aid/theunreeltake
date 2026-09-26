@@ -6,6 +6,7 @@ import {redirect} from "next/navigation";
 import {Flex, Group, Text, Stack} from '@mantine/core';
 import { ViewsCard } from "@/app/ui/admin/ViewsCard";
 import {People} from "react-bootstrap-icons";
+import { PendingRequestsCard } from "@/components/dashboard/PendingRequestsCard";
 import { AmountCommentsCard } from "@/components/comments";
 
 export default function DashboardPage() {
@@ -62,7 +63,7 @@ export default function DashboardPage() {
           <AmountCommentsCard/>
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
-            Box 4
+            <PendingRequestsCard/>
           </Group>
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>

@@ -541,4 +541,11 @@ export async function replyToRequest(requestId: string, message: string) {
     subject: `Re: ${request.title}`,
     text: message,
   });
+
+  await prisma.request.update({
+    where: { id: requestId },
+    data: {
+      status: "replied"
+    }
+  });
 }
