@@ -29,7 +29,7 @@ export default async function EditPostPage({
     htmlContent: data.htmlContent,
     posterUrl: data.posterUrl,
     published: data.published,
-    mediaTagId: data.tags[0].tag.id
+    mediaTagId: data.tags.map((t) => t.tag.id)
   }
 
   return (

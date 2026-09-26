@@ -7,7 +7,13 @@ import {
   Container,
   Stack, Text,
   TextInput,
-  Title, Tooltip, Box, Group, Paper, Image
+  Title,
+  Tooltip,
+  Box,
+  Group,
+  Paper,
+  Image,
+  BackgroundImage
 } from "@mantine/core";
 
 import {useForm} from "@mantine/form";
@@ -87,7 +93,9 @@ export default function LandingPage() {
   }
 
   return (
-    <Container>
+    <Container fluid p={0}>
+      
+      <BackgroundImage src={"/img/admission.jpg"} >
 
       <Center mih={"100vh"}>
 
@@ -111,17 +119,17 @@ export default function LandingPage() {
             Welcome!
           </Title>
           <Text fw={500} fz={22} c="dark.7">
-            It looks like you're new here
+            It looks like you&#39;re new here
           </Text>
         </Stack>
 
         {/*Added the intro for first time users */}
         <Text size="sm" ta="center" lh={1.6} px="xs">
-          We here at The Unreel Take like to have fun. We don't take ourselves too seriously, but we
-          want our reviews to be seen by other fans of movies, not just robots. So we've made a small
-          minigame to really put your knowledge to the test! Don't worry about passing it, you will still
+          We here at The Unreel Take like to have fun. We don&#39;t take ourselves too seriously, but we
+          want our reviews to be seen by other fans of movies, not just robots. So we&#39;ve made a small
+          minigame to really put your knowledge to the test! Don&#39;t worry about passing it, you will still
           be able to see everything that we have to offer; but indulge us for a second and test your own 
-          movie knowledge. We want to see what you're made out of! Who knows, you might even surprise yourself.
+          movie knowledge. We want to see what you&#39;re made out of! Who knows, you might even surprise yourself.
         </Text>
 
         <Box w="100%" maw={740}>
@@ -150,7 +158,7 @@ export default function LandingPage() {
                   <Button type="submit" color="blue" radius="sm" w={140} rightSection={<ArrowRight size={14} />} loading={triviaForm.submitting}>
                     Guess
                   </Button>
-               {/*added the give up button that when clicked, the attempt tries = 3 and striaght to 
+               {/*added the give up button that when clicked, the attempt tries = 3 and straight to
                 "thanks fo trying page"*/}   
               <Button type="submit" color="red" radius="sm" w={140} rightSection={<X size={14} />} onClick={handleGiveUp}>
                     Give Up
@@ -169,6 +177,7 @@ export default function LandingPage() {
         </Paper>
 
       </Center>
+      </BackgroundImage>
 
     </Container>
   );
