@@ -5,7 +5,7 @@ import { Funnel, Filter, ArrowClockwise, PencilSquare, Chat, Trash, BarChart } f
 import { PostGrid } from "@/app/ui/admin/AdminPostGrid";
 import { NewPostButton } from "@/app/ui/admin/NewPostButton";
 import React, {useState, useEffect, useTransition, useCallback, useContext} from "react";
-import { HomeSearchBar } from "@/app/ui/home/HomeSearchBar";
+import { SearchBar } from "@/components/generic/SearchBar";
 import { getPostAction} from "@/lib/actions";
 import {AuthContext} from "@/app/ui/admin/AuthContext";
 import { Post } from "@/generated/prisma/client";
@@ -67,7 +67,7 @@ export default function DashboardPostsPage() {
         gap={"md"}>
         <Group>
           <Flex miw={500}>
-            <HomeSearchBar
+            <SearchBar
               onSearchAction={(value: string) => handleSearch(value)}
             />
           </Flex>

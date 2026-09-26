@@ -127,7 +127,7 @@ export async function createNewPost(
   formData: {
     title: string,
     slug: string,
-    mediaTagId: number,
+    mediaTagId: number[],
     pageContent: string,
     published: boolean,
     posterUrl: string | null
@@ -228,22 +228,11 @@ export async function savePost(
   content: string,
   published: boolean,
   posterUrl: string | null,
-  mediaTagId: number
-)
-{
-  try
-  {
-
-    await prisma.tagsOnPost.deleteMany({
-      where: {
-        postId: id
-      }
-    });
-
+  mediaTagId: number[]
+) {
+  try {
     await prisma.post.update({
-      where: {
-        id: id,
-      },
+      where: { id: id },
       data: {
         title: title,
         slug: slug,
@@ -251,15 +240,22 @@ export async function savePost(
         htmlContent: content,
         published: published,
         tags: {
-          create: {
-            tag: { connect: { id: mediaTagId }}
-          }
+          deleteMany: {}, 
+          create: mediaTagId.map((tagId) => ({
+            tag: { connect: { id: tagId } }
+          }))
         }
       }
     });
 
-    return { error: null, success: true};
+    // Clear Next.js cache so the frontend updates immediately
+    revalidatePath("/");
+    revalidatePath("/dashboard/posts");
+    revalidatePath(`/blog/${slug}`);
+
+    return { error: null, success: true };
   } catch (error) {
+    console.error(error);
     return { error: "Failed to save post", success: false };
   }
 }
@@ -314,12 +310,12 @@ export async function getDraftPosts() {
       }
     });
 
-    /*const formattedDrafts = draftPosts.map((post:Post) => ({
+    const formattedDrafts = draftPosts.map((post:Post) => ({
       id: post.id,
       imageSrc: post.posterUrl || "https://placehold.co/600x400?text=No+Poster",
       title: post.title,
       published: post.published,
-    }));*/
+    }));
 
     return { success: true, data: draftPosts };
   } catch (error) {
@@ -366,12 +362,12 @@ export async function getPostAction({
       },
     });
 
-    /*const formatted: PostItem[] = posts.map((post:Post) => ({
+    const formatted: PostItem[] = posts.map((post:Post) => ({
       id: post.id,
       title: post.title,
       imageSrc: post.posterUrl ?? "https://placehold.co/600x400?text=No+Poster",
       published: post.published,
-    }));*/
+    }));
 
     return {
       success: true,
