@@ -78,7 +78,7 @@ export default function DashboardPostsPage() {
           <ActionButtons
             filter={{ label: "Filter By", options: filterOptions, onSelect: handleFilter }}
             sort={{ label: "Sort By", options: sortOptions, onSelect: handleSort }}
-            onRefresh={refresh}
+            onRefreshAction={refresh}
           />
         </Group>
         <Group justify={"flex-end"}>

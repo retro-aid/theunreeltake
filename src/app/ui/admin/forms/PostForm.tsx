@@ -5,10 +5,8 @@ import {useDisclosure} from "@mantine/hooks";
 import {useRouter} from "next/navigation";
 import {DeletePostModal} from "@/app/ui/admin/DeletePostModal";
 import {zod4Resolver} from "mantine-form-zod-resolver";
-import {Button, Group, Input, Paper, MultiSelect, Stack, TextInput, Title} from "@mantine/core";
-import {createNewPost, deletePost, getAllTags, savePost} from "@/lib/actions";
-import {Button, Group, Input, Paper, Select, Stack, TextInput, Title} from "@mantine/core";
-import {createNewPost, deletePost, getAllTags} from "@/lib/actions";
+import {Button, Group, Input, MultiSelect, Paper, Stack, TextInput, Title} from "@mantine/core";
+import {createNewPost, deletePost, getAllTags } from "@/lib/actions";
 import {CreatePostSchema} from "@/lib/schemas";
 import {SiteTextEditor} from "@/app/ui/admin/SiteTextEditor"
 import {useEffect, useState} from "react";
@@ -69,29 +67,15 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
 
-      const { error, success } = await savePost(
-        post.id,
-        values.title,
-        values.slug,
-        values.pageContent,
-        isPublishing,
-        values.posterUrl ? values.posterUrl : null,
-        parsedMediaTagIds
-      );
-
-      if(!success) {
-        console.log(error);
-        return;
-      }
       await updatePostAction({
         id: post.id,
         slug: values.slug,
         title: values.title,
         posterUrl: values.posterUrl,
         htmlContent: values.pageContent,
-        imageUrls,
+        imageUrls: imageUrls,
         published: isPublishing,
-        tags: [ {tagId: values.mediaTagId} ]
+        tags: parsedMediaTagIds.map((id) => { return { tagId: id } })
       });
 
       router.push('/dashboard/posts');

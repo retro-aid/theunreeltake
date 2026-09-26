@@ -50,10 +50,10 @@ function ActionMenu(
 }
 
 export function ActionButtons(
-  { sort, filter, onRefresh }: {
+  { sort, filter, onRefreshAction }: {
     sort?: ActionMenuConfig;
     filter?: ActionMenuConfig;
-    onRefresh?: () => void;
+    onRefreshAction?: () => void;
   }
 ) {
 
@@ -61,7 +61,7 @@ export function ActionButtons(
     <>
       {filter && <ActionMenu {...filter} icon={<Funnel size={22}/>} />}
       {sort && <ActionMenu {...sort} icon={<Filter size={22}/>} />}
-      {onRefresh && <RefreshDataButton updateData={onRefresh} />}
+      {onRefreshAction && <RefreshDataButton updateData={onRefreshAction} />}
     </>
   );
 }

@@ -143,7 +143,8 @@ export async function createNewPost(
     if(!session || !session.user) {
       return { error: "You must be logged in to create a post.", success: false };
     }
-    const result = await prisma.post.create({
+
+    await prisma.post.create({
       data: {
         title: formData.title,
         slug: formData.slug,
@@ -153,15 +154,11 @@ export async function createNewPost(
         published: formData.published,
         updatedAt: new Date(),
         authorId: session.user.id,
+        tags: {
+          create: formData.mediaTagId.map((id) => { return { tagId: id } })
+        }
       }
     });
-
-    await prisma.tagsOnPost.create({
-      data: {
-        tagId: formData.mediaTagId,
-        postId: result.id
-      }
-    })
 
     return { error: null, success: true };
   } catch (error) {
@@ -470,7 +467,7 @@ export async function updateUser(id:string, name:string, role:string)
   }
 }
 
-export async function getAllTags(tagType: AllowedTagType | undefined) {
+export async function getAllTags(tagType?: AllowedTagType) {
 
   try {
 

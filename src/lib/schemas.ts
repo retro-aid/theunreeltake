@@ -126,9 +126,6 @@ export const CreatePostSchema = z.object({
   imageUrls: z
     .array(z.httpUrl("Invalid Url").or(z.literal("")))
     .max(2),
-  mediaTagId: z
-    .number()
-    .min(1, "Required"),
   mediaTagId: z.array(z.string()).default([]),
   pageContent: z
     .string()
