@@ -28,6 +28,7 @@ export default async function EditPostPage({
     slug: data.slug,
     htmlContent: data.htmlContent,
     posterUrl: data.posterUrl,
+    imageUrls: data.imageUrls,
     published: data.published,
     mediaTagId: data.tags.map((t) => t.tag.id)
   }

@@ -5,7 +5,6 @@ import {
   Title,
   Grid,
   GridCol,
-  Image,
   Text,
   Group,
   Stack,
@@ -18,6 +17,7 @@ import {
 import dayjs from "dayjs";
 import { CommentGrid, VisitorCommentForm } from "@/components/comments";
 import {getCommentsOnPostAction, getRepliesOnPostAction} from "@/lib/actions/comment-actions";
+import { PostImages } from "@/components/posts";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
 
 export default async function BlogPostPage(
@@ -123,20 +123,7 @@ export default async function BlogPostPage(
 
             <Title order={1} my={"lg"}> {data.title}  </Title>
 
-            <Grid align="flex-start" columnGap={"xs"}>
-              <GridCol span={{base: 12, md: 6}}>
-                <Image
-                  alt={"Test"}
-                  src={"https://placehold.co/640x360"}
-                />
-              </GridCol>
-              <GridCol span={{base: 12, md: 6}}>
-                <Image
-                  alt={"Test"}
-                  src={"https://placehold.co/640x360"}
-                />
-              </GridCol>
-            </Grid>
+            <PostImages urls={data.imageUrls} title={data.title} />
 
             <Group gap={"md"}>
 

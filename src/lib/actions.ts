@@ -130,7 +130,8 @@ export async function createNewPost(
     mediaTagId: number[],
     pageContent: string,
     published: boolean,
-    posterUrl: string | null
+    posterUrl: string | null,
+    imageUrls: string[]
   }
 ){
   try {
@@ -148,7 +149,9 @@ export async function createNewPost(
         slug: formData.slug,
         htmlContent: formData.pageContent,
         posterUrl: formData.posterUrl,
+        imageUrls: formData.imageUrls,
         published: formData.published,
+        updatedAt: new Date(),
         authorId: session.user.id,
       }
     });
