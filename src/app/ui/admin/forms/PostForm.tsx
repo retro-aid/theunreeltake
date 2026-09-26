@@ -21,6 +21,7 @@ interface PostProp {
   slug: string;
   htmlContent: string;
   posterUrl: string | null;
+  imageUrls: string[];
   published: boolean;
   mediaTagId: number[];
 }
@@ -51,6 +52,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
       slug: post?.slug || "",
       mediaTagId: post?.mediaTagId?.map(String) ?? prefill?.mediaTagId?.map(String) ?? [],
       posterUrl: post?.posterUrl ?? null,
+      imageUrls: [post?.imageUrls[0] ?? "", post?.imageUrls[1] ?? ""],
       pageContent: post?.htmlContent || (prefill?.message ? "<p>" + prefill.message + "</p>" : ""),
     },
     validate: zod4Resolver(CreatePostSchema),
@@ -61,6 +63,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
     if (hasErrors) return;
 
     const values = form.getValues();
+    const imageUrls = values.imageUrls.filter(Boolean);
     const parsedMediaTagIds = values.mediaTagId.map((id: string) => parseInt(id, 10));
 
     if (isEditMode && post) {
@@ -86,7 +89,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
         title: values.title,
         posterUrl: values.posterUrl,
         htmlContent: values.pageContent,
-        imageUrls: [],
+        imageUrls,
         published: isPublishing,
         tags: [ {tagId: values.mediaTagId} ]
       });
@@ -95,7 +98,7 @@ export function PostForm({ post, prefill }: { post?: PostProp | null; prefill?: 
 
     } else {
       const isPublishing = action === "publish";
-      await createNewPost({...values, mediaTagId: parsedMediaTagIds, published: isPublishing });
+      await createNewPost({...values, imageUrls, mediaTagId: parsedMediaTagIds, published: isPublishing });
       router.push('/dashboard/posts');
     }
   };
