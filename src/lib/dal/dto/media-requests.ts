@@ -13,9 +13,9 @@ export async function getMediaRequest(id: string) {
 }
 
 export async function getPendingRequestCount() {
-  return prisma.request.count({
-    where: {
-      status: "pending"
-    }
-  });
+    return prisma.request.count({
+        where: {
+            status: "pending"
+        }
+    });
 }

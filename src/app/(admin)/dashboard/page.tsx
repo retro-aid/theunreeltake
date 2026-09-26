@@ -10,9 +10,7 @@ import {Flex, Group, Text, Stack, Card,
   Button,} from '@mantine/core';
 import { ViewsCard } from "@/app/ui/admin/ViewsCard";
 import { PendingRequestsCard } from "@/components/dashboard/PendingRequestsCard";
-import {People, CalendarDate, PersonFill} from "react-bootstrap-icons";
-import Link from "next/link";
-import { getRecentUserReviews } from "@/lib/actions";
+import {CalendarDate, People, PersonFill} from "react-bootstrap-icons";
 
 interface RecentPostItem {
   id: string;
@@ -25,6 +23,9 @@ interface RecentPostItem {
     name?: string | null;
   } | null;
 }
+import { AmountCommentsCard } from "@/components/comments";
+import {getRecentUserReviews} from "@/lib/actions";
+import Link from "next/link";
 
 export default function DashboardPage() {
 
