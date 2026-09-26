@@ -1,7 +1,7 @@
 'use client';
 
 import { Flex, Group, Loader, Pagination } from "@mantine/core";
-import { HomeSearchBar } from "@/app/ui/home/HomeSearchBar";
+import { SearchBar } from "@/components/generic/SearchBar";
 import PostGrid from "@/app/ui/home/PostGrid";
 import CatalogActionButtons from "@/app/ui/home/CatalogActionButtons";
 import {Suspense, useCallback, useEffect, useState, useTransition} from "react";
@@ -62,7 +62,7 @@ function MoviesPageContent() {
       <Flex direction={"column"} p={{ base: "sm", sm: "lg" }}>
         <Group gap={"xs"}>
           <Flex w={{ base: "100%", sm: "80%", md: "40%" }}>
-            <HomeSearchBar
+            <SearchBar
               initialValue={search}
               onSearchAction={(value) => {
                 handleSearch(value);

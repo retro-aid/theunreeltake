@@ -16,8 +16,8 @@ import {
   Box
 } from "@mantine/core";
 import dayjs from "dayjs";
-import CommentGrid, {VisitorCommentForm} from "@/components/comments";
-import {getCommentsOnPostAction} from "@/lib/actions/comment-actions";
+import { CommentGrid, VisitorCommentForm } from "@/components/comments";
+import {getCommentsOnPostAction, getRepliesOnPostAction} from "@/lib/actions/comment-actions";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
 
 export default async function BlogPostPage(
@@ -110,7 +110,8 @@ export default async function BlogPostPage(
     );
   });
 
-  const comments = await getCommentsOnPostAction(slug);
+  //const comments = await getCommentsOnPostAction(slug);
+  const comments = await getRepliesOnPostAction(slug);
 
 
   return (

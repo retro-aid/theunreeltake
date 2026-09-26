@@ -16,7 +16,7 @@ import {
   Container,
   Paper
 } from "@mantine/core";
-import {HomeSearchBar} from "@/app/ui/home/HomeSearchBar";
+import {SearchBar} from "@/components/generic/SearchBar";
 import { useRouter } from "next/navigation";
 import { useForm } from '@mantine/form'
 import { useState } from "react"
@@ -64,7 +64,7 @@ export default function HomePage() {
 
         <Flex justify={"center"}>
           <Flex w={{ base: "100%", sm: "75%" }} align={"center"} justify={"center"}>
-            <HomeSearchBar
+            <SearchBar
               placeholderText={"Search everything"}
               onSearchAction={(value) => handleSearch(value)}
             />

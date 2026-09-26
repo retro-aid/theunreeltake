@@ -2,7 +2,7 @@ import {CulledComment} from "@/lib/dal/dto/comments";
 import {ScrollArea, Stack} from "@mantine/core";
 import {CommentCard} from "@/components/comments/cards";
 
-export default function CommentGrid(
+export function CommentGrid(
   { comments }: { comments: CulledComment[] }
 ) {
 
@@ -10,7 +10,7 @@ export default function CommentGrid(
     <ScrollArea bd={"1px solid gray.3"} p={"lg"} bdrs={"md"} h={700}>
       <Stack>
         {comments.map((item, index) =>
-          <CommentCard key={index} comment={item}/>
+          <CommentCard key={item.id} comment={item}/>
         )}
       </Stack>
     </ScrollArea>

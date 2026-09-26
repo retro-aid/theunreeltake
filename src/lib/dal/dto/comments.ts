@@ -5,12 +5,20 @@ import {headers} from "next/headers";
 import * as crypto from "node:crypto";
 import {getCurrentSession} from "@/lib/dal/utils";
 import {Comment} from "@/generated/prisma/client";
+import dayjs from "dayjs";
 
 
 type CommentWithPostTitle = Awaited<ReturnType<typeof getAdminComments>>[number];
+type CommentWithReplies = Awaited<ReturnType<typeof getRepliesOnPost>>[number];
 
-export type CulledComment = Pick<Comment, "username" | "createdAt" | "email" | "messageContent" | "userId">
+export type CulledComment = Pick<
+  CommentWithReplies,
+  "id" | "username" | "createdAt" | "email" | "messageContent" | "userId" | "postId" | "postSlug" | "repliesToId">
+ & {
+  repliesReceived?: CommentWithReplies["repliesReceived"];
+};
 export type CulledAdminComment = Omit<CommentWithPostTitle, "repliesToId">;
+//export type CulledReplyComment = Pick<CommentWithReplies, "id" | "createdAt" | "email" | "messageContent" |  "userId" | "postId" | "repliesToId" | "repliesReceived">;
 
 async function generateAnonymousUserID() {
 
@@ -53,6 +61,40 @@ export async function createComment(
 
   } catch(e) {
     console.error(e);
+  }
+}
+
+export async function createReply(
+  parentCommentId: string,
+  messageContent: string
+) {
+  try{
+    const session = await getCurrentSession();
+    const parentComment = await prisma.comment.findUniqueOrThrow({
+      where: {id: parentCommentId},
+      select: {id: true, postId: true, postSlug: true, repliesToId: true}
+      
+    });
+
+    if(parentComment.repliesToId !== null)
+    {
+      console.error("No Reply")
+    }
+
+    return await prisma.comment.create({
+      data: {
+        username: session.user.name,
+        email: session.user.email ?? null,
+        messageContent: messageContent,
+        userId: session.user.id,
+        postId: parentComment.postId,
+        postSlug: parentComment.postSlug,
+        repliesToId: parentComment.id
+      }
+    });
+  } catch (error) {
+    console.error("No reply", error)
+    return null;
   }
 }
 
@@ -128,5 +170,32 @@ export async function getCommentsOnPost(
   return prisma.comment.findMany({
     where: { postSlug: postSlug },
     orderBy: { createdAt: "desc" }
+  });
+}
+
+export async function getRepliesOnPost(
+  postSlug: string
+) {
+  return prisma.comment.findMany({
+    where: { postSlug: postSlug, repliesToId: null},
+    include: { repliesReceived: {orderBy: {createdAt: "desc"}}},
+    orderBy: {createdAt: "desc"}
+  })
+}
+
+export async function getAmountOfComments(
+  period: "month" | "year" | "day"
+) {
+
+  const now = new Date();
+  const prev = dayjs(now).subtract(1, period).toDate();
+
+  return prisma.comment.count({
+    where: {
+      createdAt: {
+        lte: now,
+        gte: prev
+      }
+    }
   });
 }
