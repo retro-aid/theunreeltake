@@ -1,4 +1,5 @@
 import { useEditor } from '@tiptap/react';
+import { useEffect } from 'react';
 import Link from '@tiptap/extension-link';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
@@ -34,6 +35,15 @@ export function SiteTextEditor({
       onChange(editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const current = editor.getHTML();
+    if (value !== current) {
+      editor.commands.setContent(value, { emitUpdate: false });
+    }
+  }, [value, editor]);
 
   return (
     <RichTextEditor editor={editor}>

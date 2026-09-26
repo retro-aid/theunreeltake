@@ -5,10 +5,12 @@ import {useDisclosure} from "@mantine/hooks";
 import {useRouter} from "next/navigation";
 import {DeletePostModal} from "@/app/ui/admin/DeletePostModal";
 import {zod4Resolver} from "mantine-form-zod-resolver";
-import {Button, Group, Input, MultiSelect, Paper, Stack, TextInput, Title} from "@mantine/core";
+import {Button, Group, Input, MultiSelect, Paper, Select, Stack, TextInput, Title} from "@mantine/core";
 import {createNewPostAction, deletePostAction, savePostAction} from "@/lib/actions/post-actions";
 import {CreatePostSchema} from "@/lib/schemas";
 import {SiteTextEditor} from "@/app/ui/admin/SiteTextEditor"
+import {useEffect, useState} from "react";
+import { getPostTemplatesAction } from "@/lib/actions/template-actions";
 import type {TagDTO} from "@/lib/dal/dto/tags";
 
 interface PostProp {
@@ -19,6 +21,12 @@ interface PostProp {
   posterUrl: string | null;
   published: boolean;
   mediaTagId: string[];
+}
+
+interface PostTemplate {
+  id:string;
+  title:string;
+  htmlContent:string;
 }
 
 type Prefill = { title: string; message: string; mediaTagId: number };
@@ -34,9 +42,23 @@ export function PostForm({
 }) {
 
   const [opened, { open, close }] = useDisclosure(false);
+  const [templates, setTemplate] = useState<PostTemplate[]>([]);
+ // const [templateOpened, {open:openTemplatePicker, close: closeTemplatePicker}] = useDisclosure(false);
   const router = useRouter();
 
   const isEditMode = !!post;
+
+  const [pageContent, setPageContent] = useState(
+    post?.htmlContent || (prefill?.message ? "<p>" + prefill.message + "</p>" : "")
+  );
+
+    useEffect(() => {
+    if (isEditMode) return;
+
+  getPostTemplatesAction().then((result) => {
+    if (result.data) setTemplate(result.data);
+    });
+  }, [isEditMode]);
 
   const form = useForm({
     mode: "uncontrolled",
@@ -51,11 +73,39 @@ export function PostForm({
     validate: zod4Resolver(CreatePostSchema),
   });
 
+    const handlePageContentChange = (html: string) => {
+    setPageContent(html);
+    form.setFieldValue('pageContent', html);
+  };
+
+  const [appliedTemplateHtml, setAppliedTemplateHtml] = useState<string | null>(null);
+
+  const selectTemplate = (templateId: string | null) => {
+    if (!templateId)
+    {
+      if(appliedTemplateHtml !== null && pageContent === appliedTemplateHtml)
+      {
+      setPageContent('');
+      form.setFieldValue('pageContent', '');
+      }
+      setAppliedTemplateHtml(null);
+      return;
+    }
+
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+
+    setPageContent(template.htmlContent);
+    form.setFieldValue('pageContent', template.htmlContent);
+    setAppliedTemplateHtml(template.htmlContent);
+  };
+
+
   const handleSubmit= async (action: "publish" | "draft" | "save") => {
     console.log("handleSubmit called with:", action);
     const { hasErrors, errors } = form.validate();
-    
-    if (hasErrors){ 
+
+    if (hasErrors){
         console.log("validation errors:", hasErrors);
         console.log("hasErrors:", hasErrors);
         console.log("errors:", errors);
@@ -71,7 +121,7 @@ export function PostForm({
         post.id,
         values.title,
         values.slug,
-        values.pageContent, 
+        values.pageContent,
         isPublishing,
         values.posterUrl ? values.posterUrl : null,
         values.mediaTagId);
@@ -130,9 +180,23 @@ export function PostForm({
             <TextInput label="Poster Url" placeholder="https://www.example.com" key={"posterUrl"} {...form.getInputProps("posterUrl")} />
           </Group>
 
+          {!isEditMode && (
+            <Select
+              label="Start from a template"
+              placeholder={templates.length ? "Choose a template" : "No templates available"}
+              data={templates.map(t => ({ value: t.id, label: t.title }))}
+              onChange={selectTemplate}
+              disabled={!templates.length}
+              clearable
+            />
+          )}
+
+
+
           <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
-            <SiteTextEditor value={form.getInputProps('pageContent').defaultValue} onChange={form.getInputProps('pageContent').onChange} />
+            <SiteTextEditor value={pageContent} onChange={handlePageContentChange} />
           </Input.Wrapper>
+
 
           <Group justify="flex-end" mt="md">
             {!isEditMode && (
