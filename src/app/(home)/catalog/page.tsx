@@ -29,6 +29,7 @@ function MoviesPageContent() {
 
   const handleSearch = (value: string) => setSearch(value);
   const handleSortBy = (value: string) => setSortBy(value);
+  const handleFilter = (value: string[]) => setTags(value);
   const handlePostsCount = (value: number) => setPostsPage(value);
 
   const refresh = useCallback(() => {
@@ -71,7 +72,10 @@ function MoviesPageContent() {
             />
           </Flex>
           <Group gap={"xs"} ml={{ base: "lg", md: 0 }}>
-            <CatalogActionButtons onSortByAction={handleSortBy} onPostsCountAction={handlePostsCount} />
+            <CatalogActionButtons 
+            onSortByAction={handleSortBy} 
+            onFilterAction={handleFilter} 
+            onPostsCountAction={handlePostsCount} />
             <RefreshDataButton updateData={refresh} />
           </Group>
         </Group>
