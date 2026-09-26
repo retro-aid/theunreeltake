@@ -1,14 +1,15 @@
 "use client";
 
-import {Button, Card, Group, Loader, Stack, Text, Title} from "@mantine/core";
-import {deleteCommentAction, getAmountOfCommentsAction} from "@/lib/actions/comment-actions";
+import {Button, Card, Group, Loader, Stack, Text, Title, Tooltip} from "@mantine/core";
+import {deleteCommentAction, getAmountOfCommentsAction, postReplyAction} from "@/lib/actions/comment-actions";
 import {redirect} from "next/navigation";
 import {CulledAdminComment, CulledComment} from "@/lib/dal/dto/comments";
 import dayjs from "dayjs";
-import {DeleteActionModal} from "@/components/generic/modals";
+import {DeleteActionModal, ReplyActionModal} from "@/components/generic/modals";
 import {useDisclosure} from "@mantine/hooks";
 import {useEffect, useState, useTransition} from "react";
 import {Chat} from "react-bootstrap-icons";
+import { authClient } from "@/lib/auth-client";
 
 
 
@@ -58,11 +59,19 @@ export function AdminCommentCard(
 
 
 export function CommentCard(
-  { comment }: { comment: CulledComment }
+  { comment, isReply = false }: { comment: CulledComment; isReply? : boolean }
 ) {
+  const { data: session } = authClient.useSession();
+  const [replyOpened, {open: openReply, close: closeReply}] = useDisclosure(false);
+  const canReply = !isReply;
 
   return (
-    <Card withBorder shadow={"none"}>
+    <Stack gap={isReply ? 0 : "sm"}>
+    <Card 
+      withBorder 
+      shadow={"none"} 
+      ml={isReply ? "xl" : undefined}
+      style={isReply ? { borderLeft: "3px solid var(--mantine-color-green-6)" } : undefined}>
 
       <Group justify={"space-between"} mx={"xs"}>
         <Text size={"sm"} fw={600}>{comment.username ?? "Anonymous User"} ({comment.userId.substring(0, 10)})</Text>
@@ -75,7 +84,36 @@ export function CommentCard(
         </Text>
       </Card.Section>
 
+      {canReply && (
+          <Group justify={"flex-end"} mx={"xs"}>
+            <Tooltip label={session?.user ? undefined : "Sign in to reply to comments"} disabled={!!session?.user}>
+            <Button size={"compact-xs"} variant={"subtle"} color={"green"} onClick={openReply} disabled={!session?.user}>
+              Reply
+            </Button>
+            </Tooltip>
+          </Group>
+      )}
+
     </Card>
+    {canReply && (
+        <ReplyActionModal
+          opened={replyOpened}
+          onClose={closeReply}
+          onConfirm={async (message) => {
+            await postReplyAction(comment.postSlug, comment.id, message);
+            closeReply();
+          }}
+        />
+      )}
+
+      {comment.repliesReceived && comment.repliesReceived.length > 0 && (
+        <Stack gap={"xs"} mt={"xs"}>
+          {comment.repliesReceived.map((reply) => (
+            <CommentCard key={reply.id} comment={reply} isReply />
+          ))}
+        </Stack>
+      )}
+    </Stack>
   );
 }
 

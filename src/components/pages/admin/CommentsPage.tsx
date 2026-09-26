@@ -3,7 +3,7 @@ import {
   Title
 } from "@mantine/core";
 import {getAdminCommentsAction} from "@/lib/actions/comment-actions";
-import {AdminCommentGrid} from "@/components/comments";
+import {AdminCommentSearch} from "@/components/comments/";
 
 export default async function CommentsPage() {
 
@@ -14,7 +14,7 @@ export default async function CommentsPage() {
 
       <Title mb={"lg"}>Recent Comments</Title>
 
-      <AdminCommentGrid comments={comments}/>
+      <AdminCommentSearch comments={comments}/>
 
     </Flex>
   );

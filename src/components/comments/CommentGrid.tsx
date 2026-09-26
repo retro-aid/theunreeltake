@@ -10,7 +10,7 @@ export function CommentGrid(
     <ScrollArea bd={"1px solid gray.3"} p={"lg"} bdrs={"md"} h={700}>
       <Stack>
         {comments.map((item, index) =>
-          <CommentCard key={index} comment={item}/>
+          <CommentCard key={item.id} comment={item}/>
         )}
       </Stack>
     </ScrollArea>
