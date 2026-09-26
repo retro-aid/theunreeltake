@@ -11,3 +11,11 @@ export async function getMediaRequest(id: string) {
     select: { id: true, type: true, title: true }
   }) as Promise<MediaRequestPrefillDTO>;
 }
+
+export async function getPendingRequestCount() {
+    return prisma.request.count({
+        where: {
+            status: "pending"
+        }
+    });
+}

@@ -81,7 +81,7 @@ export function AdminCommentGrid(
       <Group mb={"md"} justify={"flex-end"}>
         <ActionButtons
           sort={{ label: "Sort By", options: sortOptions, onSelect: handleSort }}
-          onRefresh={() => router.refresh()}
+          onRefreshAction={() => router.refresh()}
         />
       </Group>
       <ScrollArea

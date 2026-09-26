@@ -19,5 +19,5 @@ export async function PostCreatePage(
 
   if(!mediaRequest) return <PostForm/>;
 
-  return <PostForm prefill={{ title: mediaRequest.title, message: "", mediaTagId: 0}}/>;
+  return <PostForm prefill={{ title: mediaRequest.title, message: "", mediaTagId: []}}/>;
 }
