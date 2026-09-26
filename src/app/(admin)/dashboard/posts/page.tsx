@@ -1,13 +1,13 @@
 "use client"
 
-import { Flex, ActionIcon, Pagination, Group} from "@mantine/core";
-import { Funnel, Filter, ArrowClockwise, PencilSquare, Chat, Trash, BarChart } from "react-bootstrap-icons"
+import { Flex, Pagination, Group } from "@mantine/core";
+import { PencilSquare, Chat, Trash, BarChart } from "react-bootstrap-icons";
 import { PostGrid } from "@/app/ui/admin/AdminPostGrid";
 import { NewPostButton } from "@/app/ui/admin/NewPostButton";
-import React, {useState, useEffect, useTransition, useCallback, useContext} from "react";
+import React, { useState, useEffect, useTransition, useCallback } from "react";
 import { SearchBar } from "@/components/generic/SearchBar";
-import { getPostAction} from "@/lib/actions";
-import {AuthContext} from "@/app/ui/admin/AuthContext";
+import { ActionButtons, ActionMenuOption } from "@/components/generic/ActionButtons";
+import { getAdminPostsAction } from "@/lib/actions/post-actions";
 import { Post } from "@/generated/prisma/client";
 
 const postsPerPage = 10;
@@ -19,89 +19,74 @@ const icons = {
   Delete: Trash,
 };
 
-type CatalogItem = {
-  id: string;
-  title?: string;
-  imageSrc: string;
-};
+const filterOptions: ActionMenuOption[] = [
+  { label: "Published", value: "published" },
+  { label: "Draft", value: "draft" },
+];
+
+const sortOptions: ActionMenuOption[] = [
+  { label: "Post Name (A-Z)", value: "title-asc" },
+  { label: "Post Name (Z-A)", value: "title-desc" },
+  { label: "Date Created (Old - New)", value: "createdAt-asc" },
+  { label: "Date Created (New - Old)", value: "createdAt-desc" },
+];
 
 export default function DashboardPostsPage() {
 
-  const authContext = useContext(AuthContext);
-
-  const [isLoading, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [page, setPage] = useState(1);
   const [posts, setPosts] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [sort, setSort] = useState("");
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  }
+  const handleSearch = (value: string) => { setSearch(value); setPage(1); };
+  const handleFilter = (value: string) => { setFilter(value); setPage(1); };
+  const handleSort = (value: string) => { setSort(value); setPage(1); };
 
   const refresh = useCallback(() => startTransition(async () => {
 
-    const res = await getPostAction({
-      authorId: authContext.user.id,
-      page: page,
+    const res = await getAdminPostsAction({
+      page,
       limit: postsPerPage,
-      search: search
+      search,
+      filter,
+      sort
     });
 
-    if(res.success) {
+    if (res.success) {
       setPosts(res.data);
       setTotal(Math.ceil(res.total / postsPerPage));
     }
 
-  }), [page, search, authContext.user.id]);
+  }), [page, search, filter, sort]);
 
   useEffect(() => refresh(), [refresh]);
 
-  return(
+  return (
     <div style={{ padding: "0 40px" }}>
       <h1>Your Posts</h1>
-      <Flex
-        justify={"space-between"}
-        gap={"md"}>
+      <Flex justify={"space-between"} gap={"md"}>
         <Group>
           <Flex miw={500}>
             <SearchBar
               onSearchAction={(value: string) => handleSearch(value)}
             />
           </Flex>
-          <ActionIcon
-            variant={"light"}
-            color={"gray"}
-            radius={"lg"}
-            aria-label={"Filter Button"}>
-            <Funnel size={16}/>
-          </ActionIcon>
-          <ActionIcon
-            variant={"light"}
-            color={"gray"}
-            radius={"lg"}
-            aria-label={"Sort Button"}>
-            <Filter size={16}/>
-          </ActionIcon>
-          <ActionIcon
-            variant="light"
-            color="gray"
-            radius="lg"
-            onClick={() => refresh()}
-          >
-            <ArrowClockwise size={16}/>
-          </ActionIcon>
+          <ActionButtons
+            filter={{ label: "Filter By", options: filterOptions, onSelect: handleFilter }}
+            sort={{ label: "Sort By", options: sortOptions, onSelect: handleSort }}
+            onRefresh={refresh}
+          />
         </Group>
-        <Group
-          justify={"flex-end"}>
-          <NewPostButton/>
+        <Group justify={"flex-end"}>
+          <NewPostButton />
         </Group>
       </Flex>
 
-      <Flex
-        style={{ marginTop: '32px' }}>
+      <Flex style={{ marginTop: '32px' }}>
         <PostGrid data={posts} icons={icons} />
       </Flex>
 
@@ -110,11 +95,8 @@ export default function DashboardPostsPage() {
         value={page}
         onChange={setPage}
         color={"gray"}
-        style={{
-          marginTop: 32,
-          bottom: 20,
-          left: 300
-        }}/>
+        style={{ marginTop: 32, bottom: 20, left: 300 }}
+      />
     </div>
   );
 }
