@@ -1,5 +1,5 @@
-import 'server-only';
-import { Prisma } from "@/generated/prisma/client";
+import "server-only";
+import {Prisma} from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { getCurrentSession } from "@/lib/dal/utils";
 
