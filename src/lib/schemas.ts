@@ -129,6 +129,7 @@ export const CreatePostSchema = z.object({
   mediaTagId: z
     .number()
     .min(1, "Required"),
+  mediaTagId: z.array(z.string()).default([]),
   pageContent: z
     .string()
     .min(10, "Content must be at least 10 characters long"),
