@@ -98,9 +98,7 @@ export default function DashboardRequestsPage() {
 						href={{
 							pathname: "/dashboard/posts/create",
 							query: {
-								title: selectedItem.title,
-								message: selectedItem.message ?? "",
-								type: selectedItem.type ?? "",
+								mrid: selectedId
 							},
 						}}>
 						Create Post

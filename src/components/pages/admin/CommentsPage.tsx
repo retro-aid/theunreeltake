@@ -5,7 +5,7 @@ import {
 import {getAdminCommentsAction} from "@/lib/actions/comment-actions";
 import {AdminCommentSearch} from "@/components/comments/";
 
-export default async function CommentsPage() {
+export async function CommentsPage() {
 
   const comments = await getAdminCommentsAction();
 
