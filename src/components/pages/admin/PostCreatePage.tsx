@@ -1,4 +1,4 @@
-import {PostForm} from "@/app/ui/admin/forms/PostForm";
+import {PostForm} from "@/components/posts/PostForm";
 import {getMediaRequestAction} from "@/lib/actions/media-request-actions";
 
 export type CreatePostPageProps = {

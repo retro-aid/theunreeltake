@@ -1,4 +1,4 @@
-import { PostForm } from "@/app/ui/admin/forms/PostForm";
+import { PostForm } from "@/components/posts/PostForm";
 import prisma from "@/lib/prisma";
 import {redirect} from "next/navigation";
 
