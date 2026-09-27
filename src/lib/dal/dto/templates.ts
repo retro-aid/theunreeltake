@@ -76,10 +76,20 @@ export async function updatePostTemplate(
     htmlContent: string,
     isPublic: boolean,
   }) {
+
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+
+    if (!session || !session.user) {
+      return { success: false, data: [] };
+    }
+
     try{
       await prisma.postTemplate.update({
       where: {
         id: formData.id,
+        authorId: session.user.id
       },
       data: {
         title: formData.title,
@@ -98,11 +108,20 @@ export async function updatePostTemplate(
   }
 
 export async function deletePostTemplate(id: string) {
+  const session = await auth.api.getSession({
+      headers: await headers()
+    });
+
+    if (!session || !session.user) {
+      return { success: false, data: [] };
+    }
+  
   try
   {
     await prisma.postTemplate.delete({
       where:{
         id: id,
+        authorId: session.user.id
       }
     });
 
