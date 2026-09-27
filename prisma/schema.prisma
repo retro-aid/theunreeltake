@@ -21,7 +21,6 @@ model User {
   role          String?
   accounts      Account[]
   posts         Post[]
-  posttemplate  posttemplate[]
   sessions      Session[]
   postTemplates PostTemplate[]
 
@@ -155,12 +154,6 @@ model Comment {
   repliesReceived Comment[] @relation("replies")
 
   @@map("comment")
-}
-
-enum RequestStatus {
-  pending
-  replied
-  deleted
 }
 
 model PostTemplate {
