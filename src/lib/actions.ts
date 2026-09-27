@@ -6,12 +6,11 @@ import {cookies, headers} from "next/headers";
 import { auth } from "@/lib/auth";
 import * as crypto from "node:crypto";
 import dayjs from "dayjs";
-import {Tag, Verification} from "@/generated/prisma/client";
+import {Post, Tag, Verification} from "@/generated/prisma/client";
 import { sendInvitationEmail } from "@/lib/emailer";
 import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import {revalidatePath} from "next/cache";
 import {AllowedTagType, PostItem} from "./constants";
-import { Post } from "@/generated/prisma/client";
 import { RequestWhereInput, RequestOrderByWithRelationInput } from "@/generated/prisma/models/Request";
 import { Resend } from 'resend';
 

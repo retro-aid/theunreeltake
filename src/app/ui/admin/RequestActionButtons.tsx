@@ -3,24 +3,18 @@
 import { useEffect, useState } from "react";
 import { ActionIcon, Menu, Text, Tooltip } from "@mantine/core";
 import { Funnel, Filter } from "react-bootstrap-icons";
-import { getAllTags } from "@/lib/actions";
-import { AllowedTagType } from "@/lib/constants";
-import { Tag } from "@/generated/prisma/client";
+import type { TagDTO } from "@/lib/dal/dto/tags";
+
 
 export default function RequestActionButtons({
+    mediaTags,
     onSortByAction,
     onFilterByTypeAction,
 }: {
+    mediaTags: TagDTO[];
     onSortByAction: (value: string) => void;
     onFilterByTypeAction: (value: string) => void;
 }) {
-    const [mediaTags, setMediaTags] = useState<Tag[]>([]);
-
-    useEffect(() => {
-        getAllTags(AllowedTagType.Media).then((result) => {
-            if (result.data) setMediaTags(result.data);
-        });
-    }, []);
 
     return (
     <>
