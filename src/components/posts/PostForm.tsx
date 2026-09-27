@@ -209,7 +209,7 @@ export function PostForm({
             {isEditMode && post && (
               <>
                 <Button color="red" onClick={open}>Delete</Button>
-                <Button variant="default" onClick={() => {console.log("test"); handleSubmit("save")}}>Save</Button>
+                <Button variant="default" onClick={() => handleSubmit("save")}>Save</Button>
                 {!post.published && (
                    <Button color="dark" onClick={() => handleSubmit("publish")}>Publish</Button>
                 )}
