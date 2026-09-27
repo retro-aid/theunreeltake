@@ -127,10 +127,11 @@ export async function createNewPost(
   formData: {
     title: string,
     slug: string,
-    mediaTagId: number,
+    mediaTagId: number[],
     pageContent: string,
     published: boolean,
-    posterUrl: string | null
+    posterUrl: string | null,
+    imageUrls: string[]
   }
 ){
   try {
@@ -142,23 +143,22 @@ export async function createNewPost(
     if(!session || !session.user) {
       return { error: "You must be logged in to create a post.", success: false };
     }
-    const result = await prisma.post.create({
+
+    await prisma.post.create({
       data: {
         title: formData.title,
         slug: formData.slug,
         htmlContent: formData.pageContent,
         posterUrl: formData.posterUrl,
+        imageUrls: formData.imageUrls,
         published: formData.published,
+        updatedAt: new Date(),
         authorId: session.user.id,
+        tags: {
+          create: formData.mediaTagId.map((id) => { return { tagId: id } })
+        }
       }
     });
-
-    await prisma.tagsOnPost.create({
-      data: {
-        tagId: formData.mediaTagId,
-        postId: result.id
-      }
-    })
 
     return { error: null, success: true };
   } catch (error) {
@@ -228,22 +228,11 @@ export async function savePost(
   content: string,
   published: boolean,
   posterUrl: string | null,
-  mediaTagId: number
-)
-{
-  try
-  {
-
-    await prisma.tagsOnPost.deleteMany({
-      where: {
-        postId: id
-      }
-    });
-
+  mediaTagId: number[]
+) {
+  try {
     await prisma.post.update({
-      where: {
-        id: id,
-      },
+      where: { id: id },
       data: {
         title: title,
         slug: slug,
@@ -251,15 +240,22 @@ export async function savePost(
         htmlContent: content,
         published: published,
         tags: {
-          create: {
-            tag: { connect: { id: mediaTagId }}
-          }
+          deleteMany: {},
+          create: mediaTagId.map((tagId) => ({
+            tag: { connect: { id: tagId } }
+          }))
         }
       }
     });
 
-    return { error: null, success: true};
+    // Clear Next.js cache so the frontend updates immediately
+    revalidatePath("/");
+    revalidatePath("/dashboard/posts");
+    revalidatePath(`/blog/${slug}`);
+
+    return { error: null, success: true };
   } catch (error) {
+    console.error(error);
     return { error: "Failed to save post", success: false };
   }
 }
@@ -314,12 +310,12 @@ export async function getDraftPosts() {
       }
     });
 
-    /*const formattedDrafts = draftPosts.map((post:Post) => ({
+    const formattedDrafts = draftPosts.map((post:Post) => ({
       id: post.id,
       imageSrc: post.posterUrl || "https://placehold.co/600x400?text=No+Poster",
       title: post.title,
       published: post.published,
-    }));*/
+    }));
 
     return { success: true, data: draftPosts };
   } catch (error) {
@@ -366,12 +362,12 @@ export async function getPostAction({
       },
     });
 
-    /*const formatted: PostItem[] = posts.map((post:Post) => ({
+    const formatted: PostItem[] = posts.map((post:Post) => ({
       id: post.id,
       title: post.title,
       imageSrc: post.posterUrl ?? "https://placehold.co/600x400?text=No+Poster",
       published: post.published,
-    }));*/
+    }));
 
     return {
       success: true,
@@ -471,7 +467,7 @@ export async function updateUser(id:string, name:string, role:string)
   }
 }
 
-export async function getAllTags(tagType: AllowedTagType | undefined) {
+export async function getAllTags(tagType?: AllowedTagType) {
 
   try {
 
@@ -541,4 +537,42 @@ export async function replyToRequest(requestId: string, message: string) {
     subject: `Re: ${request.title}`,
     text: message,
   });
+
+  await prisma.request.update({
+    where: { id: requestId },
+    data: {
+      status: "replied"
+    }
+  });
+}
+
+export async function getRecentUserReviews(limit: number = 5) {
+  try {
+    const posts = await prisma.post.findMany({
+      take: limit,
+      where: {
+        published: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        posterUrl: true,
+        createdAt: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return { success: true, data: posts };
+  } catch (error) {
+    console.error("Prisma error fetching recent reviews:", error);
+    return { success: false, data: [] };
+  }
 }
