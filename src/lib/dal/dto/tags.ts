@@ -10,4 +10,7 @@ export async function updateTag(
         where: {id}, 
         data: {displayName: displayName, type: type}
     });
-}
+}export type TagDTO = {
+  id: number;
+  displayName: string;
+};
