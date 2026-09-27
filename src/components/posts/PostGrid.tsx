@@ -159,7 +159,7 @@ export function PostCard({post, icons, onPostUpdated}: {post: PostDTO; icons: Ic
 
 export function PostGrid({ data, icons , onPostUpdated}: GridProps) {
     return (
-        <Grid>
+        <Grid >
             {data.map((post) => (
                 <Grid.Col
                     key={post.id}
