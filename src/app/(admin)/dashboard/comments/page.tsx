@@ -1,4 +1,4 @@
-import CommentsPage from "@/components/pages/admin";
+import { CommentsPage } from "@/components/pages/admin";
 
 const Page = () => <CommentsPage/>;
 

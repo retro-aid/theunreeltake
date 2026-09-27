@@ -6,7 +6,7 @@ import {useState, useEffect, useTransition, useCallback} from "react"
 import GridReview from "./gridReview";
 import Link from "next/link"
 import { getMediaRequests,replyToRequest } from "@/lib/actions";
-import {HomeSearchBar} from "@/app/ui/home/HomeSearchBar";
+import {SearchBar} from "@/components/generic/SearchBar";
 import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
 import {Request} from "@/generated/prisma/client";
@@ -98,9 +98,7 @@ export default function DashboardRequestsPage() {
 						href={{
 							pathname: "/dashboard/posts/create",
 							query: {
-								title: selectedItem.title,
-								message: selectedItem.message ?? "",
-								type: selectedItem.type ?? "",
+								mrid: selectedId
 							},
 						}}>
 						Create Post
@@ -159,7 +157,7 @@ export default function DashboardRequestsPage() {
 
 			<Group mb="md">
 				<Flex miw={500}>
-				<HomeSearchBar onSearchAction={handleSearch} />
+				<SearchBar onSearchAction={handleSearch} />
 				</Flex>
 				<RequestActionButtons
 				onSortByAction={handleSort}

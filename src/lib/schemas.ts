@@ -123,9 +123,10 @@ export const CreatePostSchema = z.object({
     .httpUrl("Invalid Url")
     .nullable()
     .or(z.literal("")),
-  mediaTagId: z
-    .number()
-    .min(1, "Required"),
+  imageUrls: z
+    .array(z.httpUrl("Invalid Url").or(z.literal("")))
+    .max(2),
+  mediaTagId: z.array(z.string()).default([]),
   pageContent: z
     .string()
     .min(10, "Content must be at least 10 characters long"),

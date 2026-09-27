@@ -1,5 +1,6 @@
 export * from "./cards";
 export * from "./forms";
 
-export { default } from "./CommentGrid";
+export * from "./CommentGrid";
 export * from "./AdminCommentGrid";
+export * from "./AdminCommentSearch";
