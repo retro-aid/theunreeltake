@@ -180,6 +180,21 @@ export function PostForm({
             <TextInput label="Poster Url" placeholder="https://www.example.com" key={"posterUrl"} {...form.getInputProps("posterUrl")} />
           </Group>
 
+          <Group grow align={"flex-start"}>
+            <TextInput
+              label={"Image 1 Url"}
+              placeholder={"https://www.example.com"}
+              key={form.key("imageUrls.0")}
+              {...form.getInputProps("imageUrls.0")}
+            />
+            <TextInput
+              label={"Image 2 Url"}
+              placeholder={"https://www.example.com"}
+              key={form.key("imageUrls.1")}
+              {...form.getInputProps("imageUrls.1")}
+            />
+          </Group>
+
           {!isEditMode && (
             <Select
               label="Start from a template"
