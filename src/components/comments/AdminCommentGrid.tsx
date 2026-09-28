@@ -1,11 +1,14 @@
 "use client";
 
-import {CulledAdminComment} from "@/lib/dal/dto/comments";
-import {Group, Pagination, ScrollArea, Stack} from "@mantine/core";
-import {AdminCommentCard} from "@/components/comments/cards";
-import React, {useRef, useState} from "react";
-import {useRouter} from "next/navigation";
-import {ActionButtons, ActionMenuOption} from "@/components/generic/ActionButtons";
+import { CulledAdminComment } from "@/lib/dal/dto/comments";
+import { Group, Pagination, ScrollArea, Stack } from "@mantine/core";
+import { AdminCommentCard } from "@/components/comments/cards";
+import React, { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ActionButtons,
+  ActionMenuOption,
+} from "@/components/generic/ActionButtons";
 
 const sortOptions: ActionMenuOption[] = [
   { label: "User Name (A-Z)", value: "username-asc" },
@@ -19,25 +22,26 @@ const sortOptions: ActionMenuOption[] = [
 ];
 
 function sortComments(comments: CulledAdminComment[], sort: string) {
-
   if (!sort) return comments;
 
-  const [key, direction] = sort.split("-") as ["username" | "userId" | "email" | "createdAt", "asc" | "desc"];
+  const [key, direction] = sort.split("-") as [
+    "username" | "userId" | "email" | "createdAt",
+    "asc" | "desc",
+  ];
   const order = direction === "asc" ? 1 : -1;
 
   return [...comments].sort((a, b) => {
-    const result = key === "createdAt"
-      ? a.createdAt.getTime() - b.createdAt.getTime()
-      : (a[key] ?? "").localeCompare(b[key] ?? "");
+    const result =
+      key === "createdAt"
+        ? a.createdAt.getTime() - b.createdAt.getTime()
+        : (a[key] ?? "").localeCompare(b[key] ?? "");
 
     return result * order;
   });
 }
 
 export function chunkData<T>(array: T[], chunkSize: number): T[][] {
-
-  if(!array.length)
-    return [];
+  if (!array.length) return [];
 
   const head = array.slice(0, chunkSize);
   const tail = array.slice(chunkSize);
@@ -45,10 +49,11 @@ export function chunkData<T>(array: T[], chunkSize: number): T[][] {
   return [head, ...chunkData(tail, chunkSize)];
 }
 
-export function AdminCommentGrid(
-  { comments }: { comments: CulledAdminComment[] }
-) {
-
+export function AdminCommentGrid({
+  comments,
+}: {
+  comments: CulledAdminComment[];
+}) {
   const viewport = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
   const router = useRouter();
@@ -58,29 +63,34 @@ export function AdminCommentGrid(
 
   let pageItems: React.JSX.Element[] = [];
 
-  if(chunkedComments.length > 0) {
-    pageItems = chunkedComments[page - 1].map(item =>
-      <AdminCommentCard key={item.id} comment={item}/>
-    );
+  if (chunkedComments.length > 0) {
+    pageItems = chunkedComments[page - 1].map((item) => (
+      <AdminCommentCard key={item.id} comment={item} />
+    ));
   }
 
-  const scrollToTop = () => viewport.current!.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToTop = () =>
+    viewport.current!.scrollTo({ top: 0, behavior: "smooth" });
 
   const handleSort = (value: string) => {
     setSort(value);
     setPage(1);
-  }
+  };
 
   const handlePageChange = (p: number) => {
     setPage(p);
     scrollToTop();
-  }
+  };
 
   return (
     <>
       <Group mb={"md"} justify={"flex-end"}>
         <ActionButtons
-          sort={{ label: "Sort By", options: sortOptions, onSelect: handleSort }}
+          sort={{
+            label: "Sort By",
+            options: sortOptions,
+            onSelect: handleSort,
+          }}
           onRefreshAction={() => router.refresh()}
         />
       </Group>
@@ -92,9 +102,7 @@ export function AdminCommentGrid(
         h={700}
         viewportRef={viewport}
       >
-        <Stack>
-          {pageItems}
-        </Stack>
+        <Stack>{pageItems}</Stack>
       </ScrollArea>
 
       <Pagination

@@ -1,22 +1,19 @@
 import "server-only";
 import prisma from "@/lib/prisma";
-import {headers} from "next/headers";
+import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import type { PostEditDTO, PostDTO } from "./dto/posts";
 import { Prisma } from "@/generated/prisma/client";
 
-
-export async function deletePost(id:string)
-{
-  try
-  {
+export async function deletePost(id: string) {
+  try {
     await prisma.post.delete({
-      where:{
+      where: {
         id: id,
-      }
+      },
     });
 
-    return { error: null, success: true};
+    return { error: null, success: true };
   } catch (error) {
     return { error: "Failed to delete post", success: false };
   }
@@ -59,20 +56,20 @@ export async function getAllPosts({
   limit = 10,
   search = "",
   filter = "",
-  sort = ""
+  sort = "",
 }: {
-  page?: number,
-  limit?: number,
-  search?: string,
-  filter?: string,
-  sort?: string
+  page?: number;
+  limit?: number;
+  search?: string;
+  filter?: string;
+  sort?: string;
 }) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers(),
+      headers: await headers(),
     });
 
-     if (!session?.user) {
+    if (!session?.user) {
       return {
         success: false,
         data: [],
@@ -86,11 +83,7 @@ export async function getAllPosts({
         mode: "insensitive" as const,
       },
       published:
-        filter === "published"
-          ? true
-          : filter === "draft"
-            ? false
-            : undefined,
+        filter === "published" ? true : filter === "draft" ? false : undefined,
       ...(session.user.role?.toLowerCase() !== "admin" && {
         authorId: session.user.id,
       }),
@@ -134,37 +127,36 @@ export async function getAllPosts({
   }
 }
 
-export async function togglePublished(id:string)
-{
+export async function togglePublished(id: string) {
   try {
-		const post = await prisma.post.findUnique({
-			where: { id },
-			select: { published: true },
-		});
+    const post = await prisma.post.findUnique({
+      where: { id },
+      select: { published: true },
+    });
 
-		if (!post) {
-			return {
-				success: false,
-				error: "Post not found",
-			};
-		}
+    if (!post) {
+      return {
+        success: false,
+        error: "Post not found",
+      };
+    }
 
-		await prisma.post.update({
-			where: { id },
-			data: {
-				published: !post.published,
-			},
-		});
+    await prisma.post.update({
+      where: { id },
+      data: {
+        published: !post.published,
+      },
+    });
 
-		return {
-			success: true,
-			error: null,
-		};
-} catch (error) {
-		console.error("Failed to post publication:", error);
-		return {
-			success: false,
-			error: "Failed to update post",
-		};
-	}
+    return {
+      success: true,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Failed to post publication:", error);
+    return {
+      success: false,
+      error: "Failed to update post",
+    };
+  }
 }

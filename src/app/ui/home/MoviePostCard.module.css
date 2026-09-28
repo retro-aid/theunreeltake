@@ -1,11 +1,9 @@
-
 .card:hover {
+  transition-duration: 500ms;
+  transition: ease-in-out background-position;
+  transition-delay: 50ms;
 
-    transition-duration: 500ms;
-    transition: ease-in-out background-position;
-    transition-delay: 50ms;
+  cursor: pointer;
 
-    cursor: pointer;
-
-    transform: translateX(-1%) translateY(-1%);
+  transform: translateX(-1%) translateY(-1%);
 }

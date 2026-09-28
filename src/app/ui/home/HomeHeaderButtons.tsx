@@ -1,9 +1,8 @@
-import {Button} from "@mantine/core";
+import { Button } from "@mantine/core";
 import Link from "next/link";
 
 export function HomeHeaderButtons() {
-
-  return(
+  return (
     <Button
       component={Link}
       href={"/login"}

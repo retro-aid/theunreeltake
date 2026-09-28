@@ -1,29 +1,29 @@
-"use server"
+"use server";
 
 import { revalidatePath } from "next/cache";
-import { updateTag, getAllTags } from "../dal/dto/tags"
+import { updateTag, getAllTags } from "../dal/dto/tags";
 
-export async function updateTagAction (
-    id: number,
-    displayName: string,
-    type: string
+export async function updateTagAction(
+  id: number,
+  displayName: string,
+  type: string,
 ) {
-    try {
-        await updateTag(id, displayName, type);
-        revalidatePath("/dashboard/tags");
-        return {
-            error: null,
-            success: true
-        };
-    } catch (error) {
-        console.error("Failed to update tag:", error);
+  try {
+    await updateTag(id, displayName, type);
+    revalidatePath("/dashboard/tags");
     return {
-        error: error,
-        sucess: false
+      error: null,
+      success: true,
     };
-    }
+  } catch (error) {
+    console.error("Failed to update tag:", error);
+    return {
+      error: error,
+      sucess: false,
+    };
+  }
 }
 
-export async function getAllTagsAction () {
-    return getAllTags();
+export async function getAllTagsAction() {
+  return getAllTags();
 }

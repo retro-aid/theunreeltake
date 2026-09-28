@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     const cookieStore = await cookies();
-    const seen = cookieStore.get(SEEN_COOKIE)?.value.split(",").filter(Boolean) ?? [];
+    const seen =
+      cookieStore.get(SEEN_COOKIE)?.value.split(",").filter(Boolean) ?? [];
 
     if (seen.includes(slug)) {
       return NextResponse.json({ counted: false }, { status: 200 });

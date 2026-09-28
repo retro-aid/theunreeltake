@@ -1,10 +1,9 @@
-import {getAmountOfCommentsAction} from "@/lib/actions/comment-actions";
-import {Chat, Send} from "react-bootstrap-icons";
+import { getAmountOfCommentsAction } from "@/lib/actions/comment-actions";
+import { Chat, Send } from "react-bootstrap-icons";
 import GenericAnalyticsCard from "./GenericAnalyticsCard";
-import {getPendingRequestCountAction} from "@/lib/actions/media-request-actions";
+import { getPendingRequestCountAction } from "@/lib/actions/media-request-actions";
 
 export function AmountCommentsCard() {
-
   return (
     <GenericAnalyticsCard
       icon={Chat}
@@ -15,7 +14,6 @@ export function AmountCommentsCard() {
 }
 
 export function PendingRequestsCard() {
-
   return (
     <GenericAnalyticsCard
       icon={Send}

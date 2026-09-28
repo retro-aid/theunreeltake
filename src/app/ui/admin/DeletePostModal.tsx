@@ -8,14 +8,13 @@ interface DeletePostModalProps {
   onConfirm: () => void;
 }
 
-export function DeletePostModal({ opened, onClose, onConfirm}: DeletePostModalProps) {
+export function DeletePostModal({
+  opened,
+  onClose,
+  onConfirm,
+}: DeletePostModalProps) {
   return (
-    <Modal 
-      opened={opened} 
-      onClose={onClose} 
-      title="Delete Post?" 
-      centered 
-    >
+    <Modal opened={opened} onClose={onClose} title="Delete Post?" centered>
       <Text size="sm" mb="xl">
         Are you sure you want to delete this post?
       </Text>
@@ -24,7 +23,7 @@ export function DeletePostModal({ opened, onClose, onConfirm}: DeletePostModalPr
         <Button variant="default" onClick={onClose}>
           No, Keep
         </Button>
-        
+
         <Button color="red" onClick={onConfirm}>
           Yes, Delete
         </Button>

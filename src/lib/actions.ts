@@ -1,27 +1,29 @@
 "use server";
 
-import {CreateTagFom, RequestForm} from "@/lib/schemas";
+import { CreateTagFom, RequestForm } from "@/lib/schemas";
 import prisma from "@/lib/prisma";
-import {cookies, headers} from "next/headers";
+import { cookies, headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import * as crypto from "node:crypto";
 import dayjs from "dayjs";
-import {Post, Tag, Verification} from "@/generated/prisma/client";
+import { Post, Tag, Verification } from "@/generated/prisma/client";
 import { sendInvitationEmail } from "@/lib/emailer";
 import { sendPasswordWasResetEmail } from "@/lib/emailer";
-import {revalidatePath} from "next/cache";
-import {AllowedTagType, PostItem} from "./constants";
-import { RequestWhereInput, RequestOrderByWithRelationInput } from "@/generated/prisma/models/Request";
-import { Resend } from 'resend';
+import { revalidatePath } from "next/cache";
+import { AllowedTagType, PostItem } from "./constants";
+import {
+  RequestWhereInput,
+  RequestOrderByWithRelationInput,
+} from "@/generated/prisma/models/Request";
+import { Resend } from "resend";
 
 const REQUEST_ORDER_BY: Record<string, RequestOrderByWithRelationInput> = {
   title: { title: "asc" },
-  name:  { name: "asc" },
+  name: { name: "asc" },
   email: { email: "asc" },
 };
 
 function generateInvitationToken(): string {
-
   const byteLength = 6;
 
   const bytes = crypto.randomBytes(byteLength);
@@ -36,7 +38,6 @@ function generateInvitationToken(): string {
 }
 
 export async function createInvitationVerification(email: string) {
-
   const now = new Date();
   const token = generateInvitationToken();
   const data = {
@@ -45,50 +46,50 @@ export async function createInvitationVerification(email: string) {
     value: email,
     createdAt: now,
     updatedAt: now,
-    expiresAt: dayjs(now).add(7, "day").toDate()
-  }
+    expiresAt: dayjs(now).add(7, "day").toDate(),
+  };
 
   await prisma.verification.create({
-    data: data
+    data: data,
   });
 
   await sendInvitationEmail(email, token);
 }
 
-export async function verifyInvitationToken(token: string): Promise<{data: Verification | null, error: string | null}> {
-
+export async function verifyInvitationToken(
+  token: string,
+): Promise<{ data: Verification | null; error: string | null }> {
   const verification = await prisma.verification.findFirst({
     where: {
-      identifier: token
-    }
+      identifier: token,
+    },
   });
 
-  if(!verification)
-    return { data: null, error: "Invalid Token" }
+  if (!verification) return { data: null, error: "Invalid Token" };
 
-  if(verification.expiresAt < new Date()) {
-
+  if (verification.expiresAt < new Date()) {
     await deleteInvitationToken(verification.id);
 
-    return {data: null, error: "Token Expired"}
+    return { data: null, error: "Token Expired" };
   }
 
   return { data: verification, error: null };
 }
 
-export async function deleteInvitationToken(id: string): Promise<{ statusMessage: string, success: boolean }> {
-
+export async function deleteInvitationToken(
+  id: string,
+): Promise<{ statusMessage: string; success: boolean }> {
   try {
     await prisma.verification.delete({
       where: {
-        id: id
-      }
+        id: id,
+      },
     });
   } catch (error) {
-    return { statusMessage: "Error deleting invitation token", success: false }
+    return { statusMessage: "Error deleting invitation token", success: false };
   }
 
-  return { statusMessage: "Successfully deleted token", success: true }
+  return { statusMessage: "Successfully deleted token", success: true };
 }
 
 // Removed sendUserInvitaion,
@@ -97,8 +98,8 @@ export async function checkUserExists(email: string) {
   try {
     const existingUser = await prisma.user.findUnique({
       where: {
-        email: email.toLowerCase()
-      }
+        email: email.toLowerCase(),
+      },
     });
 
     // Returns true if the user exists and false if they dont
@@ -111,36 +112,36 @@ export async function checkUserExists(email: string) {
 
 export async function notifyPasswordChanged() {
   const session = await auth.api.getSession({
-    headers: await headers()
+    headers: await headers(),
   });
 
   if (session && session.user) {
     await sendPasswordWasResetEmail({
       name: session.user.name,
-      email: session.user.email
+      email: session.user.email,
     });
   }
 }
 
-export async function createNewPost(
-  formData: {
-    title: string,
-    slug: string,
-    mediaTagId: number[],
-    pageContent: string,
-    published: boolean,
-    posterUrl: string | null,
-    imageUrls: string[]
-  }
-){
+export async function createNewPost(formData: {
+  title: string;
+  slug: string;
+  mediaTagId: number[];
+  pageContent: string;
+  published: boolean;
+  posterUrl: string | null;
+  imageUrls: string[];
+}) {
   try {
-
     const session = await auth.api.getSession({
-      headers: await headers()
+      headers: await headers(),
     });
 
-    if(!session || !session.user) {
-      return { error: "You must be logged in to create a post.", success: false };
+    if (!session || !session.user) {
+      return {
+        error: "You must be logged in to create a post.",
+        success: false,
+      };
     }
 
     await prisma.post.create({
@@ -154,9 +155,11 @@ export async function createNewPost(
         updatedAt: new Date(),
         authorId: session.user.id,
         tags: {
-          create: formData.mediaTagId.map((id) => { return { tagId: id } })
-        }
-      }
+          create: formData.mediaTagId.map((id) => {
+            return { tagId: id };
+          }),
+        },
+      },
     });
 
     return { error: null, success: true };
@@ -167,7 +170,6 @@ export async function createNewPost(
 }
 
 export async function createTriviaCookie() {
-
   const cookieStore = await cookies();
 
   cookieStore.set({
@@ -176,20 +178,20 @@ export async function createTriviaCookie() {
     priority: "low",
     httpOnly: true,
     sameSite: "strict",
-    expires: dayjs(new Date()).add(1, "year").toDate()
+    expires: dayjs(new Date()).add(1, "year").toDate(),
   });
 }
 
-export async function deleteUser(id : string){
-  try{
-      const deleteUser = await prisma.user.delete({
-        where: {id},
-      });
-    revalidatePath("/dashboard/users")
-    return {data: deleteUser, error: "none"};
-  } catch(e){
+export async function deleteUser(id: string) {
+  try {
+    const deleteUser = await prisma.user.delete({
+      where: { id },
+    });
+    revalidatePath("/dashboard/users");
+    return { data: deleteUser, error: "none" };
+  } catch (e) {
     console.error("Database Error: ", e);
-    return {data: null, error: "User not found"};
+    return { data: null, error: "User not found" };
   }
 }
 
@@ -204,17 +206,15 @@ export async function getAllUsers(Id?: string) {
   }
 }
 
-export async function deletePost(id:string)
-{
-  try
-  {
+export async function deletePost(id: string) {
+  try {
     await prisma.post.delete({
-      where:{
+      where: {
         id: id,
-      }
+      },
     });
 
-    return { error: null, success: true};
+    return { error: null, success: true };
   } catch (error) {
     return { error: "Failed to delete post", success: false };
   }
@@ -227,7 +227,7 @@ export async function savePost(
   content: string,
   published: boolean,
   posterUrl: string | null,
-  mediaTagId: number[]
+  mediaTagId: number[],
 ) {
   try {
     await prisma.post.update({
@@ -241,10 +241,10 @@ export async function savePost(
         tags: {
           deleteMany: {},
           create: mediaTagId.map((tagId) => ({
-            tag: { connect: { id: tagId } }
-          }))
-        }
-      }
+            tag: { connect: { id: tagId } },
+          })),
+        },
+      },
     });
 
     // Clear Next.js cache so the frontend updates immediately
@@ -260,30 +260,25 @@ export async function savePost(
 }
 
 export async function deleteTag(id: number) {
-
   try {
-    await prisma.tag.delete({where: {id: id}});
+    await prisma.tag.delete({ where: { id: id } });
 
     revalidatePath("/dashboard/tags");
-    return { error : null, success: true };
-
+    return { error: null, success: true };
   } catch (error) {
     return { error: error, success: false };
   }
 }
 
 export async function createTag(tag: CreateTagFom) {
-
   try {
-
     await prisma.tag.create({
-      data: { displayName: tag.name, type: tag.type }
+      data: { displayName: tag.name, type: tag.type },
     });
 
     revalidatePath("/dashboard/tags");
 
     return { error: null, success: true };
-
   } catch (error) {
     return { error: error, success: false };
   }
@@ -292,7 +287,7 @@ export async function createTag(tag: CreateTagFom) {
 export async function getDraftPosts() {
   try {
     const session = await auth.api.getSession({
-      headers: await headers()
+      headers: await headers(),
     });
 
     if (!session || !session.user) {
@@ -305,11 +300,11 @@ export async function getDraftPosts() {
         published: false,
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: "desc",
+      },
     });
 
-    const formattedDrafts = draftPosts.map((post:Post) => ({
+    const formattedDrafts = draftPosts.map((post: Post) => ({
       id: post.id,
       imageSrc: post.posterUrl || "https://placehold.co/600x400?text=No+Poster",
       title: post.title,
@@ -327,14 +322,13 @@ export async function getPostAction({
   authorId,
   page = 1,
   limit = 10,
-  search = ""
+  search = "",
 }: {
-  authorId: string,
-  page?: number,
-  limit?: number,
-  search?: string,
+  authorId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
 }) {
-
   try {
     const posts = await prisma.post.findMany({
       where: {
@@ -343,7 +337,7 @@ export async function getPostAction({
           mode: "insensitive",
         },
         published: true,
-        authorId: authorId
+        authorId: authorId,
       },
       orderBy: {
         createdAt: "desc",
@@ -361,7 +355,7 @@ export async function getPostAction({
       },
     });
 
-    const formatted: PostItem[] = posts.map((post:Post) => ({
+    const formatted: PostItem[] = posts.map((post: Post) => ({
       id: post.id,
       title: post.title,
       imageSrc: post.posterUrl ?? "https://placehold.co/600x400?text=No+Poster",
@@ -383,25 +377,22 @@ export async function getPostAction({
   }
 }
 
-export async function submitRequestForm(data: RequestForm){
-  try{
+export async function submitRequestForm(data: RequestForm) {
+  try {
     await prisma.request.create({
       data: {
-				email: data.email,
-				title: data.title,
-				message: data.message ?? "",
-				type: data.mediaType,
-				name: data.name ?? null,
-			},
-        });
-    return{e: null, success: true};
-    }
-    catch(e){
-      return {e: "Failed to submit form", success: false}
-    }
-
+        email: data.email,
+        title: data.title,
+        message: data.message ?? "",
+        type: data.mediaType,
+        name: data.name ?? null,
+      },
+    });
+    return { e: null, success: true };
+  } catch (e) {
+    return { e: "Failed to submit form", success: false };
+  }
 }
-
 
 export async function getMediaRequests({
   page = 1,
@@ -423,7 +414,7 @@ export async function getMediaRequests({
         ? [
             { title: { contains: search, mode: "insensitive" } },
             { email: { contains: search, mode: "insensitive" } },
-            { name:  { contains: search, mode: "insensitive" } },
+            { name: { contains: search, mode: "insensitive" } },
           ]
         : undefined,
     };
@@ -445,47 +436,43 @@ export async function getMediaRequests({
   }
 }
 
-export async function updateUser(id:string, name:string, role:string)
-{
-  try{
+export async function updateUser(id: string, name: string, role: string) {
+  try {
     await prisma.user.update({
-      where:{
-        id:id,
+      where: {
+        id: id,
       },
       data: {
         name: name,
-        role: role
-      }
+        role: role,
+      },
     });
 
     revalidatePath("/dashboard/users");
 
-    return {error: null, success: true};
+    return { error: null, success: true };
   } catch (error) {
-    return {error: "Failed to update user",success:false};
+    return { error: "Failed to update user", success: false };
   }
 }
 
 export async function getAllTags(tagType?: AllowedTagType) {
-
   try {
-
     let result: Tag[];
 
-    if(!tagType) {
+    if (!tagType) {
       result = await prisma.tag.findMany();
     } else {
       result = await prisma.tag.findMany({
         where: {
-          type: tagType
-        }
+          type: tagType,
+        },
       });
     }
 
     return { error: null, data: result };
-
   } catch (error) {
-    return { error: "Failed to fetch tags", data: null }
+    return { error: "Failed to fetch tags", data: null };
   }
 }
 
@@ -502,8 +489,11 @@ export async function getTotalViews(days: number = 30) {
   }
 }
 
-export async function createTriviaQuestion(question: string, answer: string, category: string) {
-
+export async function createTriviaQuestion(
+  question: string,
+  answer: string,
+  category: string,
+) {
   const data = {
     id: crypto.randomUUID(),
     question: question,
@@ -512,11 +502,11 @@ export async function createTriviaQuestion(question: string, answer: string, cat
     difficulty: "Medium",
     type: "Fill in the blank",
     sucrate: "50%",
-    published: false
-  }
+    published: false,
+  };
 
   await prisma.trivia.create({
-    data: data
+    data: data,
   });
 }
 
@@ -528,10 +518,10 @@ export async function replyToRequest(requestId: string, message: string) {
     where: { id: requestId },
   });
 
-  if (!request) throw new Error('Request not found');
+  if (!request) throw new Error("Request not found");
 
   await resend.emails.send({
-    from: 'you@yourdomain.com',
+    from: "you@yourdomain.com",
     to: request.email,
     subject: `Re: ${request.title}`,
     text: message,
@@ -540,8 +530,8 @@ export async function replyToRequest(requestId: string, message: string) {
   await prisma.request.update({
     where: { id: requestId },
     data: {
-      status: "replied"
-    }
+      status: "replied",
+    },
   });
 }
 
