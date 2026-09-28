@@ -1,10 +1,10 @@
-
 import * as z from "zod";
 
 import {
   AllowedMediaType,
   maxTextInputLength,
-  maxTextAreaLength, AllowedTagType
+  maxTextAreaLength,
+  AllowedTagType,
 } from "@/lib/constants";
 
 export type CatalogItem = z.infer<typeof CatalogItemSchema>;
@@ -20,7 +20,7 @@ export type CreateTagFom = z.infer<typeof CreateTagSchema>;
 
 const httpUrl = z.url({
   protocol: /^https?$/,
-  hostname: z.regexes.hostname
+  hostname: z.regexes.hostname,
 });
 
 export const CatalogItemSchema = z.object({
@@ -31,7 +31,7 @@ export const CatalogItemSchema = z.object({
   rating: z.number().positive().default(0),
   releaseYear: z.string().default(""),
   posterUrl: httpUrl.default(""),
-  mediaType: z.string().default(AllowedMediaType.Book)
+  mediaType: z.string().default(AllowedMediaType.Book),
 });
 
 export const CreateUserSchema = z.object({
@@ -43,11 +43,14 @@ export const CreateUserSchema = z.object({
   email: z.email().nonempty("Required"),
   password: z
     .string()
-    .refine((val) => /[^a-zA-Z0-9]/.test(val), "Must contain one special character")
+    .refine(
+      (val) => /[^a-zA-Z0-9]/.test(val),
+      "Must contain one special character",
+    )
     .refine((val) => /[0-9]/.test(val), "Must contain one number")
     .refine((val) => /[A-Z]/.test(val), "Must contain one uppercase letter")
     .min(8, "Must be at least 8 characters")
-    .nonempty("Required")
+    .nonempty("Required"),
 });
 
 export const RequestFormSchema = z.object({
@@ -55,12 +58,12 @@ export const RequestFormSchema = z.object({
   email: z.email({ error: "Invalid Email" }).nonempty({ error: "Required" }),
   title: z.string().max(maxTextInputLength).nonempty({ error: "Required" }),
   mediaType: z.string().nonempty("Required"),
-  message: z.string().max(maxTextAreaLength).optional()
+  message: z.string().max(maxTextAreaLength).optional(),
 });
 
 export const LoginFormSchema = z.object({
-  email: z.email({ error: "Invalid email"}).nonempty({ error: "Required" }),
-  password: z.string().nonempty({ error: "Required" })
+  email: z.email({ error: "Invalid email" }).nonempty({ error: "Required" }),
+  password: z.string().nonempty({ error: "Required" }),
 });
 
 export const ChangePasswordSchema = z.object({
@@ -69,7 +72,7 @@ export const ChangePasswordSchema = z.object({
 });
 
 export const ForgotPasswordSchema = LoginFormSchema.pick({
-  email: true
+  email: true,
 });
 
 export const ResetPasswordSchema = LoginFormSchema.pick({
@@ -77,24 +80,25 @@ export const ResetPasswordSchema = LoginFormSchema.pick({
 });
 
 export const RegisterUserSchema = CreateUserSchema.extend({
-  confirmPassword: z.string().nonempty("Required")
+  confirmPassword: z.string().nonempty("Required"),
 }).superRefine(({ confirmPassword, password }, ctx) => {
-  if(confirmPassword !== password) {
+  if (confirmPassword !== password) {
     ctx.addIssue({
       code: "custom",
       message: "Passwords must match",
-      path: ["confirmPassword"]
+      path: ["confirmPassword"],
     });
   }
 });
 
 // Validates the email input in the InviteUserModal
 export const InviteUserSchema = z.object({
-  email: z.email({ error: "Invalid email address"})
+  email: z
+    .email({ error: "Invalid email address" })
     .trim()
     .toLowerCase()
     .min(1, { message: "Required" })
-    .max(255, { message: "Email is too long" })
+    .max(255, { message: "Email is too long" }),
 });
 
 export const ChangeUsernameSchema = z.object({
@@ -104,28 +108,23 @@ export const ChangeUsernameSchema = z.object({
     .max(128, "Username must be less than 128 characters")
     .regex(
       /^[a-zA-Z0-9_-\s]+$/,
-      "Username can only contain letters, spaces, numbers, underscores, and hyphens"
+      "Username can only contain letters, spaces, numbers, underscores, and hyphens",
     ),
 });
 
 export type ChangeUsernameForm = z.infer<typeof ChangeUsernameSchema>;
 
 export const CreatePostSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(100, "Title is too long"),
+  title: z.string().min(1, "Title is required").max(100, "Title is too long"),
   slug: z
     .string()
     .min(1, "Slug is required")
-    .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers, and dashes allowed"),
-  posterUrl: z
-    .httpUrl("Invalid Url")
-    .nullable()
-    .or(z.literal("")),
-  imageUrls: z
-    .array(z.httpUrl("Invalid Url").or(z.literal("")))
-    .max(2),
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Only lowercase letters, numbers, and dashes allowed",
+    ),
+  posterUrl: z.httpUrl("Invalid Url").nullable().or(z.literal("")),
+  imageUrls: z.array(z.httpUrl("Invalid Url").or(z.literal(""))).max(2),
   mediaTagId: z.array(z.string()).default([]),
   pageContent: z
     .string()
@@ -137,8 +136,8 @@ export const CreateTagSchema = z.object({
     .string()
     .min(3, "Display name must be at least 3 characters.")
     .max(128, "Display name must be less than 128 characters."),
-  type: z.enum(AllowedTagType)
-})
+  type: z.enum(AllowedTagType),
+});
 
 export const EditUserSchema = z.object({
   name: z
@@ -147,17 +146,13 @@ export const EditUserSchema = z.object({
     .max(128, "Username must be less than 128 characters")
     .regex(
       /^[a-zA-Z0-9_\- ]+$/,
-      "Username can only contain letters, numbers, underscores, spaces and hyphens"
+      "Username can only contain letters, numbers, underscores, spaces and hyphens",
     ),
-  role: z
-    .enum(["Admin", "User"])
-})
+  role: z.enum(["Admin", "User"]),
+});
 
 export const TriviaQuestionSchema = z.object({
-  question: z
-  .string(),
-  answer: z
-  .string(),
-  category: z
-  .string()
-})
+  question: z.string(),
+  answer: z.string(),
+  category: z.string(),
+});

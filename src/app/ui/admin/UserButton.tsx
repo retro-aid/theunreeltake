@@ -1,17 +1,15 @@
-import {Avatar, Box, Group, Text, UnstyledButton} from '@mantine/core';
-import {useContext} from "react";
-import {AuthContext} from "@/app/ui/admin/AuthContext";
+import { Avatar, Box, Group, Text, UnstyledButton } from "@mantine/core";
+import { useContext } from "react";
+import { AuthContext } from "@/app/ui/admin/AuthContext";
 
-import classes from './UserButton.module.css';
+import classes from "./UserButton.module.css";
 
 export function UserButton() {
-
   const data = useContext(AuthContext);
 
   return (
     <UnstyledButton className={classes.user}>
       <Group gap={0}>
-
         <Box>
           <Avatar
             variant={"light"}
@@ -19,9 +17,11 @@ export function UserButton() {
             radius={"xs"}
             size={36}
           >
-            {data?.user.name.split(" ").slice(0, 2).map(x => x[0])}
+            {data?.user.name
+              .split(" ")
+              .slice(0, 2)
+              .map((x) => x[0])}
           </Avatar>
-
         </Box>
 
         <Box w={165} ml={7}>
@@ -32,9 +32,7 @@ export function UserButton() {
           <Text c="dimmed" mih={14} size={"11px"} truncate={"end"}>
             {data?.user.email}
           </Text>
-
         </Box>
-
       </Group>
     </UnstyledButton>
   );

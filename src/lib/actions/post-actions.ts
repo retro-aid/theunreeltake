@@ -3,31 +3,30 @@ import {
   deletePost,
   getPostForEdit,
   getAllPosts,
-	togglePublished,
+  togglePublished,
 } from "@/lib/dal/posts";
-import {createPost, CreatePostArgs, getAdminPosts, getPost, updatePost, UpdatePostArgs} from "@/lib/dal/dto/posts";
+import {
+  createPost,
+  CreatePostArgs,
+  getAdminPosts,
+  getPost,
+  updatePost,
+  UpdatePostArgs,
+} from "@/lib/dal/dto/posts";
 
-export async function getPostAction(
-  id: string
-) {
+export async function getPostAction(id: string) {
   return getPost(id);
 }
 
-export async function createPostAction(
-  createPostArgs: CreatePostArgs
-) {
+export async function createPostAction(createPostArgs: CreatePostArgs) {
   return createPost(createPostArgs);
 }
 
-export async function deletePostAction(
-  id:string
-) {
+export async function deletePostAction(id: string) {
   return deletePost(id);
 }
 
-export async function getPostForEditAction(
-  id: string
-) {
+export async function getPostForEditAction(id: string) {
   return getPostForEdit(id);
 }
 
@@ -53,19 +52,16 @@ export async function getAllPostsAction({
   });
 }
 
-export async function togglePublishedAction(id:string)
-{
-	return togglePublished(id);
+export async function togglePublishedAction(id: string) {
+  return togglePublished(id);
 }
 
-export async function updatePostAction(
-  updatePostArgs: UpdatePostArgs
-) {
+export async function updatePostAction(updatePostArgs: UpdatePostArgs) {
   return updatePost(updatePostArgs);
 }
 
 export async function getAdminPostsAction(
-  query: Parameters<typeof getAdminPosts>[0]
+  query: Parameters<typeof getAdminPosts>[0],
 ) {
   return getAdminPosts(query);
 }

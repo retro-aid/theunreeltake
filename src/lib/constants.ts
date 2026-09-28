@@ -1,12 +1,10 @@
-
 import {
   Film,
   House,
   PersonCircle,
   Send,
-  CameraVideo
+  CameraVideo,
 } from "react-bootstrap-icons";
-
 
 export const maxTextInputLength = 100;
 export const maxTextAreaLength = 250;
@@ -19,50 +17,50 @@ export const publicRouteMetadata = [
     href: "/",
     icon: House,
     disabled: false,
-    prefetch: true
+    prefetch: true,
   },
   {
     label: "About",
     href: "/about",
     icon: PersonCircle,
     disabled: false,
-    prefetch: true
+    prefetch: true,
   },
   {
     label: "Catalog",
     href: "/catalog",
     icon: Film,
     disabled: false,
-    prefetch: true
+    prefetch: true,
   },
   {
     label: "Requests",
     href: "/requests",
     icon: Send,
     disabled: false,
-    prefetch: true
-  }
+    prefetch: true,
+  },
 ];
 export const navlinks = [
-    {
-        label: "Trivia", 
-        href: "/dashboard/trivia",
-        icon: CameraVideo, 
-        disabled: false,
-    }
-]
+  {
+    label: "Trivia",
+    href: "/dashboard/trivia",
+    icon: CameraVideo,
+    disabled: false,
+  },
+];
 export enum AllowedMediaType {
   Book = "Book",
   Movie = "Movie",
-  Tv_Show= "TV Show",
+  Tv_Show = "TV Show",
   Game = "Game",
-  Music = "Music"
+  Music = "Music",
 }
 
 export enum AllowedTagType {
   Category = "category",
   Media = "media",
-  Informational = "informational"
+  Informational = "informational",
 }
 
 export type PostItem = {

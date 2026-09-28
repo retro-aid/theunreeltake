@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 import { ViewTracker } from "@/app/ui/home/ViewTracker";
 import {
   Title,
@@ -12,36 +12,33 @@ import {
   Paper,
   Button,
   Container,
-  Box
+  Box,
 } from "@mantine/core";
 import dayjs from "dayjs";
 import { CommentGrid, VisitorCommentForm } from "@/components/comments";
-import {getRepliesOnPostAction} from "@/lib/actions/comment-actions";
+import { getRepliesOnPostAction } from "@/lib/actions/comment-actions";
 import { PostImages } from "@/components/posts";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
 
-export default async function BlogPostPage(
-  {
-    params
-  }: {
-    params: Promise<{ slug: string }>
-  }
-) {
-
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
 
   const data = await prisma.post.findUnique({
     where: { slug: slug },
     include: {
-      tags: { include: { tag: true }, omit: { postId: true, tagId: true }},
-      author: { select: { name: true, image: true } }
+      tags: { include: { tag: true }, omit: { postId: true, tagId: true } },
+      author: { select: { name: true, image: true } },
     },
-    omit: { authorId: true }
+    omit: { authorId: true },
   });
 
-  if (!data || !data.published) redirect ("/catalog");
+  if (!data || !data.published) redirect("/catalog");
 
-  const currentTagIds = data.tags.map(({ tag }) => tag.id)
+  const currentTagIds = data.tags.map(({ tag }) => tag.id);
 
   const relatedTaggedPosts = await prisma.post.findMany({
     where: {
@@ -51,17 +48,22 @@ export default async function BlogPostPage(
     },
     include: {
       author: { select: { name: true } },
-      tags: { include: { tag: true }, omit: { postId: true, tagId: true } }
+      tags: { include: { tag: true }, omit: { postId: true, tagId: true } },
     },
     omit: {
-      authorId: true
+      authorId: true,
     },
   });
 
   const currentTagIdsSet = new Set(currentTagIds);
 
   const relatedPosts = relatedTaggedPosts
-    .map((post) => ({ post, sharedTagcount: post.tags.filter(( { tag }) => currentTagIdsSet.has(tag.id)).length}))
+    .map((post) => ({
+      post,
+      sharedTagcount: post.tags.filter(({ tag }) =>
+        currentTagIdsSet.has(tag.id),
+      ).length,
+    }))
     .sort((a, b) => b.sharedTagcount - a.sharedTagcount)
     .slice(0, 4)
     .map(({ post }) => post);
@@ -92,17 +94,17 @@ export default async function BlogPostPage(
   }
 
   const tagElements = data.tags.map((value, index) => {
-    return(
-      <Button 
+    return (
+      <Button
         key={index}
         color={"dark"}
         variant={"outline"}
         size={"sm"}
         mt={4}
         onClick={async () => {
-          "use server"
-          const url: string = "/catalog?tags="+value.tag.id;
-          redirect (url);
+          "use server";
+          const url: string = "/catalog?tags=" + value.tag.id;
+          redirect(url);
         }}
       >
         {value.tag.displayName}
@@ -113,45 +115,54 @@ export default async function BlogPostPage(
   //const comments = await getCommentsOnPostAction(slug);
   const comments = await getRepliesOnPostAction(slug);
 
-
   return (
     <Flex bg={"gray.0"}>
       <ViewTracker slug={slug} />
-      <Container px={{ base: 0, md: "md"}}>
-        <Paper shadow={"sm"} p={{ base: "md", sm: "xl"}} bdrs={0}>
+      <Container px={{ base: 0, md: "md" }}>
+        <Paper shadow={"sm"} p={{ base: "md", sm: "xl" }} bdrs={0}>
           <Stack>
-
-            <Title order={1} my={"lg"}> {data.title}  </Title>
+            <Title order={1} my={"lg"}>
+              {" "}
+              {data.title}{" "}
+            </Title>
 
             <PostImages urls={data.imageUrls} title={data.title} />
 
             <Group gap={"md"}>
-
               <Paper shadow={"xs"} bg={"gray.0"} p={"xs"} bdrs={0} miw={175}>
                 <Stack gap={0}>
-                  <Text component={"span"} size={"xs"} fw={500}>Written By:</Text>
+                  <Text component={"span"} size={"xs"} fw={500}>
+                    Written By:
+                  </Text>
                   <Text>{data.author.name}</Text>
                 </Stack>
               </Paper>
 
               <Paper shadow={"xs"} bg={"gray.0"} p={"xs"} bdrs={0} miw={175}>
                 <Stack gap={0}>
-                  <Text component={"span"} size={"xs"} fw={500}>Posted:</Text>
-                  <Text>{dayjs(data.createdAt).format("MMM D, YYYY h:mm A")}</Text>
+                  <Text component={"span"} size={"xs"} fw={500}>
+                    Posted:
+                  </Text>
+                  <Text>
+                    {dayjs(data.createdAt).format("MMM D, YYYY h:mm A")}
+                  </Text>
                 </Stack>
               </Paper>
 
               <Paper shadow={"xs"} bg={"gray.0"} p={"xs"} bdrs={0} miw={175}>
                 <Stack gap={0}>
-                  <Text component={"span"} size={"xs"} fw={500}>Updated:</Text>
-                  <Text>{dayjs(data.updatedAt).format("MMM D, YYYY h:mm A")}</Text>
+                  <Text component={"span"} size={"xs"} fw={500}>
+                    Updated:
+                  </Text>
+                  <Text>
+                    {dayjs(data.updatedAt).format("MMM D, YYYY h:mm A")}
+                  </Text>
                 </Stack>
               </Paper>
-
             </Group>
 
             <Box>
-              <div dangerouslySetInnerHTML={{__html: data.htmlContent}}></div>
+              <div dangerouslySetInnerHTML={{ __html: data.htmlContent }}></div>
             </Box>
 
             {relatedPosts.length > 0 && (
@@ -162,7 +173,7 @@ export default async function BlogPostPage(
 
                 <Grid>
                   {relatedPosts.map((post) => (
-                    <GridCol key={post.slug} span={{base: 12, sm: 6, md: 3}}>
+                    <GridCol key={post.slug} span={{ base: 12, sm: 6, md: 3 }}>
                       <MoviePostCard postData={post}></MoviePostCard>
                     </GridCol>
                   ))}
@@ -170,17 +181,16 @@ export default async function BlogPostPage(
               </Box>
             )}
 
-            <Text size="sm" ta="left" fw={500}>Tags:</Text>
-            <Group>
-              {tagElements}
-            </Group>
+            <Text size="sm" ta="left" fw={500}>
+              Tags:
+            </Text>
+            <Group>{tagElements}</Group>
 
-            <VisitorCommentForm slug={slug}/>
+            <VisitorCommentForm slug={slug} />
 
             <Title order={4}>Recent Comments</Title>
 
-            <CommentGrid comments={comments}/>
-
+            <CommentGrid comments={comments} />
           </Stack>
         </Paper>
       </Container>

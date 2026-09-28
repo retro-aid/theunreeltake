@@ -1,7 +1,7 @@
-"use server"
+"use server";
 
-import { getTags } from "../dal/dto/catalog"
+import { getTags } from "../dal/dto/catalog";
 
-export async function getTagsAction(){
-    return getTags();
+export async function getTagsAction() {
+  return getTags();
 }

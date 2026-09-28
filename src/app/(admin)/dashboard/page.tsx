@@ -1,15 +1,21 @@
 "use client";
 
-import {useContext, useEffect, useState} from "react";
-import {AuthContext} from "@/app/ui/admin/AuthContext";
-import {redirect} from "next/navigation";
-import {Flex, Group, Text, Stack, Card,
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { redirect } from "next/navigation";
+import {
+  Flex,
+  Group,
+  Text,
+  Stack,
+  Card,
   SimpleGrid,
   Loader,
   Image,
-  Button,} from '@mantine/core';
+  Button,
+} from "@mantine/core";
 import { ViewsCard } from "@/app/ui/admin/ViewsCard";
-import {CalendarDate, People, PersonFill} from "react-bootstrap-icons";
+import { CalendarDate, People, PersonFill } from "react-bootstrap-icons";
 
 interface RecentPostItem {
   id: string;
@@ -22,17 +28,19 @@ interface RecentPostItem {
     name?: string | null;
   } | null;
 }
-import { AmountCommentsCard, PendingRequestsCard } from "@/components/analytics";
-import {getRecentUserReviews} from "@/lib/actions";
+import {
+  AmountCommentsCard,
+  PendingRequestsCard,
+} from "@/components/analytics";
+import { getRecentUserReviews } from "@/lib/actions";
 import Link from "next/link";
 
 export default function DashboardPage() {
-
   const contextData = useContext(AuthContext);
   const [posts, setPosts] = useState<RecentPostItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  if(!contextData) redirect("/login");
+  if (!contextData) redirect("/login");
 
   useEffect(() => {
     async function loadRecentPosts() {
@@ -47,53 +55,61 @@ export default function DashboardPage() {
 
   return (
     <>
-      <h1>Welcome,  {contextData.user.name}!</h1>
-      
-      <Flex 
-      mih={500}
-      gap="xs"
-      justify="left"
-      align="left"
-      direction="column"
-      wrap="wrap"
+      <h1>Welcome, {contextData.user.name}!</h1>
+
+      <Flex
+        mih={500}
+        gap="xs"
+        justify="left"
+        align="left"
+        direction="column"
+        wrap="wrap"
       >
-        <Flex 
-        mih={250} 
-        w={"100%"}
-        gap="xl"
-        direction="row"
-        wrap="wrap" >
+        <Flex mih={250} w={"100%"} gap="xl" direction="row" wrap="wrap">
           <ViewsCard />
-          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"20%"} maw={440}
-          style={{
-							'borderStyle': 'solid',
-							'borderWidth': '3px',
-							padding: '5px',
-							borderRadius: "12px",
-							boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
-					}}>
-          	<Stack gap = {5} align = "center">
-							<People size={40}/>
-							<Text size = "xl" fw = {500}>
-								100
-							</Text>
-							<Text size = "xl" fw = {400}>
-								Active Members
-							</Text>
-						</Stack>
+          <Group
+            gap={"xl"}
+            wrap={"nowrap"}
+            justify={"center"}
+            align={"center"}
+            w={"20%"}
+            maw={440}
+            style={{
+              borderStyle: "solid",
+              borderWidth: "3px",
+              padding: "5px",
+              borderRadius: "12px",
+              boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <Stack gap={5} align="center">
+              <People size={40} />
+              <Text size="xl" fw={500}>
+                100
+              </Text>
+              <Text size="xl" fw={400}>
+                Active Members
+              </Text>
+            </Stack>
           </Group>
         </Flex>
 
-        <Flex 
-        mih={250} 
-        w={"100%"}
-        gap="xl"
-        direction="row"
-        wrap="wrap" >
-          <AmountCommentsCard/>
-          <PendingRequestsCard/>
-          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
-          style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
+        <Flex mih={250} w={"100%"} gap="xl" direction="row" wrap="wrap">
+          <AmountCommentsCard />
+          <PendingRequestsCard />
+          <Group
+            gap={"xl"}
+            wrap={"nowrap"}
+            justify={"center"}
+            align={"center"}
+            w={"30%"}
+            style={{
+              borderStyle: "solid",
+              borderWidth: "3px",
+              padding: "5px",
+              borderRadius: "12px",
+            }}
+          >
             Box 5
           </Group>
         </Flex>
@@ -122,20 +138,18 @@ export default function DashboardPage() {
                 justifyContent: "space-between",
               }}
             >
-
-                <Image
-                  src={
-                    post.posterUrl ??
-                    `https://placehold.co/400x250?text=${encodeURIComponent(
-                      post.title
-                    )}`
-                  }
-                  radius="sm"
-                  height={140}
-                  alt={post.title}
-                  fit="cover"
-                />
-
+              <Image
+                src={
+                  post.posterUrl ??
+                  `https://placehold.co/400x250?text=${encodeURIComponent(
+                    post.title,
+                  )}`
+                }
+                radius="sm"
+                height={140}
+                alt={post.title}
+                fit="cover"
+              />
 
               <Stack gap="xs" mt="sm" style={{ flexGrow: 1 }}>
                 <Text fw={600} size="sm" lineClamp={1} title={post.title}>
@@ -155,7 +169,6 @@ export default function DashboardPage() {
                     {new Date(post.createdAt).toLocaleDateString()}
                   </Text>
                 </Group>
-
               </Stack>
 
               <Button
@@ -176,5 +189,4 @@ export default function DashboardPage() {
       )}
     </>
   );
-
 }

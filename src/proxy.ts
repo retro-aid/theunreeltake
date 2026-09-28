@@ -6,27 +6,26 @@ export const config = {
 };
 
 export async function proxy(request: NextRequest) {
-
-  if(request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/landing")
+  if (
+    request.nextUrl.pathname === "/" ||
+    request.nextUrl.pathname === "/landing"
+  )
     return handleLandingProxy(request);
 
   return handleDashboardProxy(request);
 }
 
 function handleLandingProxy(request: NextRequest) {
-
   const hasTriviaCookie = request.cookies.has("unreel");
 
-  if(request.nextUrl.pathname === "/" && !hasTriviaCookie)
+  if (request.nextUrl.pathname === "/" && !hasTriviaCookie)
     return NextResponse.redirect(new URL("/landing", request.url));
 
-  if(request.nextUrl.pathname === "/landing" && hasTriviaCookie)
-    return NextResponse.redirect(new URL("/", request.url))
-
+  if (request.nextUrl.pathname === "/landing" && hasTriviaCookie)
+    return NextResponse.redirect(new URL("/", request.url));
 }
 
 function handleDashboardProxy(request: NextRequest) {
-
   const sessionCookie = getSessionCookie(request);
 
   if (!sessionCookie) {

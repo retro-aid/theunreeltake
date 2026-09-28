@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { Title, Stack, Paper, SimpleGrid, Text } from "@mantine/core";
-import { Request } from "@/generated/prisma/client"
+import { Request } from "@/generated/prisma/client";
 
 type GridReviewProps = {
   data: Request[];
@@ -15,7 +15,7 @@ export default function GridReview({
   onSelectAction,
 }: GridReviewProps) {
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg:4 }} spacing="lg">
+    <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
       {data.map((item) => {
         const isSelected = item.id === selectedId;
 
@@ -42,7 +42,7 @@ export default function GridReview({
                 Email: {item.email}
               </Text>
 
-              <Text size="sm" mt="xs"   >
+              <Text size="sm" mt="xs">
                 {item.message}
               </Text>
             </Stack>

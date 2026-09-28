@@ -1,5 +1,5 @@
 import "server-only";
-import {Prisma} from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { getCurrentSession } from "@/lib/dal/utils";
 
@@ -15,23 +15,21 @@ export async function getAdminPosts({
   limit = 10,
   search = "",
   filter = "",
-  sort = ""
+  sort = "",
 }: {
-  page?: number,
-  limit?: number,
-  search?: string,
-  filter?: string,
-  sort?: string
+  page?: number;
+  limit?: number;
+  search?: string;
+  filter?: string;
+  sort?: string;
 }) {
-
   try {
-
     const session = await getCurrentSession();
 
     const where: Prisma.PostWhereInput = {
       authorId: session.user.id,
       title: { contains: search, mode: "insensitive" },
-      published: filter ? filter === "published" : undefined
+      published: filter ? filter === "published" : undefined,
     };
 
     const [data, total] = await Promise.all([
@@ -39,13 +37,12 @@ export async function getAdminPosts({
         where,
         orderBy: POST_ORDER_BY[sort] ?? { createdAt: "desc" },
         skip: (page - 1) * limit,
-        take: limit
+        take: limit,
       }),
-      prisma.post.count({ where })
+      prisma.post.count({ where }),
     ]);
 
     return { success: true, data, total };
-
   } catch (e) {
     console.error(e);
     return { success: false, data: [], total: 0 };
@@ -55,23 +52,23 @@ export async function getAdminPosts({
 type PostWithTags = Prisma.PostGetPayload<{
   include: {
     tags: {
-      select: { tagId: true }
-    }
-  }
+      select: { tagId: true };
+    };
+  };
 }>;
 
-
 export type GetPostEditDTO = PostWithTags;
-export type CreatePostArgs = Omit<PostWithTags, "id" | "createdAt" | "updatedAt" | "views" | "authorId">;
-export type UpdatePostArgs = Omit<PostWithTags, "authorId" | "createdAt" | "views" | "updatedAt">;
+export type CreatePostArgs = Omit<
+  PostWithTags,
+  "id" | "createdAt" | "updatedAt" | "views" | "authorId"
+>;
+export type UpdatePostArgs = Omit<
+  PostWithTags,
+  "authorId" | "createdAt" | "views" | "updatedAt"
+>;
 
-
-export async function updatePost(
-  post: UpdatePostArgs
-) {
-
+export async function updatePost(post: UpdatePostArgs) {
   try {
-
     await prisma.post.update({
       where: { id: post.id },
       data: {
@@ -84,31 +81,25 @@ export async function updatePost(
         updatedAt: new Date(),
         tags: {
           deleteMany: {},
-          create: post.tags
-        }
-      }
+          create: post.tags,
+        },
+      },
     });
-
   } catch (e) {
     console.error(e);
   }
 }
 
+export async function createPost(post: CreatePostArgs) {
+  const session = await getCurrentSession();
 
-export async function createPost(
-  post: CreatePostArgs
-) {
-
-  const session = await  getCurrentSession();
-
-  if(!session || !session.user) {
+  if (!session || !session.user) {
     // TODO Replace with better error handling
     console.error("Forbidden");
     return;
   }
 
   try {
-
     await prisma.post.create({
       data: {
         title: post.title,
@@ -120,37 +111,28 @@ export async function createPost(
         authorId: session.user.id,
         updatedAt: new Date(),
         tags: {
-          createMany: { data: post.tags }
-        }
+          createMany: { data: post.tags },
+        },
       },
-    })
-
-  } catch(e) {
+    });
+  } catch (e) {
     console.error(e);
   }
 }
 
-
-
-export async function getPost(
-  id: string
-): Promise<GetPostEditDTO | null> {
-
+export async function getPost(id: string): Promise<GetPostEditDTO | null> {
   try {
-
     return prisma.post.findUnique({
       where: { id: id },
       include: {
         tags: true,
-      }
+      },
     });
-
-  } catch(e) {
+  } catch (e) {
     console.error(e);
     return null;
   }
 }
-
 
 export type PostDTO = {
   id: string;

@@ -16,16 +16,25 @@ export interface ActionMenuConfig {
   onSelect: (value: string) => void;
 }
 
-function ActionMenu(
-  { label, options, onSelect, icon }: ActionMenuConfig & { icon: ReactNode }
-) {
-
+function ActionMenu({
+  label,
+  options,
+  onSelect,
+  icon,
+}: ActionMenuConfig & { icon: ReactNode }) {
   return (
-    <Menu transitionProps={{ transition: "pop-top-left" }} position={"bottom-start"}>
-
+    <Menu
+      transitionProps={{ transition: "pop-top-left" }}
+      position={"bottom-start"}
+    >
       <Menu.Target>
         <Tooltip label={label}>
-          <ActionIcon color={"dark"} size={"lg"} variant={"outline"} aria-label={`${label} Button`}>
+          <ActionIcon
+            color={"dark"}
+            size={"lg"}
+            variant={"outline"}
+            aria-label={`${label} Button`}
+          >
             {icon}
           </ActionIcon>
         </Tooltip>
@@ -44,23 +53,23 @@ function ActionMenu(
           <Text>Clear</Text>
         </Menu.Item>
       </Menu.Dropdown>
-
     </Menu>
   );
 }
 
-export function ActionButtons(
-  { sort, filter, onRefreshAction }: {
-    sort?: ActionMenuConfig;
-    filter?: ActionMenuConfig;
-    onRefreshAction?: () => void;
-  }
-) {
-
+export function ActionButtons({
+  sort,
+  filter,
+  onRefreshAction,
+}: {
+  sort?: ActionMenuConfig;
+  filter?: ActionMenuConfig;
+  onRefreshAction?: () => void;
+}) {
   return (
     <>
-      {filter && <ActionMenu {...filter} icon={<Funnel size={22}/>} />}
-      {sort && <ActionMenu {...sort} icon={<Filter size={22}/>} />}
+      {filter && <ActionMenu {...filter} icon={<Funnel size={22} />} />}
+      {sort && <ActionMenu {...sort} icon={<Filter size={22} />} />}
       {onRefreshAction && <RefreshDataButton updateData={onRefreshAction} />}
     </>
   );

@@ -6,7 +6,7 @@ export function PostsButton() {
   return (
     <Button
       component={Link}
-      href={"/dashboard/posts/edit"} 
+      href={"/dashboard/posts/edit"}
       leftSection={<FileRichtext size={18} />}
       justify={"start"}
       color={"dark"}

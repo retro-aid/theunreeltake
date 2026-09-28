@@ -1,6 +1,6 @@
 "use client";
 
-import {Modal, Button, Group, Text, Textarea} from "@mantine/core";
+import { Modal, Button, Group, Text, Textarea } from "@mantine/core";
 import { useState } from "react";
 
 interface DeletePostModalProps {
@@ -16,20 +16,18 @@ interface ReplyPostModalProps {
   description?: string;
   opened: boolean;
   onClose: () => void;
-  onConfirm: (message : string) => void | Promise<void>;
+  onConfirm: (message: string) => void | Promise<void>;
 }
 
-export function DeleteActionModal(
-  { title, description, opened, onClose, onConfirm}: DeletePostModalProps
-) {
-
+export function DeleteActionModal({
+  title,
+  description,
+  opened,
+  onClose,
+  onConfirm,
+}: DeletePostModalProps) {
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={title}
-      centered
-    >
+    <Modal opened={opened} onClose={onClose} title={title} centered>
       <Text size="sm" mb="xl">
         {description}
       </Text>
@@ -47,10 +45,13 @@ export function DeleteActionModal(
   );
 }
 
-export function ReplyActionModal(
-  { title, description, opened, onClose, onConfirm }: ReplyPostModalProps
-) {
-
+export function ReplyActionModal({
+  title,
+  description,
+  opened,
+  onClose,
+  onConfirm,
+}: ReplyPostModalProps) {
   const [message, setMessage] = useState("");
   const [isPending, setIsPending] = useState(false);
 
