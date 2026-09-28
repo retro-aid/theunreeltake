@@ -61,10 +61,14 @@ type PostWithTags = Prisma.PostGetPayload<{
 }>;
 
 
+export type GetPostEditDTO = PostWithTags;
+export type CreatePostArgs = Omit<PostWithTags, "id" | "createdAt" | "updatedAt" | "views" | "authorId">;
 export type UpdatePostArgs = Omit<PostWithTags, "authorId" | "createdAt" | "views" | "updatedAt">;
 
 
-export async function updatePost(post: UpdatePostArgs) {
+export async function updatePost(
+  post: UpdatePostArgs
+) {
 
   try {
 
@@ -88,7 +92,67 @@ export async function updatePost(post: UpdatePostArgs) {
   } catch (e) {
     console.error(e);
   }
-}export type PostDTO = {
+}
+
+
+export async function createPost(
+  post: CreatePostArgs
+) {
+
+  const session = await  getCurrentSession();
+
+  if(!session || !session.user) {
+    // TODO Replace with better error handling
+    console.error("Forbidden");
+    return;
+  }
+
+  try {
+
+    await prisma.post.create({
+      data: {
+        title: post.title,
+        slug: post.slug,
+        htmlContent: post.htmlContent,
+        posterUrl: post.posterUrl,
+        imageUrls: post.imageUrls,
+        published: post.published,
+        authorId: session.user.id,
+        updatedAt: new Date(),
+        tags: {
+          createMany: { data: post.tags }
+        }
+      },
+    })
+
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+
+
+export async function getPost(
+  id: string
+): Promise<GetPostEditDTO | null> {
+
+  try {
+
+    return prisma.post.findUnique({
+      where: { id: id },
+      include: {
+        tags: true,
+      }
+    });
+
+  } catch(e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
+export type PostDTO = {
   id: string;
   title: string;
   slug: string;

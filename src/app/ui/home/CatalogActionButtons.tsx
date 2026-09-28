@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionIcon, Checkbox, Menu, MultiSelect, Text, Tooltip} from "@mantine/core";
+import {ActionIcon, Checkbox, Menu, Text, Tooltip} from "@mantine/core";
 import {CardText, Funnel} from "react-bootstrap-icons";
 import {allowedPostsPerPage} from "@/lib/constants";
 import { getTagsAction } from "@/lib/actions/catalog-actions";
@@ -37,7 +37,7 @@ export default function CatalogActionButtons(
       });
     }, []);
 
-  let handleArray = (id: number) =>{
+  const handleArray = (id: number) =>{
     for (let i = 0; i < tagList.length; i++)
     {
       if(tagList[i] === id.toString()){

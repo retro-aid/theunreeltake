@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 import {DeletePostModal} from "@/app/ui/admin/DeletePostModal";
 import {zod4Resolver} from "mantine-form-zod-resolver";
 import {Button, Group, Input, MultiSelect, Paper, Select, Stack, TextInput, Title} from "@mantine/core";
-import {createNewPostAction, deletePostAction, savePostAction} from "@/lib/actions/post-actions";
+import {createPostAction, deletePostAction, updatePostAction} from "@/lib/actions/post-actions";
 import {CreatePostSchema} from "@/lib/schemas";
 import {SiteTextEditor} from "@/app/ui/admin/SiteTextEditor"
 import {useEffect, useState} from "react";
@@ -20,7 +20,7 @@ interface PostProp {
   htmlContent: string;
   posterUrl: string | null;
   published: boolean;
-  mediaTagId: string[];
+  tags: { tagId: number }[];
 }
 
 interface PostTemplate {
@@ -29,7 +29,7 @@ interface PostTemplate {
   htmlContent:string;
 }
 
-type Prefill = { title: string; message: string; mediaTagId: number };
+type Prefill = { title: string; message: string; mediaTags: number[] };
 
 export function PostForm({
   post,
@@ -43,7 +43,6 @@ export function PostForm({
 
   const [opened, { open, close }] = useDisclosure(false);
   const [templates, setTemplate] = useState<PostTemplate[]>([]);
- // const [templateOpened, {open:openTemplatePicker, close: closeTemplatePicker}] = useDisclosure(false);
   const router = useRouter();
 
   const isEditMode = !!post;
@@ -65,9 +64,9 @@ export function PostForm({
     initialValues: {
       title: post?.title || prefill?.title || "",
       slug: post?.slug || "",
-      mediaTagId: post?.mediaTagId ? post.mediaTagId :prefill?.mediaTagId ? [String(prefill?.mediaTagId)] : [],
+      tagIds: new Array<{ value: number }>(), // TODO Fix this
       posterUrl: post?.posterUrl ?? null,
-      imageUrls: [],
+      imageUrls: new Array<string>(), // TODO Fix this
       pageContent: post?.htmlContent || (prefill?.message ? "<p>" + prefill.message + "</p>" : ""),
     },
     validate: zod4Resolver(CreatePostSchema),
@@ -117,25 +116,30 @@ export function PostForm({
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
 
-      const { error, success } = await savePostAction(
-        post.id,
-        values.title,
-        values.slug,
-        values.pageContent,
-        isPublishing,
-        values.posterUrl ? values.posterUrl : null,
-        values.mediaTagId);
-
-      if(!success) {
-        console.log(error);
-        return;
-      }
+      await updatePostAction({
+        id: post.id,
+        title: values.title,
+        slug: values.slug,
+        htmlContent: values.pageContent,
+        published: isPublishing,
+        posterUrl: values.posterUrl,
+        tags: values.tagIds.map(i =>{ return { tagId: i.value } }),
+        imageUrls: values.imageUrls
+      });
 
       router.push('/dashboard/posts');
 
     } else {
       const isPublishing = action === "publish";
-      await createNewPostAction({...values, published: isPublishing });
+      await createPostAction({
+        title: values.title,
+        slug: values.slug,
+        htmlContent: values.pageContent,
+        published: isPublishing,
+        posterUrl: values.posterUrl,
+        imageUrls: values.imageUrls,
+        tags: values.tagIds.map(t =>{ return { tagId: t.value } }),
+      });
       router.push('/dashboard/posts');
     }
   };
@@ -171,11 +175,11 @@ export function PostForm({
               label="Media Type"
               placeholder="Select media type"
               data={mediaTags.map((tag) => ({
-                value: String(tag.id),
+                value: tag.id,
                 label: tag.displayName,
             	}))}
-              key="mediaTagId"
-              {...form.getInputProps('mediaTagId')}
+              key="tagIds"
+              {...form.getInputProps('tagIds')}
             />
             <TextInput label="Poster Url" placeholder="https://www.example.com" key={"posterUrl"} {...form.getInputProps("posterUrl")} />
           </Group>

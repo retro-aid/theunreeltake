@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache";
-import { updateTag } from "../dal/dto/tags"
+import { updateTag, getAllTags } from "../dal/dto/tags"
 
 export async function updateTagAction (
     id: number,
@@ -22,4 +22,8 @@ export async function updateTagAction (
         sucess: false
     };
     }
+}
+
+export async function getAllTagsAction () {
+    return getAllTags();
 }

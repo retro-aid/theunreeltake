@@ -9,7 +9,6 @@ import {
   ChatLeftDots,
   FileRichtext,
   House,
-  Journal,
   People,
   Send,
   Tag,
