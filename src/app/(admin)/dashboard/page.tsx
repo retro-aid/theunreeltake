@@ -9,7 +9,6 @@ import {Flex, Group, Text, Stack, Card,
   Image,
   Button,} from '@mantine/core';
 import { ViewsCard } from "@/app/ui/admin/ViewsCard";
-import { PendingRequestsCard } from "@/components/dashboard/PendingRequestsCard";
 import {CalendarDate, People, PersonFill} from "react-bootstrap-icons";
 
 interface RecentPostItem {
@@ -23,7 +22,7 @@ interface RecentPostItem {
     name?: string | null;
   } | null;
 }
-import { AmountCommentsCard } from "@/components/comments";
+import { AmountCommentsCard, PendingRequestsCard } from "@/components/analytics";
 import {getRecentUserReviews} from "@/lib/actions";
 import Link from "next/link";
 
@@ -43,7 +42,7 @@ export default function DashboardPage() {
       }
       setIsLoading(false);
     }
-    loadRecentPosts();
+    loadRecentPosts().then();
   }, []);
 
   return (
@@ -92,10 +91,7 @@ export default function DashboardPage() {
         direction="row"
         wrap="wrap" >
           <AmountCommentsCard/>
-          <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
-          style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
-            <PendingRequestsCard/>
-          </Group>
+          <PendingRequestsCard/>
           <Group gap={"xl"} wrap={"nowrap"} justify={"center"} align = {"center"} w={"30%"}
           style={{'borderStyle': 'solid', 'borderWidth': '3px', padding: '5px', borderRadius: "12px"}}>
             Box 5

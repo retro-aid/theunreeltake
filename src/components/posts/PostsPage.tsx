@@ -1,6 +1,6 @@
 "use client"
-import { Flex, ActionIcon, Pagination, Group} from "@mantine/core";
-import { Funnel, Filter, ArrowClockwise, PencilSquare, Chat, Trash, BarChart } from "react-bootstrap-icons"
+import { Flex, Pagination, Group} from "@mantine/core";
+import { PencilSquare, Chat, Trash, BarChart } from "react-bootstrap-icons"
 import { PostGrid } from "@/components/posts/PostGrid";
 import { NewPostButton } from "@/app/ui/admin/NewPostButton";
 import React, {useState, useEffect, useTransition, useCallback, useContext} from "react";
@@ -67,7 +67,7 @@ export default function DashboardPostsPage() {
       setTotal(Math.ceil(res.total / postsPerPage));
     }
 
-  }), [page, search, filter, sort, authContext.user.id]);
+  }), [page, search, filter, sort]);
 
   useEffect(() => refresh(), [refresh]);
 
@@ -97,7 +97,7 @@ export default function DashboardPostsPage() {
 
       <Flex
         style={{ marginTop: '32px' }}>
-        <PostGrid data={posts} icons={icons} onPostUpdated={refresh}/>
+        <PostGrid data={posts} icons={icons} onPostUpdatedAction={refresh}/>
       </Flex>
 
       <Pagination

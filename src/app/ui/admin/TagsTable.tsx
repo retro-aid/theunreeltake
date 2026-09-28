@@ -1,7 +1,7 @@
 "use client";
 
 import {Tag} from "@/generated/prisma/client";
-import {ActionIcon, Button, Group, Modal, Table, TableData, Title, Text, Stack, TextInput, MenuLabel, Select} from "@mantine/core";
+import {ActionIcon, Button, Group, Modal, Table, TableData, Title, Text, Stack, TextInput, Select} from "@mantine/core";
 import {Trash, PencilSquare, Floppy} from "react-bootstrap-icons";
 import {deleteTag} from "@/lib/actions";
 import {useDisclosure} from "@mantine/hooks";

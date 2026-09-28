@@ -1,45 +1,33 @@
 "use server";
 import {
-    savePost,
-    createNewPost,
-    deletePost,
-    getPostForEdit,
-    getAllPosts,
+  deletePost,
+  getPostForEdit,
+  getAllPosts,
 	togglePublished,
-
 } from "@/lib/dal/posts";
-import { getAdminPosts, updatePost, UpdatePostArgs } from "@/lib/dal/dto/posts";
+import {createPost, CreatePostArgs, getAdminPosts, getPost, updatePost, UpdatePostArgs} from "@/lib/dal/dto/posts";
 
-export async function savePostAction(id: string,
-  title: string,
-  slug: string,
-  content: string,
-  published: boolean,
-  posterUrl: string | null,
-  mediaTagId: string[])
-{
-  return savePost(id, title, slug, content, published, posterUrl, mediaTagId);
+export async function getPostAction(
+  id: string
+) {
+  return getPost(id);
 }
 
-export async function createNewPostAction(formData: {
-    title: string,
-    slug: string,
-    mediaTagId: string[],
-    pageContent: string,
-    published: boolean,
-    posterUrl: string | null
-  })
-{
-  return createNewPost(formData);
+export async function createPostAction(
+  createPostArgs: CreatePostArgs
+) {
+  return createPost(createPostArgs);
 }
 
-export async function deletePostAction(id:string)
-{
+export async function deletePostAction(
+  id:string
+) {
   return deletePost(id);
 }
 
-export async function getPostForEditAction(id: string)
-{
+export async function getPostForEditAction(
+  id: string
+) {
   return getPostForEdit(id);
 }
 

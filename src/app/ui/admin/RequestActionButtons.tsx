@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ActionIcon, Menu, Text, Tooltip } from "@mantine/core";
 import { Funnel, Filter } from "react-bootstrap-icons";
 import type { TagDTO } from "@/lib/dal/dto/tags";
-import { getAllTagsAction } from "@/lib/actions/post-actions";
+import { getAllTagsAction } from "@/lib/actions/tag-actions";
 
 
 export default function RequestActionButtons({
@@ -17,13 +17,11 @@ export default function RequestActionButtons({
 		const [mediaTags, setMediaTags] = useState<TagDTO[]>([]);
 		useEffect(() => {
     const loadTags = async () => {
-        const res = await getAllTagsAction();
+        const tags = await getAllTagsAction();
 
-        if (res.success) {
-            setMediaTags(res.data);
-        }
+        setMediaTags(tags);
     	};
-    	loadTags();
+    	loadTags().then();
 		}, []);
     return (
     <>

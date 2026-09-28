@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 import {headers} from "next/headers";
 import * as crypto from "node:crypto";
 import {getCurrentSession} from "@/lib/dal/utils";
-import {Comment} from "@/generated/prisma/client";
 import dayjs from "dayjs";
 
 
@@ -18,7 +17,6 @@ export type CulledComment = Pick<
   repliesReceived?: CommentWithReplies["repliesReceived"];
 };
 export type CulledAdminComment = Omit<CommentWithPostTitle, "repliesToId">;
-//export type CulledReplyComment = Pick<CommentWithReplies, "id" | "createdAt" | "email" | "messageContent" |  "userId" | "postId" | "repliesToId" | "repliesReceived">;
 
 async function generateAnonymousUserID() {
 
@@ -63,6 +61,8 @@ export async function createComment(
     console.error(e);
   }
 }
+
+
 
 export async function createReply(
   parentCommentId: string,

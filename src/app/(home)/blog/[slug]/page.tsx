@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import dayjs from "dayjs";
 import { CommentGrid, VisitorCommentForm } from "@/components/comments";
-import {getCommentsOnPostAction, getRepliesOnPostAction} from "@/lib/actions/comment-actions";
+import {getRepliesOnPostAction} from "@/lib/actions/comment-actions";
 import { PostImages } from "@/components/posts";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
 

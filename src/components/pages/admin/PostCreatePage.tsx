@@ -1,34 +1,35 @@
-import {PostForm} from "@/components/posts/PostForm";
-import { getAllTags } from "@/lib/dal/tags";
+import {PostForm} from "@/components/posts";
+import {getAllTagsAction} from "@/lib/actions/tag-actions";
+import {getMediaRequestAction} from "@/lib/actions/media-request-actions";
 
 export type CreatePostPageProps = {
-  searchParams: Promise<{ title?: string; message?: string; type?: string; }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function PostCreatePage(
   { searchParams }: CreatePostPageProps
 ) {
-    const { title, message, type } = await searchParams;
 
-	const result = await getAllTags();
+  const tags = await getAllTagsAction();
 
-	const mediaTags = result.data ? result.data : [];
+  const { mrid } = await searchParams;
 
-	const mediaTagId =
-		mediaTags.find((tag) => tag.displayName === type)?.id ?? 0;
+  // Return empty Post Form
+  if(!mrid) return <PostForm mediaTags={tags}/>;
 
-  const prefill =
-    title || message || mediaTagId
-      ? {
-          title: title ?? "",
-          message: message ?? "",
-          mediaTagId,
-        }
-      : undefined;
-  return (
-    <PostForm
-      prefill={prefill}
-      mediaTags={mediaTags}
-    />
-  );
+  const mediaRequestId = Array.isArray(mrid) ? mrid.at(0) ?? "" : mrid;
+
+  const mediaRequest = await getMediaRequestAction(mediaRequestId);
+
+  // Return empty if media request not found
+  if(!mediaRequest) return <PostForm mediaTags={tags}/>;
+
+  //Construct Prefill Data
+  const prefill = {
+    title: mediaRequest.title,
+    message: "",
+    mediaTags: []
+  }
+
+  return <PostForm mediaTags={tags} prefill={prefill}/>
 }
