@@ -1,7 +1,7 @@
 'use client';
 
 import { Flex, Group, Loader, Pagination } from "@mantine/core";
-import { HomeSearchBar } from "@/app/ui/home/HomeSearchBar";
+import { SearchBar } from "@/components/generic/SearchBar";
 import PostGrid from "@/app/ui/home/PostGrid";
 import CatalogActionButtons from "@/app/ui/home/CatalogActionButtons";
 import {Suspense, useCallback, useEffect, useState, useTransition} from "react";
@@ -29,6 +29,7 @@ function MoviesPageContent() {
 
   const handleSearch = (value: string) => setSearch(value);
   const handleSortBy = (value: string) => setSortBy(value);
+  const handleFilter = (value: string[]) => setTags(value);
   const handlePostsCount = (value: number) => setPostsPage(value);
 
   const refresh = useCallback(() => {
@@ -62,7 +63,7 @@ function MoviesPageContent() {
       <Flex direction={"column"} p={{ base: "sm", sm: "lg" }}>
         <Group gap={"xs"}>
           <Flex w={{ base: "100%", sm: "80%", md: "40%" }}>
-            <HomeSearchBar
+            <SearchBar
               initialValue={search}
               onSearchAction={(value) => {
                 handleSearch(value);
@@ -71,7 +72,10 @@ function MoviesPageContent() {
             />
           </Flex>
           <Group gap={"xs"} ml={{ base: "lg", md: 0 }}>
-            <CatalogActionButtons onSortByAction={handleSortBy} onPostsCountAction={handlePostsCount} />
+            <CatalogActionButtons 
+            onSortByAction={handleSortBy} 
+            onFilterAction={handleFilter} 
+            onPostsCountAction={handlePostsCount} />
             <RefreshDataButton updateData={refresh} />
           </Group>
         </Group>

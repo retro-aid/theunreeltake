@@ -1,5 +1,5 @@
 <h1>The Unreel Take</h1>
-<a href="https://www.angryfitzmedia.com/" rel="nofollow"><img width="200" height="200" alt="AFM" src="https://github.com/user-attachments/assets/43ee9a9b-6289-4542-b07b-193beac02408" /img></a>
+<a href="https://www.angryfitzmedia.com/" rel="nofollow"><img width="200" height="200" alt="AFM" src="https://github.com/user-attachments/assets/43ee9a9b-6289-4542-b07b-193beac02408" /></a>
 <h2>About the Project</h2>
 <h3>Background</h3>
 <p>The Unreel Take is a curated library of reviews for a large variety of media such as movies, books, and TV shows. Authors aim to provide readers with their own personal experience of a particular title, rather than just assigning it an arbitrary, often opinionated, rating.
@@ -14,18 +14,18 @@
 <p>Our backend solution implements a private dashboard that supports user roles, invitation and account setup, a rich text editor for publishing and editing content, and a suite of other tools for general website management.</p>
 <h3>Techstacks Used</h3>
 <ul>
-  <a href="https://nextjs.org/docs" rel="nofollow"><img width="96" height="96" alt="next-js-logo-png_seeklogo-394608" src="https://github.com/user-attachments/assets/73a38cbb-6e8b-42c1-aff9-2115ef0358c2"/img></a>
-  <a href="https://www.typescriptlang.org/docs/handbook/" rel="nofollow"><img width="96" height="96" alt="icons8-typescript-96" src="https://github.com/user-attachments/assets/65f0a6a9-7a07-4ac6-9175-3631f05426d5"/img></a>
-  <a href="https://react.dev/reference/react" rel="nofollow"><img width="96" height="96" alt="icons8-react-96" src="https://github.com/user-attachments/assets/df259d74-4f7b-49eb-98e1-5287bac025a5"/img></a>
-  <a href="https://mantine.dev/getting-started/" rel="nofollow"><img width="136" height="51" alt="Screenshot 2026-05-13 131732" src="https://github.com/user-attachments/assets/b163238a-fd92-4996-96b6-0e96584a89aa"/img></a>
-  <a href="https://www.better-auth.com/docs/introduction" rel="nofollow"><img width="136" height="40" alt="Screenshot 2026-05-13 134333" src="https://github.com/user-attachments/assets/dcb59f43-53a8-4836-b0ed-339d7a1fcc78"/img></a>
-  <a href="https://www.prisma.io/docs" rel="nofollow"><img width="115" height="39" alt="Screenshot 2026-05-13 135120" src="https://github.com/user-attachments/assets/b7300137-636c-43a8-ad77-b6008bc59d8e"/img></a>
-  <a href="https://day.js.org/docs/en/installation/installation" rel="nofollow"><img width="96" height="34" alt="Screenshot 2026-05-13 135445" src="https://github.com/user-attachments/assets/d9c97d69-b1e4-4e6d-8f75-9b8d01a88ed5"/img></a>
-  <a href="https://zod.dev/api" rel="nofollow"><img width="96" height="95" alt="Screenshot 2026-05-13 135748" src="https://github.com/user-attachments/assets/eefae282-09db-45b1-92d7-e8f3a9fc6706"/img></a>
-  <a href="https://nodejs.org/en/download" rel="nofollow"><img width="96" height="96" alt="icons8-npm-96" src="https://github.com/user-attachments/assets/4cd69811-86db-4663-98e1-aa6f71a26c11"/img></a>
-  <a href="https://vercel.com/home" rel="nofollow"><img width="93" height="18" alt="Screenshot 2026-05-13 150954" src="https://github.com/user-attachments/assets/7353e115-9fca-429d-9bad-c53a69d79cea" /img></a>
-  <a href="https://neon.com/" rel="nofollow"><img width="96" height="96" alt="Screenshot 2026-05-13 151131" src="https://github.com/user-attachments/assets/741548a6-5130-484f-b2f4-ac61e46a7664"/img></a>
-  <a href="https://resend.com/home rel="nofollow"><img width="85" height="22" alt="Screenshot 2026-05-13 151410" src="https://github.com/user-attachments/assets/e4150efd-7387-4aa4-9a3d-36ccc29301e5" /img></a>
+  <a href="https://nextjs.org/docs" rel="nofollow"><img width="96" height="96" alt="next-js-logo-png_seeklogo-394608" src="https://github.com/user-attachments/assets/73a38cbb-6e8b-42c1-aff9-2115ef0358c2"/></a>
+  <a href="https://www.typescriptlang.org/docs/handbook/" rel="nofollow"><img width="96" height="96" alt="icons8-typescript-96" src="https://github.com/user-attachments/assets/65f0a6a9-7a07-4ac6-9175-3631f05426d5"/></a>
+  <a href="https://react.dev/reference/react" rel="nofollow"><img width="96" height="96" alt="icons8-react-96" src="https://github.com/user-attachments/assets/df259d74-4f7b-49eb-98e1-5287bac025a5"/></a>
+  <a href="https://mantine.dev/getting-started/" rel="nofollow"><img width="136" height="51" alt="Screenshot 2026-05-13 131732" src="https://github.com/user-attachments/assets/b163238a-fd92-4996-96b6-0e96584a89aa"/></a>
+  <a href="https://www.better-auth.com/docs/introduction" rel="nofollow"><img width="136" height="40" alt="Screenshot 2026-05-13 134333" src="https://github.com/user-attachments/assets/dcb59f43-53a8-4836-b0ed-339d7a1fcc78"/></a>
+  <a href="https://www.prisma.io/docs" rel="nofollow"><img width="115" height="39" alt="Screenshot 2026-05-13 135120" src="https://github.com/user-attachments/assets/b7300137-636c-43a8-ad77-b6008bc59d8e"/></a>
+  <a href="https://day.js.org/docs/en/installation/installation" rel="nofollow"><img width="96" height="34" alt="Screenshot 2026-05-13 135445" src="https://github.com/user-attachments/assets/d9c97d69-b1e4-4e6d-8f75-9b8d01a88ed5"/></a>
+  <a href="https://zod.dev/api" rel="nofollow"><img width="96" height="95" alt="Screenshot 2026-05-13 135748" src="https://github.com/user-attachments/assets/eefae282-09db-45b1-92d7-e8f3a9fc6706"/></a>
+  <a href="https://nodejs.org/en/download" rel="nofollow"><img width="96" height="96" alt="icons8-npm-96" src="https://github.com/user-attachments/assets/4cd69811-86db-4663-98e1-aa6f71a26c11"/></a>
+  <a href="https://vercel.com/home" rel="nofollow"><img width="93" height="18" alt="Screenshot 2026-05-13 150954" src="https://github.com/user-attachments/assets/7353e115-9fca-429d-9bad-c53a69d79cea" /></a>
+  <a href="https://neon.com/" rel="nofollow"><img width="96" height="96" alt="Screenshot 2026-05-13 151131" src="https://github.com/user-attachments/assets/741548a6-5130-484f-b2f4-ac61e46a7664"/></a>
+  <a href="https://resend.com/home" rel="nofollow"><img width="85" height="22" alt="Screenshot 2026-05-13 151410" src="https://github.com/user-attachments/assets/e4150efd-7387-4aa4-9a3d-36ccc29301e5" /></a>
   <img width="96" height="96" alt="icons8-visual-studio-96" src="https://github.com/user-attachments/assets/a31b9d8a-58bc-4471-ad48-4c7922c8ad09" />
   <img width="96" height="96" alt="icons8-github-logo-96" src="https://github.com/user-attachments/assets/449e2e6f-63eb-4a7a-a0d8-ee678fa097f2" />
 </ul>
@@ -53,7 +53,7 @@
   <li>Related reviews</li>
   <li>Customizable trivia</li>
   <li>Better user management</li>
-</ul></p>
+</ul>
 <h2>Testing</h2>
 To be completed in CSC 191
 <h2>Deployment</h2>
@@ -73,7 +73,7 @@ To be completed in CSC 191
   <li>Melvin Ly (Developer)</li>
   <li>Elias Rangel (Developer)</li>
 </ul>
-<h3>Icon Sources</h3></h3>
+<h3>Icon Sources</h3>
 <ul>
   <li><a target="_blank" href="https://images.seeklogo.com/logo-png/39/1/next-js-logo-png_seeklogo-394608.png">Next.js logo</a></li>
   <li><a target="_blank" href="https://icons8.com/icon/uJM6fQYqDaZK/typescript">TypeScript</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></li>

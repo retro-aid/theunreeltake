@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { ActionIcon, Menu, Text, Tooltip } from "@mantine/core";
 import { Funnel, Filter } from "react-bootstrap-icons";
-import { getAllTags } from "@/lib/actions";
-import { AllowedTagType } from "@/lib/constants";
-import { Tag } from "@/generated/prisma/client";
+import type { TagDTO } from "@/lib/dal/dto/tags";
+import { getAllTagsAction } from "@/lib/actions/tag-actions";
+
 
 export default function RequestActionButtons({
     onSortByAction,
@@ -14,14 +14,15 @@ export default function RequestActionButtons({
     onSortByAction: (value: string) => void;
     onFilterByTypeAction: (value: string) => void;
 }) {
-    const [mediaTags, setMediaTags] = useState<Tag[]>([]);
+		const [mediaTags, setMediaTags] = useState<TagDTO[]>([]);
+		useEffect(() => {
+    const loadTags = async () => {
+        const tags = await getAllTagsAction();
 
-    useEffect(() => {
-        getAllTags(AllowedTagType.Media).then((result) => {
-            if (result.data) setMediaTags(result.data);
-        });
-    }, []);
-
+        setMediaTags(tags);
+    	};
+    	loadTags().then();
+		}, []);
     return (
     <>
       <Menu transitionProps={{ transition: "pop-top-left" }} position="bottom-start">

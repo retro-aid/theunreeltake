@@ -122,13 +122,6 @@ export function TriviaTable({data}: {data: Trivia[]})
               onClick={() => {
                 setSelectedQuestionId(item.id)
 
-                // Auto-populate attempt; Always one form behind.
-                /*form.setInitialValues({
-                  question: item.question,
-                  answer: item.answer,
-                  category: item.category
-                })*/
-
                 setModalOpened(true);
                 setActiveModal("edit");
               }}

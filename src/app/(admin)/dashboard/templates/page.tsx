@@ -1,46 +1,58 @@
-'use client';
+"use client";
 
-import { Card, CardSection, Group, Text, Menu, ActionIcon, Image, Button, Title, Container } from "@mantine/core";
-import { ThreeDots, Trash, PencilSquare, PlusSquare } from "react-bootstrap-icons";
+import {useEffect, useState, useTransition} from "react";
+import { Title, Box, Loader, Center, Button, Group } from "@mantine/core";
+import { PencilSquare, Chat, BarChart, Trash, PlusSquare } from "react-bootstrap-icons";
+import { PostTemplate } from "@/generated/prisma/client";
+import { getPostTemplatesAction } from "@/lib/actions/template-actions";
+import { TemplateGrid } from "@/app/ui/admin/AdminTemplateGrid";
+import Link from "next/link";
+
+const GRID_ICONS = {
+  Edit: PencilSquare,
+  Chat: Chat,
+  Stats: BarChart,
+  Delete: Trash,
+};
 
 export default function TemplatePage() {
 
-    return (
-        <Container fluid p="md">
-            <Title>Templates</Title>
-                <Group justify="flex-end">
-                    <Button leftSection={<PlusSquare size={16}></PlusSquare>}>
-                        New Template
-                    </Button>
-                </Group>
+  const [templates, setTemplates] = useState<PostTemplate[]>([]);
+  const [isLoading, startTransition] = useTransition();
 
-                <Group>
-                <Card withBorder shadow="sm">
-                    <CardSection withBorder inheritPadding py="xs">
-                        <Group justify="space-between">
-                            <Text size="lg" fw={700}> Movie Review Template </Text>
-                            <Menu withinPortal position="bottom-end" shadow="sm">
-                                <Menu.Target>
-                                    <ActionIcon variant="default">
-                                        <ThreeDots size={16}>
+  useEffect(() => {
+    startTransition(async () => {
 
-                                        </ThreeDots>
-                                    </ActionIcon>
-                                </Menu.Target>
+      const result = await getPostTemplatesAction();
 
-                                <Menu.Dropdown>
-                                    <Menu.Item leftSection={<PencilSquare size={14}></PencilSquare>}>
-                                        Edit
-                                    </Menu.Item>
-                                    <Menu.Item leftSection={<Trash size={14}></Trash>} color="red">
-                                        Delete
-                                    </Menu.Item>
-                                </Menu.Dropdown>
-                            </Menu>
-                        </Group>
-                    </CardSection>
-                </Card>
-                </Group>
-        </Container>
-    );
+      if(result.success) {
+        setTemplates(result.data);
+      }
+
+    });
+  }, []);
+
+  return (
+    <Box>
+      <Title order={2} mb="xl">Your Templates</Title>
+        <Group justify="flex-end">
+            <Button 
+            component={Link}
+            href={"/dashboard/templates/create"}
+            leftSection={<PlusSquare size={16}></PlusSquare>}
+            >
+                New Template
+            </Button>
+        </Group>
+      {isLoading ? (
+        <Center mt="xl">
+          <Loader color="blue" />
+        </Center>
+      ) : templates.length === 0 ? (
+        <p>You have no saved templates.</p>
+      ) : (
+        <TemplateGrid data={templates} icons={GRID_ICONS} />
+      )}
+    </Box>
+  );
 }
