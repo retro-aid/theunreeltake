@@ -1,13 +1,15 @@
 {
   "name": "the-unreel-take",
   "version": "0.6.1",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "vitest"
   },
   "dependencies": {
     "@gfazioli/mantine-flip": "^2.5.9",
@@ -28,32 +30,39 @@
     "@tiptap/react": "^3.22.2",
     "@tiptap/starter-kit": "^3.22.2",
     "@types/pg": "^8.16.0",
-    "better-auth": "^1.4.10",
+    "better-auth": "1.7.7",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "mantine-form-zod-resolver": "^1.3.0",
-    "next": "16.2.3",
+    "next": "16.3.8",
     "react": "^19.2.3",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.2.3",
     "resend": "^6.7.0",
+    "vitest-mock-extended": "^5.1.1",
     "zod": "^4.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^20.19.27",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^9.39.2",
     "eslint-config-next": "15.1.7",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "postcss": "8.5.10",
+    "jsdom": "^30.1.1",
+    "postcss": "8.5.23",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "3.9.9",
     "prisma": "^7.2.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^5.0.2"
   }
 }
