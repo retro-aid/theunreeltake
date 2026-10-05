@@ -100,6 +100,14 @@ export async function replyToRequest(
 }
 //handles request deletion
 export async function deleteRequest(id:string){
-    await fetch(`/api/requests/${id}`, { method: "DELETE" });
-    close();
+    try {
+    await prisma.request.delete({
+      where: { id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Delete failed:", error);
+    throw new Error("Delete failed");
+  }
 }
