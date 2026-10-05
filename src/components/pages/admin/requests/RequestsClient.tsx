@@ -19,7 +19,7 @@ import { useState, useEffect, useTransition, useCallback } from "react";
 import GridReview from "@/components/requests/GridReview";
 import Link from "next/link";
 import { RequestDTO } from "@/lib/dal/dto/requests";
-import { replyToRequestAction, getMediaRequestsAction } from "@/lib/actions/request-actions";
+import { replyToRequestAction, getMediaRequestsAction, deleteRequestAction } from "@/lib/actions/request-actions";
 import { SearchBar } from "@/components/generic/SearchBar";
 import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
@@ -71,8 +71,13 @@ export default function DashboardRequestsPage() {
   };
 	//handles deleting the selected requests
   const handleDelete = async () => {
-    await fetch(`/api/requests/${selectedItem?.id}`, { method: "DELETE" });
-    close();
+    try{
+        await deleteRequestAction(selectedItem!.id);
+        closeDelete();
+        refresh();
+    }catch (error){
+        console.error("Delete failed", error);
+    }
   };
 	//sends a reply to the selected request
   const handleSend = async () => {
@@ -80,7 +85,7 @@ export default function DashboardRequestsPage() {
     setSending(true);
     try {
       await replyToRequestAction(selectedItem.id, message);
-      close();
+      closeReply();
       setMessage("");
     } catch (error) {
       console.error("Send failed:", error);
