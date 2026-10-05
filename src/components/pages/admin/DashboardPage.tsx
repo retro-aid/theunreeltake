@@ -23,7 +23,7 @@ interface RecentPostItem {
     name?: string | null;
   } | null;
 }
-import { getRecentUserReviewsAction } from "@/lib/actions/review-actions";
+import { getRecentUserReviewsAction } from "@/lib/actions/analytics-actions";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";

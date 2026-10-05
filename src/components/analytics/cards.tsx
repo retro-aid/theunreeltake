@@ -3,7 +3,8 @@
 import { getAmountOfCommentsAction } from "@/lib/actions/comment-actions";
 import { Chat, Eye, Send } from "react-bootstrap-icons";
 import GenericAnalyticsCard from "./GenericAnalyticsCard";
-import { getPendingRequestCountAction, getTotalViewsAction } from "@/lib/actions/media-request-actions";
+import { getPendingRequestCountAction } from "@/lib/actions/media-request-actions";
+import { getTotalViewsAction } from "@/lib/actions/analytics-actions";
 
 export function AmountCommentsCard() {
   return (
@@ -30,10 +31,7 @@ export function ViewsCard() {
     <GenericAnalyticsCard
       icon={Eye}
       subtitle={"Total views of posts"}
-      onFetchDataAction={async () => {
-        const result = await getTotalViewsAction();
-        return result.success ? result.total : 0;
-      }}
+      onFetchDataAction={getTotalViewsAction}
     />
   );
 }
