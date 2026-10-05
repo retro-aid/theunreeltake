@@ -29,22 +29,22 @@ import { headers } from "next/headers";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 
 export async function DashboardPage() {
-    const contextData = await auth.api.getSession({
-        headers: await headers(),
-    });
+  const contextData = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    if (!contextData) redirect("/login");
+  if (!contextData) redirect("/login");
 
-    const res = await getRecentUserReviewsAction(5);
+  const res = await getRecentUserReviewsAction(5);
 
-    const posts = 
-        res.success && res.data ? (res.data as unknown as RecentPostItem[]) : [];
+  const posts =
+    res.success && res.data ? (res.data as unknown as RecentPostItem[]) : [];
 
   return (
     <>
       <h1>Welcome, {contextData.user.name}!</h1>
 
-      <AnalyticsDashboard/>
+      <AnalyticsDashboard />
 
       <h2>Recent Reviews</h2>
 

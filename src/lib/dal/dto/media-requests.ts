@@ -11,6 +11,7 @@ export async function getMediaRequest(id: string) {
   }) as Promise<MediaRequestPrefillDTO>;
 }
 
+// Counts the number of requests with the status pending. Returns the total
 export async function getPendingRequestCount() {
   return prisma.request.count({
     where: {

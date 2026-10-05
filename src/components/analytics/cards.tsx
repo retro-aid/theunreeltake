@@ -27,7 +27,7 @@ export function PendingRequestsCard() {
 }
 
 export function ViewsCard() {
-  return(
+  return (
     <GenericAnalyticsCard
       icon={Eye}
       subtitle={"Total views of posts"}

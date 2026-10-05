@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { getTotalViews, getRecentUserReviews } from "../dal/dto/analytics";
 
@@ -7,5 +7,5 @@ export async function getTotalViewsAction() {
 }
 
 export async function getRecentUserReviewsAction(limit: number) {
-    return getRecentUserReviews(limit);
+  return getRecentUserReviews(limit);
 }
