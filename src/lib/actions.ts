@@ -476,19 +476,6 @@ export async function getAllTags(tagType?: AllowedTagType) {
   }
 }
 
-export async function getTotalViews(days: number = 30) {
-  try {
-    const totalViews = await prisma.post.aggregate({
-      _sum: { views: true },
-    });
-
-    return { success: true, total: totalViews._sum.views ?? 0 };
-  } catch (error) {
-    console.error("Failed to fetch total views:", error);
-    return { success: false, total: 0 };
-  }
-}
-
 export async function createTriviaQuestion(
   question: string,
   answer: string,
@@ -535,33 +522,3 @@ export async function replyToRequest(requestId: string, message: string) {
   });
 }
 
-export async function getRecentUserReviews(limit: number = 5) {
-  try {
-    const posts = await prisma.post.findMany({
-      take: limit,
-      where: {
-        published: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        posterUrl: true,
-        createdAt: true,
-        author: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    return { success: true, data: posts };
-  } catch (error) {
-    console.error("Prisma error fetching recent reviews:", error);
-    return { success: false, data: [] };
-  }
-}
