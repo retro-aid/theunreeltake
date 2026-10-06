@@ -1,9 +1,11 @@
 import "server-only";
 import prisma from "@/lib/prisma";
 
-/*  Gets the total number of views across all posts
-    Returns the total number of views 
-    Returns 0 if it fails */
+/**
+ * Gets the total number of views across all posts
+ *
+ * @returns The total number of views or 0 if it fails
+ */
 export async function getTotalViews() {
   try {
     const totalViews = await prisma.post.aggregate({
@@ -17,9 +19,13 @@ export async function getTotalViews() {
   }
 }
 
-/*  Fetches the most recent published user reviews
-    Limits the number of reviews 
-    Returns recent reviews or empty array if it fails */
+/**
+ * Fetches the most recent published user reviews.
+ *
+ * @param limit - limits the number of reviews to return
+ *
+ * @returns recent reviews or empty array if it fails
+ */
 export async function getRecentUserReviews(limit: number = 5) {
   try {
     const posts = await prisma.post.findMany({
