@@ -1,15 +1,16 @@
 "use server";
-import { deleteRequest, replyToRequest, getMediaRequests } from "@/lib/dal/dto/requests";
+import {
+  deleteRequest,
+  replyToRequest,
+  getMediaRequests,
+} from "@/lib/dal/dto/requests";
 
 //wrapper functions for the dto functions
 export async function deleteRequestAction(id: string) {
   return deleteRequest(id);
 }
 
-export async function replyToRequestAction(
-  id: string,
-  message: string,
-) {
+export async function replyToRequestAction(id: string, message: string) {
   return replyToRequest(id, message);
 }
 
