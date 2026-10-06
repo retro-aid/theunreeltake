@@ -1,7 +1,10 @@
+"use client";
+
 import { getAmountOfCommentsAction } from "@/lib/actions/comment-actions";
-import { Chat, Send } from "react-bootstrap-icons";
+import { Chat, Eye, Send } from "react-bootstrap-icons";
 import GenericAnalyticsCard from "./GenericAnalyticsCard";
 import { getPendingRequestCountAction } from "@/lib/actions/media-request-actions";
+import { getTotalViewsAction } from "@/lib/actions/analytics-actions";
 
 export function AmountCommentsCard() {
   return (
@@ -19,6 +22,16 @@ export function PendingRequestsCard() {
       icon={Send}
       subtitle={"Requests pending"}
       onFetchDataAction={getPendingRequestCountAction}
+    />
+  );
+}
+
+export function ViewsCard() {
+  return (
+    <GenericAnalyticsCard
+      icon={Eye}
+      subtitle={"Total views of posts"}
+      onFetchDataAction={getTotalViewsAction}
     />
   );
 }
