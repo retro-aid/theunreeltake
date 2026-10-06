@@ -21,7 +21,12 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
     await postAnonymousCommentAction(slug, formData);
     commentForm.reset();
   };
-
+/**
+ * URT 386 changes: include placeholder for the "Leave a comment section"
+ *  - the user now knows the name entry is optional
+ *  - the user knows the email entry is optional
+ *  - the user knows that the max number of words in a comment allowed
+ */
   return (
     <form onSubmit={commentForm.onSubmit(handleSubmit)}>
       <Fieldset
@@ -33,6 +38,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           <TextInput
             label={"Name:"}
             maw={250}
+            placeholder = "Name is optional"
             key={commentForm.key("username")}
             {...commentForm.getInputProps("username")}
           />
@@ -40,6 +46,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           <TextInput
             label={"Email:"}
             maw={250}
+            placeholder = "Email is optional"
             key={commentForm.key("email")}
             {...commentForm.getInputProps("email")}
           />
@@ -51,6 +58,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           minRows={4}
           autosize
           maxLength={500}
+          placeholder ="Write your comment below (max 500 words)"
           key={commentForm.key("message")}
           {...commentForm.getInputProps("message")}
         />
