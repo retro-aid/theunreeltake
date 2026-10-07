@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * URT 386 changes: 
+ * Added an input description to help users navigate when wanting to comment on a post
+ */
+
 import { Button, Fieldset, Group, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -21,12 +26,16 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
     await postAnonymousCommentAction(slug, formData);
     commentForm.reset();
   };
-/**
- * URT 386 changes: include placeholder for the "Leave a comment section"
- *  - the user now knows the name entry is optional
- *  - the user knows the email entry is optional
- *  - the user knows that the max number of words in a comment allowed
+
+  /**
+ * included the input description so that the users know what to input 
+ * @returns 
+ * the descriptions under label to inform the user on what each will do 
+ * 
+ * @remarks
+ * The description = "" comes from the TextInput - part of "@mantine/core"
  */
+
   return (
     <form onSubmit={commentForm.onSubmit(handleSubmit)}>
       <Fieldset
@@ -38,7 +47,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           <TextInput
             label={"Name:"}
             maw={250}
-            placeholder = "Name is optional"
+            description = "Username that will be shown on the comment"
             key={commentForm.key("username")}
             {...commentForm.getInputProps("username")}
           />
@@ -46,7 +55,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           <TextInput
             label={"Email:"}
             maw={250}
-            placeholder = "Email is optional"
+            description = "Email will be used to notify of any replies"
             key={commentForm.key("email")}
             {...commentForm.getInputProps("email")}
           />
@@ -58,7 +67,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           minRows={4}
           autosize
           maxLength={500}
-          placeholder ="Write your comment below (max 500 words)"
+          description ="Write your comment below (max 500 characters)"
           key={commentForm.key("message")}
           {...commentForm.getInputProps("message")}
         />
