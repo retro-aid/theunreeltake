@@ -51,15 +51,9 @@ export function SiteTextEditor({ value, onChange, description, }: RichTextEditor
     }
   }, [value, editor]);
 
-  /**
-   * URT 386 change: add a const to represent if the document contains actual text or media
-   */
-
-  const isEmpty = editor ? editor.isEmpty : !value || value === "<p></p>";
-  /**
-   * Near the end of the return, Box is added with the conditional Text component
-   * This allows so the placeholder can be showed before the user types
-   */
+/**
+ * returns the option to add an input description under the label for PageContent for the PostForm and TemplateForm
+ */
   return (
 
     <>
