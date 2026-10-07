@@ -142,6 +142,8 @@ export function TemplateForm({
 
             <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
               <SiteTextEditor
+              // URT386 change: include an instruction for the user as a placeholder.
+                placeholder = "Create a template for a post. You can decide whether you can make it public or not. Making it public ensures that the admin and users can use the template."
                 value={form.getInputProps("pageContent").defaultValue}
                 onChange={form.getInputProps("pageContent").onChange}
               />
