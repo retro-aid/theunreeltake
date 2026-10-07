@@ -20,6 +20,20 @@ export async function getTotalViews() {
 }
 
 /**
+ * Gets the total number of users currently registered
+ *
+ * @returns The count of users that exist in the database, or 0 if the database query fails
+ */
+export async function getTotalActiveUsers(): Promise<number> {
+  try {
+    return await prisma.user.count();
+  } catch (error) {
+    console.error(error);
+    return 0;
+  }
+}
+
+/**
  * Fetches the most recent published user reviews.
  *
  * @param limit - limits the number of reviews to return

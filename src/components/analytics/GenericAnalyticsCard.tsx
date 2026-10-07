@@ -18,9 +18,9 @@ export default function GenericAnalyticsCard(props: GenericAnalyticsCardProps) {
     startTransition(async () => {
       if (!props.onFetchDataAction) return;
 
-      const v = (await props.onFetchDataAction()) ?? 0;
+      const fetchedData = await props.onFetchDataAction();
 
-      setValue(v);
+      setValue(fetchedData);
     });
   }, [props]);
 
