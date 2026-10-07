@@ -195,6 +195,7 @@ export function PostForm({
           <Stack gap="md">
             <TextInput
               label="Post Title"
+              description = "Post Title should be the name of the media being review (ex: movie name, show name, etc)"
               placeholder="Enter the title of your post"
               key="title"
               {...form.getInputProps("title")}
@@ -203,6 +204,7 @@ export function PostForm({
             <Group grow align="flex-start">
               <TextInput
                 label="Slug"
+                description = "The unique identifier used when the post's url gets created (use hyphens as spaces)"
                 placeholder="e.g., my-new-post"
                 key="slug"
                 {...form.getInputProps("slug")}
@@ -210,6 +212,7 @@ export function PostForm({
               <MultiSelect
                 label="Media Type"
                 placeholder="Select media type"
+                description = "Can select multiple types"
                 data={mediaTags.map((tag) => ({
                   value: tag.id,
                   label: tag.displayName,
@@ -219,6 +222,7 @@ export function PostForm({
               />
               <TextInput
                 label="Poster Url"
+                description = "The poster that your audience will see on the catalog"
                 placeholder="https://www.example.com"
                 key={"posterUrl"}
                 {...form.getInputProps("posterUrl")}
@@ -256,10 +260,8 @@ export function PostForm({
             )}
 
             <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
-              <SiteTextEditor
-                placeholder="The content of the Post should include any relevant information about the movie including the 4 minimun: Summary, Category, Drink and Food (what should it be paired with), and other relevant reviews.
-                            In addition, once the content is typed up, you have the option to discard, save the draft for later
-                            or publish it if desired." // From SiteTextEditor and be different in for template, instructions for how to create a page content
+              <SiteTextEditor //
+                description="The content the audience will see on for this post"
                 value={pageContent}
                 onChange={handlePageContentChange}
               />

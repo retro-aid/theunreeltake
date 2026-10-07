@@ -29,7 +29,16 @@ export function CreateTagForm() {
 
     createTagForm.reset();
   };
-
+/**
+ * URT 386 changed: 
+ * Added input description for "Display Name" and "Tag Type"
+ * 
+ * @remarks
+ * the description from <Text Input> is part of "@mantine/core"
+ * 
+ * @returns
+ * returns the same layout but with now the input description added for better user experience
+ */
   return (
     <form
       onSubmit={createTagForm.onSubmit(handleSubmit)}
@@ -38,6 +47,7 @@ export function CreateTagForm() {
       <Group align={"start"}>
         <TextInput
           label={"Display Name"}
+          description = "Tag name would be visible to everyone"
           miw={250}
           key={createTagForm.key("name")}
           {...createTagForm.getInputProps("name")}
@@ -46,6 +56,7 @@ export function CreateTagForm() {
         <Select
           label={"Tag Type"}
           miw={250}
+          description = "Choose which tag category it is"
           key={createTagForm.key("type")}
           data={Object.values(AllowedTagType)}
           allowDeselect={false}
