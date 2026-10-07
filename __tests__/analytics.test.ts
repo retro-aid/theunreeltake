@@ -15,7 +15,7 @@ vi.mock(import("@/lib/prisma"));
  * Checks:
  *    Total amount of pending requests
  *    Returns zero if there are no pending requests
- *    Throws an error when quering fails
+ *    Throws an error when querying fails
  */
 describe("getPendingRequestCount", () => {
   it("returns the number of pending requests", async () => {
@@ -54,7 +54,7 @@ describe("getTotalViews", () => {
   it("returns the number of total views", async () => {
     prisma.post.aggregate.mockResolvedValueOnce({
       _sum: { views: 150 },
-    } as any);
+    } as never);
 
     const totalViews = await getTotalViews();
 
@@ -62,7 +62,9 @@ describe("getTotalViews", () => {
   });
 
   it("returns 0 when the total amount of views equal 0", async () => {
-    prisma.post.aggregate.mockResolvedValueOnce({ _sum: { views: 0 } } as any);
+    prisma.post.aggregate.mockResolvedValueOnce({
+      _sum: { views: 0 },
+    } as never);
 
     const totalViews = await getTotalViews();
 
