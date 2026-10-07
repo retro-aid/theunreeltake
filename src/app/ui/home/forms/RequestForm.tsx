@@ -17,24 +17,17 @@ import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useEffect, useState } from "react";
 import { RequestFormSchema } from "@/lib/schemas";
-import {
-  AllowedTagType,
-  maxTextAreaLength,
-  maxTextInputLength,
-} from "@/lib/constants";
-import { getAllTags, submitRequestForm } from "@/lib/actions";
+import { maxTextAreaLength, maxTextInputLength } from "@/lib/constants";
+import { submitRequestForm } from "@/lib/actions";
+import { getAllTagsAction } from "@/lib/actions/tag-actions";
 import Link from "next/link";
-import { Tag } from "@/generated/prisma/client";
+import type { TagDTO } from "@/lib/dal/dto/tags";
 
 export function RequestForm() {
-  const [mediaTags, setMediaTags] = useState(new Array<Tag>());
+  const [mediaTags, setMediaTags] = useState(new Array<TagDTO>());
 
   useEffect(() => {
-    getAllTags(AllowedTagType.Media).then((result) => {
-      if (result.data) {
-        setMediaTags(result.data);
-      }
-    });
+    getAllTagsAction().then(setMediaTags).catch(console.error);
   }, []);
 
   const form = useForm({
