@@ -1,50 +1,64 @@
-"use client";
-
 import { getAmountOfCommentsAction } from "@/lib/actions/comment-actions";
-import { Chat, Eye, Send, People } from "react-bootstrap-icons";
+import { Chat, Eye, People, Send } from "react-bootstrap-icons";
 import GenericAnalyticsCard from "./GenericAnalyticsCard";
 import { getPendingRequestCountAction } from "@/lib/actions/media-request-actions";
-import {
-  getTotalActiveUsersAction,
-  getTotalViewsAction,
-} from "@/lib/actions/analytics-actions";
+import { getTotalViewsAction } from "@/lib/actions/analytics-actions";
+import { Suspense } from "react";
+import { CardSkeleton } from "./CardSkeleton";
+import { getTotalActiveUsers } from "@/lib/dal/dto/analytics";
 
 export function AmountCommentsCard() {
+  const amountOfComments = getAmountOfCommentsAction("month");
+
   return (
-    <GenericAnalyticsCard
-      icon={Chat}
-      subtitle={"Comments in last 30 days"}
-      onFetchDataAction={() => getAmountOfCommentsAction("month")}
-    />
+    <Suspense fallback={<CardSkeleton />}>
+      <GenericAnalyticsCard
+        icon={Chat}
+        subtitle={"Comments in last 30 days"}
+        valuePromise={amountOfComments}
+      />
+    </Suspense>
   );
 }
 
 export function PendingRequestsCard() {
+  const pendingRequests = getPendingRequestCountAction();
+
   return (
-    <GenericAnalyticsCard
-      icon={Send}
-      subtitle={"Requests pending"}
-      onFetchDataAction={getPendingRequestCountAction}
-    />
+    <Suspense fallback={<CardSkeleton />}>
+      <GenericAnalyticsCard
+        icon={Send}
+        subtitle={"Requests pending"}
+        valuePromise={pendingRequests}
+      />
+    </Suspense>
   );
 }
 
 export function ViewsCard() {
+  const totalViews = getTotalViewsAction();
+
   return (
-    <GenericAnalyticsCard
-      icon={Eye}
-      subtitle={"Total views of posts"}
-      onFetchDataAction={getTotalViewsAction}
-    />
+    <Suspense fallback={<CardSkeleton />}>
+      <GenericAnalyticsCard
+        icon={Eye}
+        subtitle={"Total views of posts"}
+        valuePromise={totalViews}
+      />
+    </Suspense>
   );
 }
 
 export function TotalUsersCard() {
+  const totalActiveUsers = getTotalActiveUsers();
+
   return (
-    <GenericAnalyticsCard
-      icon={People}
-      subtitle={"Total active users"}
-      onFetchDataAction={getTotalActiveUsersAction}
-    />
+    <Suspense fallback={<CardSkeleton />}>
+      <GenericAnalyticsCard
+        icon={People}
+        subtitle={"Total active users"}
+        valuePromise={totalActiveUsers}
+      />
+    </Suspense>
   );
 }
