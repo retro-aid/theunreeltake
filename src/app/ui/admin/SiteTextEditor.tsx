@@ -27,7 +27,11 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-export function SiteTextEditor({ value, onChange, placeholder, }: RichTextEditorProps) {
+export function SiteTextEditor({
+  value,
+  onChange,
+  placeholder,
+}: RichTextEditorProps) {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
     immediatelyRender: false,
@@ -54,15 +58,15 @@ export function SiteTextEditor({ value, onChange, placeholder, }: RichTextEditor
     }
   }, [value, editor]);
 
-/**
- * URT 386 change: add a const to represent if the document contains actual text or media
- */
+  /**
+   * URT 386 change: add a const to represent if the document contains actual text or media
+   */
 
   const isEmpty = editor ? editor.isEmpty : !value || value === "<p></p>";
-/**
- * Near the end of the return, Box is added with the conditional Text component
- * This allows so the placeholder can be showed before the user types
- */
+  /**
+   * Near the end of the return, Box is added with the conditional Text component
+   * This allows so the placeholder can be showed before the user types
+   */
   return (
     <RichTextEditor editor={editor}>
       <RichTextEditor.Toolbar sticky stickyOffset="var(--docs-header-height)">
@@ -109,7 +113,7 @@ export function SiteTextEditor({ value, onChange, placeholder, }: RichTextEditor
           <RichTextEditor.Redo />
         </RichTextEditor.ControlsGroup>
       </RichTextEditor.Toolbar>
- 
+
       <Box style={{ position: "relative" }}>
         {isEmpty && placeholder && (
           <Text

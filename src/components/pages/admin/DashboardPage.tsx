@@ -11,6 +11,10 @@ import {
   Button,
 } from "@mantine/core";
 import { CalendarDate, PersonFill } from "react-bootstrap-icons";
+import { getRecentUserReviewsAction } from "@/lib/actions/analytics-actions";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { AnalyticsDashboard } from "@/components/analytics";
 
 interface RecentPostItem {
   id: string;
@@ -23,10 +27,6 @@ interface RecentPostItem {
     name?: string | null;
   } | null;
 }
-import { getRecentUserReviewsAction } from "@/lib/actions/analytics-actions";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 
 export async function DashboardPage() {
   const contextData = await auth.api.getSession({
