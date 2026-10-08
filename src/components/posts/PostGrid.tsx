@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useState } from "react";
+
 import {
   Text,
   Card,
@@ -7,25 +9,18 @@ import {
   Box,
   Group,
   ActionIcon,
-  Grid,
   Badge,
   Tooltip,
   Button,
 } from "@mantine/core";
 import Link from "next/link";
-import React, { useState } from "react";
 import { DeletePostModal } from "@/app/ui/admin/DeletePostModal";
 import {
   deletePostAction,
   togglePublishedAction,
 } from "@/lib/actions/post-actions";
 import type { PostDTO } from "@/lib/dal/dto/posts";
-
-type GridProps = {
-  data: PostDTO[];
-  icons: Icons;
-  onPostUpdatedAction: () => void;
-};
+import { ScrollableGrid } from "@/components/generic/ScrollableGrid";
 
 type Icons = {
   Edit: React.ElementType;
@@ -33,6 +28,16 @@ type Icons = {
   Stats: React.ElementType;
   Delete: React.ElementType;
 };
+
+/**
+ * Icon component mapping required by the post card actions.
+ */
+type GridProps = {
+  data: PostDTO[];
+  icons: Icons;
+  onPostUpdatedAction: () => void;
+};
+
 
 export function PostCard({
   post,
@@ -44,13 +49,12 @@ export function PostCard({
   onPostUpdatedAction: () => void;
 }) {
   const [opened, setOpened] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const onConfirm = async () => {
     await deletePostAction(post.id);
     setOpened(false);
   };
-
-  const [isPublishing, setIsPublishing] = useState(false);
 
   const handlePublish = async () => {
     setIsPublishing(true);
@@ -171,25 +175,38 @@ export function PostCard({
   );
 }
 
+/**
+ * URT388 change:
+ * Grid layout view for rendering posts using the generic {@link ScrollableGrid}.
+ *
+ * @remarks
+ * - Refactored to delegate layout, responsiveness, and scrolling to the generic `ScrollableGrid` component.
+ * - height can be adjusted such that if, ex. 600, it can make the posts scrollable
+ * - Preserves existing post functionality and cards intact.
+ *
+ * @param props - Grid configuration props defined in {@link GridProps}.
+ * @returns The posts collection rendered inside a scrollable grid container.
+ */
 export function PostGrid({ data, icons, onPostUpdatedAction }: GridProps) {
   return (
-    <Grid>
-      {data.map((post) => (
-        <Grid.Col
-          key={post.id}
-          style={{
-            minWidth: 249,
-            maxWidth: 300,
-          }}
-          span={{ base: 12, sm: 6, md: 3 }}
-        >
-          <PostCard
-            post={post}
-            icons={icons}
-            onPostUpdatedAction={onPostUpdatedAction}
-          />
-        </Grid.Col>
-      ))}
-    </Grid>
+    <ScrollableGrid<PostDTO>
+      data={data}
+      layout="grid"
+      pageSize={0} // Disable pagination so all posts display in a single scrollable viewport
+      height={600} // Change the height to check the scroll works
+      showActions={false}
+      keyExtractor={(post) => post.id}
+      gridColProps={{
+        span: { base: 12, sm: 6, md: 3 },
+        style: { minWidth: 249, maxWidth: 300 },
+      }}
+      renderItem={(post) => (
+        <PostCard
+          post={post}
+          icons={icons}
+          onPostUpdatedAction={onPostUpdatedAction}
+        />
+      )}
+    />
   );
 }
