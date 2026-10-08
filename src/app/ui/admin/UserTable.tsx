@@ -114,17 +114,7 @@ export function UserTable() {
       </Table.Td>
     </Table.Tr>
   ));
-/**
- * URT 386 changed: 
- * Added input description for Edit User
- * 
- * @remarks
- * the description from <Text Input> is part of "@mantine/core"
- * 
- * @returns
- * returns the same layout but with now the input description added for better user experience 
- * the users would be informed if the name is changed and/or the change in the role
- */
+
   return (
     <>
       {activeModal == "delete" && (
@@ -172,14 +162,12 @@ export function UserTable() {
         >
           <TextInput
             label="Change Name"
-            description = "Name will be visible to everyone"
             placeholder="Name"
             {...form.getInputProps("name")}
           ></TextInput>
 
           <Select
             label="Change Role"
-            description = "Role change would change their access abilities"
             placeholder="Role"
             data={["Admin", "User"]}
             {...form.getInputProps("role")}

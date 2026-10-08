@@ -69,17 +69,6 @@ export default function NewsletterPage() {
   const [sending, setSending] = useState(false);
   const [sends, setSends] = useState<PastSend[]>(MOCK_PAST_SENDS);
 
-  /**
- * URT 386 changed: 
- * Added input description for the newsletter body
- * 
- * @remarks
- * the description from <Text Input> is part of "@mantine/core"
- * 
- * @returns
- * returns the same layout but with now the input description added for the body of the newsletter
- */
-
   return (
     <Container size="lg" py="xl">
       <Title order={2} mb="lg">
@@ -129,7 +118,6 @@ export default function NewsletterPage() {
               />
               <Textarea
                 label="Body"
-                description = "The content of the newsletter that the subscribers will see"
                 placeholder="Write your newsletter..."
                 value={body}
                 onChange={(e) => setBody(e.currentTarget.value)}

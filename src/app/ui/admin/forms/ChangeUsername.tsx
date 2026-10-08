@@ -52,16 +52,6 @@ export function ChangeUsername() {
     close();
   };
 
-  /**
- * URT 386 changed: 
- * Added input description for new username
- * 
- * @remarks
- * the description from <Text Input> is part of "@mantine/core"
- * 
- * @returns
- * returns the same layout but with now the input description added for username so users know about new username being visible to everyone
- */
   return (
     <>
       <form onSubmit={usernameForm.onSubmit(handleInitialSubmit)}>
@@ -73,7 +63,6 @@ export function ChangeUsername() {
             radius="md"
             label="Username"
             placeholder="New Username"
-            description = "New username will be visible to everyone"
             mb="md"
             {...usernameForm.getInputProps("username")}
           />
