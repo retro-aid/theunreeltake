@@ -2,13 +2,16 @@
 
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { CreateTagFom, CreateTagSchema } from "@/lib/schemas";
-import { createTag } from "@/lib/actions";
+import {
+  type CreateTagForm as CreateTagFormValues,
+  CreateTagSchema,
+} from "@/lib/schemas/tag-schemas";
+import { createTagAction } from "@/lib/actions/tag-actions";
 import { AllowedTagType } from "@/lib/constants";
 import { Button, Group, Select, TextInput } from "@mantine/core";
 import { PlusLg } from "react-bootstrap-icons";
 
-export default function CreateTagForm() {
+export function CreateTagForm() {
   const createTagForm = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -19,8 +22,8 @@ export default function CreateTagForm() {
     onSubmitPreventDefault: "always",
   });
 
-  const handleSubmit = async (formData: CreateTagFom) => {
-    const { error, success } = await createTag(formData);
+  const handleSubmit = async (formData: CreateTagFormValues) => {
+    const { error, success } = await createTagAction(formData);
 
     if (!success) console.log(error);
 

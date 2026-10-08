@@ -15,13 +15,12 @@ import {
   Select,
 } from "@mantine/core";
 import { Trash, PencilSquare, Floppy } from "react-bootstrap-icons";
-import { deleteTag } from "@/lib/actions";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import { updateTagAction } from "@/lib/actions/tag-actions";
+import { deleteTagAction, updateTagAction } from "@/lib/actions/tag-actions";
 import { AllowedTagType } from "@/lib/constants";
 
-export default function TagsTable({ data }: { data: Tag[] }) {
+export function TagsTable({ data }: { data: Tag[] }) {
   const [opened, { open, close }] = useDisclosure();
   const [selectedTagId, setSelectedTagId] = useState(0);
   const [editTag, setEditTag] = useState<number | null>(null);
@@ -52,7 +51,7 @@ export default function TagsTable({ data }: { data: Tag[] }) {
   };
 
   const handleDelete = async (id: number) => {
-    const { error, success } = await deleteTag(id);
+    const { error, success } = await deleteTagAction(id);
 
     if (!success) {
       console.log(error);
