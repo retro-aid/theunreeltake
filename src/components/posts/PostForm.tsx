@@ -257,9 +257,9 @@ export function PostForm({
 
             <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
               <SiteTextEditor
-              placeholder="The content of the Post should include any relevant information about the movie including the 4 minimun: Summary, Category, Drink and Food (what should it be paired with), and other relevant reviews.
+                placeholder="The content of the Post should include any relevant information about the movie including the 4 minimun: Summary, Category, Drink and Food (what should it be paired with), and other relevant reviews.
                             In addition, once the content is typed up, you have the option to discard, save the draft for later
-                            or publish it if desired."// From SiteTextEditor and be different in for template, instructions for how to create a page content
+                            or publish it if desired." // From SiteTextEditor and be different in for template, instructions for how to create a page content
                 value={pageContent}
                 onChange={handlePageContentChange}
               />
