@@ -8,25 +8,23 @@ import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 
 /**
- * URT 386 changes: implement a description for how the post/template in the Rich Text Editor should followed
- * Changes:
- * - import the Box, Text
- * - Box serves as like a lightweight layout
- * - Text renders the placeholder label
- * - In the interface, placeholder is added so it can be pass dynamic placeholders strings directly
- * - Placeholders would be called in PostForm and AdminTemplate
- * - Placeholder would include on instructions to write a Post or creating a template
+ * URT 386 changes: 
+ * Include a TextInput in order to be used in PostForm and TemplateForm under the Page Content label
+ * 
+ * @remarks
+ * TextInput is part of "@mantine/core"
  */
-import { Box, Text } from "@mantine/core";
+import {TextInput} from "@mantine/core";
 
 import { RichTextEditor } from "@mantine/tiptap";
 
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
+  description?: string;
 }
 
+export function SiteTextEditor({ value, onChange, description, }: RichTextEditorProps) {
 export function SiteTextEditor({
   value,
   onChange,
@@ -58,17 +56,18 @@ export function SiteTextEditor({
     }
   }, [value, editor]);
 
-  /**
-   * URT 386 change: add a const to represent if the document contains actual text or media
-   */
-
-  const isEmpty = editor ? editor.isEmpty : !value || value === "<p></p>";
-  /**
-   * Near the end of the return, Box is added with the conditional Text component
-   * This allows so the placeholder can be showed before the user types
-   */
+/**
+ * returns the option to add an input description under the label for PageContent for the PostForm and TemplateForm
+ */
   return (
-    <RichTextEditor editor={editor}>
+
+    <>
+      <TextInput
+        description={description}
+        styles={{ input: { display: "none" } }}
+      />
+
+    <RichTextEditor editor={editor} mt={description ? "xs" :undefined}>
       <RichTextEditor.Toolbar sticky stickyOffset="var(--docs-header-height)">
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
@@ -132,7 +131,7 @@ export function SiteTextEditor({
           </Text>
         )}
         <RichTextEditor.Content />
-      </Box>
     </RichTextEditor>
+    </>
   );
 }

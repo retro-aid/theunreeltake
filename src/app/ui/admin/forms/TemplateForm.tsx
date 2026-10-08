@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * URT386 Changes:
+ * Added an input description to help users know how to create templates
+ */
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
@@ -101,7 +105,15 @@ export function TemplateForm({
     close();
     router.push("/dashboard/templates");
   };
-
+/**
+ * included the input description so that the users know what to input 
+ * @returns 
+ * the three descriptions (line 142, 150 & 158) that is added under the label with short description
+ * 
+ * @remarks
+ * The description = "" comes from the TextInput - part of "@mantine/core"
+ * In line 159, it comes from "@SiteTextEditor" which also use TextInput as part of "@mantine/core"
+ */
   return (
     <>
       <DeletePostModal
@@ -128,6 +140,7 @@ export function TemplateForm({
           <Stack gap="md">
             <TextInput
               label="Template Title"
+              description = "Name of the template"
               placeholder="Enter the title of your template"
               key="title"
               {...form.getInputProps("title")}
@@ -135,6 +148,7 @@ export function TemplateForm({
 
             <TextInput
               label="Template Description"
+              description = "Short description of what the template includes"
               placeholder="Enter the description of your template"
               key="description"
               {...form.getInputProps("description")}
@@ -142,8 +156,7 @@ export function TemplateForm({
 
             <Input.Wrapper label="Page Content" error={form.errors.pageContent}>
               <SiteTextEditor
-                // URT386 change: include an instruction for the user as a placeholder.
-                placeholder="Create a template for a post. You can decide whether you can make it public or not. Making it public ensures that the admin and users can use the template."
+                description="Content of the template"
                 value={form.getInputProps("pageContent").defaultValue}
                 onChange={form.getInputProps("pageContent").onChange}
               />
