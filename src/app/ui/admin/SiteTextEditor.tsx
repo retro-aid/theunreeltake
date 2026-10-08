@@ -25,6 +25,11 @@ interface RichTextEditorProps {
 }
 
 export function SiteTextEditor({ value, onChange, description, }: RichTextEditorProps) {
+export function SiteTextEditor({
+  value,
+  onChange,
+  placeholder,
+}: RichTextEditorProps) {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
     immediatelyRender: false,
@@ -108,6 +113,23 @@ export function SiteTextEditor({ value, onChange, description, }: RichTextEditor
         </RichTextEditor.ControlsGroup>
       </RichTextEditor.Toolbar>
 
+      <Box style={{ position: "relative" }}>
+        {isEmpty && placeholder && (
+          <Text
+            c="dimmed"
+            size="sm"
+            onClick={() => editor?.commands.focus()}
+            style={{
+              position: "absolute",
+              top: "var(--mantine-spacing-md, 16px)",
+              left: "var(--mantine-spacing-md, 16px)",
+              pointerEvents: "none", // lets clicks pass straight to the editor
+              userSelect: "none",
+            }}
+          >
+            {placeholder}
+          </Text>
+        )}
         <RichTextEditor.Content />
     </RichTextEditor>
     </>
