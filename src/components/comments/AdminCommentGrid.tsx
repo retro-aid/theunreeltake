@@ -1,14 +1,9 @@
 "use client";
 
 import { CulledAdminComment } from "@/lib/dal/dto/comments";
-import { Group, Pagination, ScrollArea, Stack } from "@mantine/core";
 import { AdminCommentCard } from "@/components/comments/cards";
-import React, { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  ActionButtons,
-  ActionMenuOption,
-} from "@/components/generic/ActionButtons";
+import { ActionMenuOption } from "@/components/generic/ActionButtons";
+import { ScrollableGrid } from "@/components/generic/ScrollableGrid";
 
 const sortOptions: ActionMenuOption[] = [
   { label: "User Name (A-Z)", value: "username-asc" },
@@ -40,78 +35,33 @@ function sortComments(comments: CulledAdminComment[], sort: string) {
   });
 }
 
-export function chunkData<T>(array: T[], chunkSize: number): T[][] {
-  if (!array.length) return [];
-
-  const head = array.slice(0, chunkSize);
-  const tail = array.slice(chunkSize);
-
-  return [head, ...chunkData(tail, chunkSize)];
-}
-
+/**
+ * URT 388 change:
+ * Renders the admin comments feed using the generic {@link ScrollableGrid} component.
+ * Basically it still keeps the comments layout and doesn't affect its components
+ * 
+ * @remarks
+ * Refactored to utilize `ScrollableGrid<CulledAdminComment>` configured in `stack` mode,
+ * paginated to 5 items per batch with built-in sorting and height constraints.
+ *
+ * @param props - Props containing the comments to display.
+ * @returns The comment card stream wrapped in the generic scrollable grid.
+ */
 export function AdminCommentGrid({
   comments,
 }: {
   comments: CulledAdminComment[];
 }) {
-  const viewport = useRef<HTMLDivElement>(null);
-  const [page, setPage] = useState(1);
-  const router = useRouter();
-  const [sort, setSort] = useState("");
-
-  const chunkedComments = chunkData(sortComments(comments, sort), 5);
-
-  let pageItems: React.JSX.Element[] = [];
-
-  if (chunkedComments.length > 0) {
-    pageItems = chunkedComments[page - 1].map((item) => (
-      <AdminCommentCard key={item.id} comment={item} />
-    ));
-  }
-
-  const scrollToTop = () =>
-    viewport.current!.scrollTo({ top: 0, behavior: "smooth" });
-
-  const handleSort = (value: string) => {
-    setSort(value);
-    setPage(1);
-  };
-
-  const handlePageChange = (p: number) => {
-    setPage(p);
-    scrollToTop();
-  };
-
   return (
-    <>
-      <Group mb={"md"} justify={"flex-end"}>
-        <ActionButtons
-          sort={{
-            label: "Sort By",
-            options: sortOptions,
-            onSelect: handleSort,
-          }}
-          onRefreshAction={() => router.refresh()}
-        />
-      </Group>
-      <ScrollArea
-        bd={"1px solid gray.3"}
-        bg={"gray.0"}
-        p={"lg"}
-        bdrs={"md"}
-        h={700}
-        viewportRef={viewport}
-      >
-        <Stack>{pageItems}</Stack>
-      </ScrollArea>
-
-      <Pagination
-        total={chunkedComments.length}
-        value={page}
-        onChange={handlePageChange}
-        siblings={1}
-        py={"lg"}
-      />
-    </>
+    <ScrollableGrid<CulledAdminComment>
+      data={comments}
+      layout="stack"
+      pageSize={5}
+      height={700}
+      keyExtractor={(item) => item.id}
+      renderItem={(comment) => <AdminCommentCard comment={comment} />}
+      sortOptions={sortOptions}
+      onSort={sortComments}
+    />
   );
 }
