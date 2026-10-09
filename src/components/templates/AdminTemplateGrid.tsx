@@ -10,32 +10,20 @@ import {
   Tooltip,
   Divider,
   Badge,
+  Button,
 } from "@mantine/core";
 import Link from "next/link";
 import React, { useState } from "react";
-import { DeletePostModal } from "./DeletePostModal";
+import { PencilSquare, Trash, PlusSquare } from "react-bootstrap-icons";
+import { DeletePostModal } from "@/app/ui/admin/DeletePostModal";
 import { PostTemplate } from "@/generated/prisma/client";
 import { deletePostTemplateAction } from "@/lib/actions/template-actions";
 
 type GridProps = {
   data: PostTemplate[];
-  icons: Icons;
 };
 
-type Icons = {
-  Edit: React.ElementType;
-  Chat: React.ElementType;
-  Stats: React.ElementType;
-  Delete: React.ElementType;
-};
-
-export function PostCard({
-  template,
-  icons,
-}: {
-  template: PostTemplate;
-  icons: Icons;
-}) {
+export function PostCard({ template }: { template: PostTemplate }) {
   const [opened, setOpened] = useState(false);
   const onConfirm = async () => {
     await deletePostTemplateAction(template.id);
@@ -112,7 +100,7 @@ export function PostCard({
                   bdrs={"xs"}
                   color={"black"}
                 >
-                  <icons.Edit size={16} />
+                  <PencilSquare size={16} />
                 </ActionIcon>
               </Tooltip>
 
@@ -124,7 +112,7 @@ export function PostCard({
                   color={"red"}
                   onClick={() => setOpened(true)}
                 >
-                  <icons.Delete size={16} />
+                  <Trash size={16} />
                 </ActionIcon>
               </Tooltip>
             </Group>
@@ -141,7 +129,14 @@ export function PostCard({
   );
 }
 
-export function TemplateGrid({ data, icons }: GridProps) {
+/**
+ * Grid of template cards.
+ *
+ * Icons are imported here now instead of passed in as a prop, since a server
+ * component can't pass components down to a client component.
+ *
+ */
+export function TemplateGrid({ data }: GridProps) {
   return (
     <Grid>
       {data.map((template) => (
@@ -150,9 +145,27 @@ export function TemplateGrid({ data, icons }: GridProps) {
           style={{ minWidth: 250 }}
           span={{ base: 12, sm: 6, md: 3 }}
         >
-          <PostCard template={template} icons={icons} />
+          <PostCard template={template} />
         </Grid.Col>
       ))}
     </Grid>
+  );
+}
+
+/**
+ * Button that links to the create template page.
+ *
+ * Kept in a client component because Mantine's `component={Link}` prop doesn't
+ * work in server components.
+ */
+export function NewTemplateButton() {
+  return (
+    <Button
+      component={Link}
+      href="/dashboard/templates/create"
+      leftSection={<PlusSquare size={16} />}
+    >
+      New Template
+    </Button>
   );
 }
