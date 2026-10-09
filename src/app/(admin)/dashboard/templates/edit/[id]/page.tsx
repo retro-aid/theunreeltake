@@ -1,31 +1,9 @@
-import { TemplateForm } from "@/components/templates/TemplateForm";
-import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import { EditTemplatePage } from "@/components/pages/admin";
 
-export default async function EditTemplatePage({
+export default function Page({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-
-  const data = await prisma.postTemplate.findUnique({
-    where: { id: id },
-  });
-
-  if (!data) redirect("/dashboard/templates");
-
-  const template = {
-    id: data.id,
-    title: data.title,
-    description: data.description,
-    htmlContent: data.htmlContent,
-    isPublic: data.isPublic,
-  };
-
-  return (
-    <div>
-      <TemplateForm template={template} />
-    </div>
-  );
+  return <EditTemplatePage params={params} />;
 }

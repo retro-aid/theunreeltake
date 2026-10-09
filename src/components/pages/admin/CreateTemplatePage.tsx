@@ -1,6 +1,6 @@
 import { TemplateForm } from "@/components/templates/TemplateForm";
 
-export default async function CreateTemplatePage({
+export async function CreateTemplatePage({
   searchParams,
 }: {
   searchParams: Promise<{

@@ -2,7 +2,7 @@ import { TemplateForm } from "@/components/templates/TemplateForm";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-export default async function EditTemplatePage({
+export async function EditTemplatePage({
   params,
 }: {
   params: Promise<{ id: string }>;

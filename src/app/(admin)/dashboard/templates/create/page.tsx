@@ -1,6 +1,6 @@
-import { TemplateForm } from "@/components/templates/TemplateForm";
+import { CreateTemplatePage } from "@/components/pages/admin";
 
-export default async function CreateTemplatePage({
+export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -10,21 +10,5 @@ export default async function CreateTemplatePage({
     isPublic?: boolean;
   }>;
 }) {
-  const { title, description, htmlContent, isPublic } = await searchParams;
-
-  const prefill =
-    title || description || htmlContent || isPublic
-      ? {
-          title: title ?? "",
-          description: description ?? "",
-          htmlContent: htmlContent ?? "",
-          isPublic: isPublic ?? false,
-        }
-      : undefined;
-
-  return (
-    <div>
-      <TemplateForm prefill={prefill} />
-    </div>
-  );
+  return <CreateTemplatePage searchParams={searchParams} />;
 }
