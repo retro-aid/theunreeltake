@@ -16,8 +16,8 @@ import {
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useEffect, useState } from "react";
-import { RequestFormSchema } from "@/lib/schemas";
-import { maxTextAreaLength, maxTextInputLength } from "@/lib/constants";
+import { RequestFormSchema } from "@/lib/schemas/request-schemas";
+import { maxTextAreaLength, maxTextInputLength} from "@/lib/constants";
 import { submitRequestForm } from "@/lib/actions";
 import { getAllTagsAction } from "@/lib/actions/tag-actions";
 import Link from "next/link";
