@@ -14,7 +14,7 @@ import {
   Button,
 } from "@mantine/core";
 import Link from "next/link";
-import { DeletePostModal } from "@/app/ui/admin/DeletePostModal";
+import { DeletePostModal } from "@/components/posts/DeletePostModal";
 import {
   deletePostAction,
   togglePublishedAction,
@@ -37,7 +37,6 @@ type GridProps = {
   icons: Icons;
   onPostUpdatedAction: () => void;
 };
-
 
 export function PostCard({
   post,

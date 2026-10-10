@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { CulledAdminComment } from "@/lib/dal/dto/comments";
 import { AdminCommentGrid } from "./AdminCommentGrid";
 import { SearchBar } from "@/components/generic/SearchBar";
-import {Flex} from "@mantine/core";
+import { Flex } from "@mantine/core";
 
 export function filterAdminComments(
   comments: CulledAdminComment[],
@@ -44,15 +44,17 @@ export function AdminCommentSearch({
 
   return (
     <>
-    <Flex justify={"space-between"} gap={"md"}>
-      <Flex miw={500}>
-      <SearchBar
-		    initialValue={search}
-        placeholderText={"Search by post, message, username, email or user ID"}
-        onSearchAction={setSearch}
-      />
+      <Flex justify={"space-between"} gap={"md"}>
+        <Flex miw={500}>
+          <SearchBar
+            initialValue={search}
+            placeholderText={
+              "Search by post, message, username, email or user ID"
+            }
+            onSearchAction={setSearch}
+          />
+        </Flex>
       </Flex>
-    </Flex>
       <AdminCommentGrid key={search} comments={filtered} />
     </>
   );

@@ -46,15 +46,15 @@ export function ForgotPassword() {
   };
 
   /**
- * URT 386 changed: 
- * Added input description for forgot password
- * 
- * @remarks
- * the description from <Text Input> is part of "@mantine/core"
- * 
- * @returns
- * returns the same layout but with now the input description added for user to expect the password reset would be sent to the email inputted 
- */
+   * URT 386 changed:
+   * Added input description for forgot password
+   *
+   * @remarks
+   * the description from <Text Input> is part of "@mantine/core"
+   *
+   * @returns
+   * returns the same layout but with now the input description added for user to expect the password reset would be sent to the email inputted
+   */
 
   return (
     <Container size={420} my={40}>
@@ -94,7 +94,7 @@ export function ForgotPassword() {
             <form onSubmit={forgotPasswordForm.onSubmit(handleForgotPassword)}>
               <TextInput
                 label={"Email"}
-                description = "Password reset request will be sent to that email"
+                description="Password reset request will be sent to that email"
                 placeholder={"johndoe@example.com"}
                 radius={"md"}
                 key={"email"}

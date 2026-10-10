@@ -1,2 +1,2 @@
-export * from "./AdminTemplateGrid"
-export * from "./TemplateForm"
+export * from "./AdminTemplateGrid";
+export * from "./TemplateForm";

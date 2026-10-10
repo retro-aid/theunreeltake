@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import React, { useState } from "react";
 import { PencilSquare, Trash, PlusSquare } from "react-bootstrap-icons";
-import { DeletePostModal } from "@/app/ui/admin/DeletePostModal";
+import { DeletePostModal } from "@/components/posts/DeletePostModal";
 import { PostTemplate } from "@/generated/prisma/client";
 import { deletePostTemplateAction } from "@/lib/actions/template-actions";
 

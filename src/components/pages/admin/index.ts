@@ -5,3 +5,4 @@ export * from "./TagsPage";
 export * from "./TemplatesPage";
 export * from "./CreateTemplatePage";
 export * from "./EditTemplatePage";
+export * from "./EditPostPage";

@@ -1,7 +1,7 @@
 "use client";
 /**
  * URT 388 changes: create a ScrollableGrid that would be used for PostGrid and AdminCommentGrid
- * Grabbing the common things from both tsx and paste it here so that both Grid can be scrollable 
+ * Grabbing the common things from both tsx and paste it here so that both Grid can be scrollable
  */
 import React, { useRef, useState, useMemo } from "react";
 import { Group, Pagination, ScrollArea, Stack, Grid } from "@mantine/core";
@@ -78,7 +78,7 @@ export function ScrollableGrid<T>({
 
   const chunkedData = useMemo(
     () => (pageSize > 0 ? chunkData(processedData, pageSize) : [processedData]),
-    [processedData, pageSize]
+    [processedData, pageSize],
   );
 
   const currentPageItems = chunkedData[page - 1] ?? [];
