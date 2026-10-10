@@ -27,7 +27,7 @@ export default function GridReview({
             withBorder
             radius="md"
             p="md"
-						// Select the request when the card is clicked
+            // Select the request when the card is clicked
             onClick={() => onSelectAction?.(item.id)}
             style={{
               cursor: "pointer",
@@ -37,7 +37,7 @@ export default function GridReview({
           >
             <Stack gap={4}>
               <Title order={4}>{item.title}</Title>
-							{/*Email if given, otherwise resort to anoymous*/}
+              {/*Email if given, otherwise resort to anoymous*/}
               <Text size="xs" c="dimmed">
                 Requested By: {item.name ?? "Anonymous"}
               </Text>

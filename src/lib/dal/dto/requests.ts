@@ -72,10 +72,14 @@ export async function getMediaRequests({
 // Resend email service setup
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function replyToRequest(
-  requestId: string,
-  message: string,
-) {
+export async function replyToRequest(requestId: string, message: string) {
+  if (!requestId.trim()) {
+    throw new Error("Request ID cannot be empty");
+  }
+
+  if (!message.trim()) {
+    throw new Error("Message cannot be empty");
+  }
   const request = await prisma.request.findUnique({
     where: { id: requestId },
   });
@@ -99,8 +103,11 @@ export async function replyToRequest(
   });
 }
 //handles request deletion
-export async function deleteRequest(id:string){
-    try {
+export async function deleteRequest(id: string) {
+  if (!id.trim()) {
+    throw new Error("Request ID cannot be empty");
+  }
+  try {
     await prisma.request.delete({
       where: { id },
     });

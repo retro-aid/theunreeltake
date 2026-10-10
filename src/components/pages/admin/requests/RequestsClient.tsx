@@ -19,36 +19,40 @@ import { useState, useEffect, useTransition, useCallback } from "react";
 import GridReview from "@/components/requests/GridReview";
 import Link from "next/link";
 import { RequestDTO } from "@/lib/dal/dto/requests";
-import { replyToRequestAction, getMediaRequestsAction, deleteRequestAction } from "@/lib/actions/request-actions";
+import {
+  replyToRequestAction,
+  getMediaRequestsAction,
+  deleteRequestAction,
+} from "@/lib/actions/request-actions";
 import { SearchBar } from "@/components/generic/SearchBar";
 import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
 const limit = 10;
 
 export default function DashboardRequestsPage() {
-	//stores the currently selected request
+  //stores the currently selected request
   const [selectedId, setSelectedId] = useState<string | undefined>();
-	//stores the requests currently displayed
+  //stores the requests currently displayed
   const [requests, setRequests] = useState<RequestDTO[]>([]);
-	//retreives the currently selected request
+  //retreives the currently selected request
   const selectedItem = requests.find((item) => item.id === selectedId);
-	//stores current page and filters
+  //stores current page and filters
   const [page, setPage] = useState(1);
   const [type, setType] = useState("");
   const [sort, setSort] = useState("");
   const [search, setSearch] = useState("");
-	//stores the total amt of pages
+  //stores the total amt of pages
   const [total, setTotal] = useState(0);
-	//controls the delete and reply modals
+  //controls the delete and reply modals
   const [deleteOpened, { open: openDelete, close: closeDelete }] =
     useDisclosure(false);
   const [replyOpened, { open: openReply, close: closeReply }] =
     useDisclosure(false);
 
-	//stores reply msg and sending state
+  //stores reply msg and sending state
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
-	//tracks whether data is being loaded
+  //tracks whether data is being loaded
   const [isLoading, startTransition] = useTransition();
 
   //Handles the search values when user searches via searchbar
@@ -63,23 +67,23 @@ export default function DashboardRequestsPage() {
     setPage(1);
     setSelectedId(undefined);
   };
-	//handle sorting the request
+  //handle sorting the request
   const handleSort = (value: string) => {
     setSort(value);
     setPage(1);
     setSelectedId(undefined);
   };
-	//handles deleting the selected requests
+  //handles deleting the selected requests
   const handleDelete = async () => {
-    try{
-        await deleteRequestAction(selectedItem!.id);
-        closeDelete();
-        refresh();
-    }catch (error){
-        console.error("Delete failed", error);
+    try {
+      await deleteRequestAction(selectedItem!.id);
+      closeDelete();
+      refresh();
+    } catch (error) {
+      console.error("Delete failed", error);
     }
   };
-	//sends a reply to the selected request
+  //sends a reply to the selected request
   const handleSend = async () => {
     if (!selectedItem || !message.trim()) return;
     setSending(true);
@@ -93,17 +97,23 @@ export default function DashboardRequestsPage() {
       setSending(false);
     }
   };
-	//grabs the current request using the selected filter and page
+  //grabs the current request using the selected filter and page
   const refresh = useCallback(() => {
     startTransition(async () => {
-      const res = await getMediaRequestsAction({ page, limit, search, type, sort });
+      const res = await getMediaRequestsAction({
+        page,
+        limit,
+        search,
+        type,
+        sort,
+      });
       if (res.success) {
         setRequests(res.data);
         setTotal(Math.ceil(res.total / limit));
       }
     });
   }, [page, search, type, sort]);
-	//refresh the page whenever the page or filter changes
+  //refresh the page whenever the page or filter changes
   useEffect(() => {
     refresh();
   }, [refresh]);
