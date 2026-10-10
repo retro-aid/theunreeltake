@@ -15,7 +15,13 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState, useEffect, useTransition, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useTransition,
+  useCallback,
+  useContext,
+} from "react";
 import GridReview from "./gridReview";
 import Link from "next/link";
 import { getMediaRequests, replyToRequest } from "@/lib/actions";
@@ -23,9 +29,18 @@ import { SearchBar } from "@/components/generic/SearchBar";
 import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
 import { Request } from "@/generated/prisma/client";
+import { redirect } from "next/navigation";
+import { AuthContext } from "@/app/ui/admin/AuthContext";
 const limit = 10;
 
+/**
+ * Creates the UI component for the Dashboard page. Redirects back to dashboard if the user isn't an admin
+ * @returns renders the page
+ */
 export default function DashboardRequestsPage() {
+  const authContext = useContext(AuthContext);
+  if (authContext.user.role != "admin") redirect("/dashboard");
+
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [requests, setRequests] = useState<Request[]>([]);
   const selectedItem = requests.find((item) => item.id === selectedId);

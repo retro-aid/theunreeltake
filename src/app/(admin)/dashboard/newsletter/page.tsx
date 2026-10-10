@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthContext } from "@/app/ui/admin/AuthContext";
 import {
   Container,
   Title,
@@ -16,7 +17,8 @@ import {
   Stack,
   Divider,
 } from "@mantine/core";
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { useContext, useState } from "react";
 
 {
   /*Mock data */
@@ -63,7 +65,14 @@ const MOCK_PAST_SENDS: PastSend[] = [
   },
 ];
 
+/**
+ * Creates the UI component for the Newsletter page. Redirects back to dashboard if the user isn't an admin
+ * @returns renders the page
+ */
 export default function NewsletterPage() {
+  const authContext = useContext(AuthContext);
+  if (authContext.user.role != "admin") redirect("/dashboard");
+
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
