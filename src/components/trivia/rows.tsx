@@ -7,7 +7,7 @@ import {
   updateQuestionAction,
   publishQuestionAction,
 } from "@/lib/actions/trivia-actions";
-import { TriviaQuestionSchema } from "@/lib/schemas";
+import { TriviaQuestionSchema } from "@/lib/schemas/trivia-schemas";
 import {
   Badge,
   Button,

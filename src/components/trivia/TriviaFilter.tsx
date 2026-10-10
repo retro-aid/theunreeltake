@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import { TriviaTable } from "./tables";
 import { createTriviaQuestionAction } from "@/lib/actions/trivia-actions";
-import { TriviaQuestionSchema } from "@/lib/schemas";
+import { TriviaQuestionSchema } from "@/lib/schemas/trivia-schemas";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 
