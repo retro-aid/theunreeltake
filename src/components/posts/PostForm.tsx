@@ -3,7 +3,7 @@
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
-import { DeletePostModal } from "@/app/ui/admin/DeletePostModal";
+import { DeletePostModal } from "@/components/posts/DeletePostModal";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import {
   Button,
@@ -21,8 +21,8 @@ import {
   deletePostAction,
   updatePostAction,
 } from "@/lib/actions/post-actions";
-import { CreatePostSchema } from "@/lib/schemas";
-import { SiteTextEditor } from "@/app/ui/admin/SiteTextEditor";
+import { CreatePostSchema } from "@/lib/schemas/post-schemas";
+import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
 import { useEffect, useState } from "react";
 import { getPostTemplatesAction } from "@/lib/actions/template-actions";
 import type { TagDTO } from "@/lib/dal/dto/tags";
@@ -195,7 +195,7 @@ export function PostForm({
           <Stack gap="md">
             <TextInput
               label="Post Title"
-              description = "Post Title should be the name of the media being review (ex: movie name, show name, etc)"
+              description="Post Title should be the name of the media being review (ex: movie name, show name, etc)"
               placeholder="Enter the title of your post"
               key="title"
               {...form.getInputProps("title")}
@@ -204,7 +204,7 @@ export function PostForm({
             <Group grow align="flex-start">
               <TextInput
                 label="Slug"
-                description = "The unique identifier used when the post's url gets created (use hyphens as spaces)"
+                description="The unique identifier used when the post's url gets created (use hyphens as spaces)"
                 placeholder="e.g., my-new-post"
                 key="slug"
                 {...form.getInputProps("slug")}
@@ -212,7 +212,7 @@ export function PostForm({
               <MultiSelect
                 label="Media Type"
                 placeholder="Select media type"
-                description = "Can select multiple types"
+                description="Can select multiple types"
                 data={mediaTags.map((tag) => ({
                   value: tag.id,
                   label: tag.displayName,
@@ -222,7 +222,7 @@ export function PostForm({
               />
               <TextInput
                 label="Poster Url"
-                description = "The poster that your audience will see on the catalog"
+                description="The poster that your audience will see on the catalog"
                 placeholder="https://www.example.com"
                 key={"posterUrl"}
                 {...form.getInputProps("posterUrl")}

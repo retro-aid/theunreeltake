@@ -39,7 +39,7 @@ function sortComments(comments: CulledAdminComment[], sort: string) {
  * URT 388 change:
  * Renders the admin comments feed using the generic {@link ScrollableGrid} component.
  * Basically it still keeps the comments layout and doesn't affect its components
- * 
+ *
  * @remarks
  * Refactored to utilize `ScrollableGrid<CulledAdminComment>` configured in `stack` mode,
  * paginated to 5 items per batch with built-in sorting and height constraints.

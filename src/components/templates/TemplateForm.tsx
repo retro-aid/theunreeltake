@@ -7,7 +7,7 @@
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
-import { DeletePostModal } from "@/app/ui/admin/DeletePostModal";
+import { DeletePostModal } from "@/components/posts/DeletePostModal";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import {
   Button,
@@ -19,7 +19,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { SiteTextEditor } from "@/app/ui/admin/SiteTextEditor";
+import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
 import { CreatePostTemplateSchema } from "@/lib/schemas/template-schemas";
 import {
   createPostTemplateAction,
@@ -105,15 +105,15 @@ export function TemplateForm({
     close();
     router.push("/dashboard/templates");
   };
-/**
- * included the input description so that the users know what to input 
- * @returns 
- * the three descriptions (line 142, 150 & 158) that is added under the label with short description
- * 
- * @remarks
- * The description = "" comes from the TextInput - part of "@mantine/core"
- * In line 159, it comes from "@SiteTextEditor" which also use TextInput as part of "@mantine/core"
- */
+  /**
+   * included the input description so that the users know what to input
+   * @returns
+   * the three descriptions (line 142, 150 & 158) that is added under the label with short description
+   *
+   * @remarks
+   * The description = "" comes from the TextInput - part of "@mantine/core"
+   * In line 159, it comes from "@SiteTextEditor" which also use TextInput as part of "@mantine/core"
+   */
   return (
     <>
       <DeletePostModal
@@ -140,7 +140,7 @@ export function TemplateForm({
           <Stack gap="md">
             <TextInput
               label="Template Title"
-              description = "Name of the template"
+              description="Name of the template"
               placeholder="Enter the title of your template"
               key="title"
               {...form.getInputProps("title")}
@@ -148,7 +148,7 @@ export function TemplateForm({
 
             <TextInput
               label="Template Description"
-              description = "Short description of what the template includes"
+              description="Short description of what the template includes"
               placeholder="Enter the description of your template"
               key="description"
               {...form.getInputProps("description")}
