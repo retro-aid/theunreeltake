@@ -1,8 +1,5 @@
-import { TriviaTable } from "@/components/trivia";
-import { getAllQuestionsAction } from "@/lib/actions/trivia-actions";
+import DashboardTriviaPage from "@/components/trivia/TriviaPage";
 
-export default async function DashboardTriviaPage() {
-  const questions = await getAllQuestionsAction();
+const Page = () => <DashboardTriviaPage />;
 
-  return <TriviaTable data={questions} />;
-}
+export default Page;
