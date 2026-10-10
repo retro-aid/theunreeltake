@@ -1,14 +1,16 @@
 "use client";
 
 import { Title, Stack, Paper, SimpleGrid, Text } from "@mantine/core";
-import { Request } from "@/generated/prisma/client";
+import { RequestDTO } from "@/lib/dal/dto/requests";
 
+//Props for component
 type GridReviewProps = {
-  data: Request[];
+  data: RequestDTO[];
   selectedId?: string;
   onSelectAction?: (id: string) => void;
 };
 
+//Displays Requests in a responsive grid
 export default function GridReview({
   data,
   selectedId,
@@ -25,6 +27,7 @@ export default function GridReview({
             withBorder
             radius="md"
             p="md"
+						// Select the request when the card is clicked
             onClick={() => onSelectAction?.(item.id)}
             style={{
               cursor: "pointer",
@@ -34,7 +37,7 @@ export default function GridReview({
           >
             <Stack gap={4}>
               <Title order={4}>{item.title}</Title>
-
+							{/*Email if given, otherwise resort to anoymous*/}
               <Text size="xs" c="dimmed">
                 Requested By: {item.name ?? "Anonymous"}
               </Text>
