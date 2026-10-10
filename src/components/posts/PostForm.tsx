@@ -21,7 +21,7 @@ import {
   deletePostAction,
   updatePostAction,
 } from "@/lib/actions/post-actions";
-import { CreatePostSchema } from "@/lib/schemas";
+import { CreatePostSchema } from "@/lib/schemas/post-schemas";
 import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
 import { useEffect, useState } from "react";
 import { getPostTemplatesAction } from "@/lib/actions/template-actions";
