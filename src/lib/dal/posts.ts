@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import type { PostEditDTO, PostDTO } from "./dto/posts";
 import { Prisma } from "@/generated/prisma/client";
+import { getCurrentSession } from "@/lib/dal/utils";
 
 export async function deletePost(id: string) {
   try {
@@ -65,18 +66,8 @@ export async function getAllPosts({
   sort?: string;
 }) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCurrentSession();
 
-    if (!session?.user) {
-      return {
-        success: false,
-        data: [],
-        total: 0,
-        error: "You must be logged in.",
-      };
-    }
     const where = {
       title: {
         contains: search,
@@ -117,6 +108,15 @@ export async function getAllPosts({
       total,
     };
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return {
+        success: false,
+        data: [],
+        total: 0,
+        error: "You must be logged in.",
+      };
+    }
+
     console.error("Failed to fetch posts:", error);
 
     return {
