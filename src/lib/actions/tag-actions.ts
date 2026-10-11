@@ -49,7 +49,7 @@ export async function createTagAction(tag: CreateTagForm) {
 export async function deleteTagAction(id: number) {
   try {
     await deleteTag(id);
-    revalidatePath("/dashbaord/tags");
+    revalidatePath("/dashboard/tags");
     return { error: null, success: true };
   } catch (error) {
     console.error("Failed to delete tag:", error);
