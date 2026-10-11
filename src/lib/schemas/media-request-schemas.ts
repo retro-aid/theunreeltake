@@ -1,9 +1,5 @@
 import z from "zod";
-import {
-  maxTextInputLength,
-  maxTextAreaLength,
-} from "@/lib/constants";
-
+import { maxTextInputLength, maxTextAreaLength } from "@/lib/constants";
 
 export type RequestForm = z.infer<typeof RequestFormSchema>;
 
