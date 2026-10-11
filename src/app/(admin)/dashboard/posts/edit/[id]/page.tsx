@@ -1,7 +1,6 @@
 import { EditPostPage } from "@/components/pages/admin";
 
-
-const Page = ({ params }: {params: Promise<{ id: string }>}) => (
+const Page = ({ params }: { params: Promise<{ id: string }> }) => (
   <EditPostPage params={params} />
 );
 

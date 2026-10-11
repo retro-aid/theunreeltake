@@ -112,8 +112,6 @@ export const ChangeUsernameSchema = z.object({
 
 export type ChangeUsernameForm = z.infer<typeof ChangeUsernameSchema>;
 
-
-
 export const EditUserSchema = z.object({
   name: z
     .string()

@@ -7,4 +7,4 @@ export * from "./NewPostButton";
 export * from "./PostForm";
 export * from "./PostGrid";
 export * from "./PostsButton";
-export * from "./SiteTextEditor"
+export * from "./SiteTextEditor";

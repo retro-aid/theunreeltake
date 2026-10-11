@@ -5,12 +5,12 @@ import { getPostAction } from "@/lib/actions/post-actions";
 import { GetPostEditDTO } from "@/lib/dal/dto/posts";
 
 /**
- * 
- * Users opens this page to edit posts from getting a post id. 
- * 
+ *
+ * Users opens this page to edit posts from getting a post id.
+ *
  * @param params - Gets the Post's ID from the URL
- * 
- * 
+ *
+ *
  */
 export async function EditPostPage({
   params,
