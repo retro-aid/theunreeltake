@@ -1,14 +1,27 @@
 "use client";
 
 import { Title, Stack, Paper, SimpleGrid, Text } from "@mantine/core";
-import { Request } from "@/generated/prisma/client";
+import { RequestDTO } from "@/lib/dal/dto/media-requests";
 
 type GridReviewProps = {
-  data: Request[];
+  data: RequestDTO[];
   selectedId?: string;
   onSelectAction?: (id: string) => void;
 };
-
+/**
+ * Displays media requests in a responsive grid of selectable cards.
+ *
+ * Each card shows the request title, requester name, email address, and
+ * message. Requests without a name are labeled as anonymous. The currently
+ * selected request is visually highlighted, and clicking a card gives
+ * the optional selection callback.
+ *
+ * @param props - The data and selection properties used to render the grid.
+ * @param props.data - The media requests to display.
+ * @param props.selectedId - The id of the currently selected request.
+ * @param props.onSelectAction - Callback invoked when a request card is clicked.
+ * @returns A responsive grid of media-request cards.
+ */
 export default function GridReview({
   data,
   selectedId,
@@ -34,7 +47,6 @@ export default function GridReview({
           >
             <Stack gap={4}>
               <Title order={4}>{item.title}</Title>
-
               <Text size="xs" c="dimmed">
                 Requested By: {item.name ?? "Anonymous"}
               </Text>
