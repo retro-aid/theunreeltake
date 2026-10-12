@@ -148,6 +148,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  * @throws {Error} If the request cannot be found or an operation fails.
  */
 export async function replyToRequest(requestId: string, message: string) {
+  if (!message.trim()) {
+  	throw new Error("Message cannot be empty");
+	}
   const request = await prisma.request.findUnique({
     where: { id: requestId },
   });
@@ -178,7 +181,10 @@ export async function replyToRequest(requestId: string, message: string) {
  * @throws {Error} If the deletion fails.
  */
 export async function deleteRequest(id: string) {
-  try {
+  if (!id.trim()) {
+    throw new Error("Request ID cannot be empty");
+  }
+	try {
     await prisma.request.delete({
       where: { id },
     });
