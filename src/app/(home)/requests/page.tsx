@@ -1,6 +1,6 @@
 "use client";
 import { Box, Flex } from "@mantine/core";
-import { RequestForm } from "@/app/ui/home/forms/RequestForm";
+import { RequestForm } from "@/components/media-requests/RequestForm";
 
 export default function RequestsPage() {
   return (

@@ -16,25 +16,28 @@ import {
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useEffect, useState } from "react";
-import { RequestFormSchema } from "@/lib/schemas";
-import {
-  AllowedTagType,
-  maxTextAreaLength,
-  maxTextInputLength,
-} from "@/lib/constants";
-import { getAllTags, submitRequestForm } from "@/lib/actions";
+import { RequestFormSchema } from "@/lib/schemas/media-request-schemas";
+import { maxTextAreaLength, maxTextInputLength } from "@/lib/constants";
+import { submitRequestFormAction } from "@/lib/actions/media-request-actions";
+import { getAllTagsAction } from "@/lib/actions/tag-actions";
 import Link from "next/link";
-import { Tag } from "@/generated/prisma/client";
-
+import type { TagDTO } from "@/lib/dal/dto/tags";
+/**
+ * Renders a form that allows users to request a movie, book, or other media
+ * for review on the website.
+ *
+ * Retrieves available media tags and uses a
+ * validated form to collect the user's email, optional name, media title,
+ * media type, and optional message. Upon successful submission, the form
+ * resets and displays a confirmation message with a link back to the home page.
+ *
+ * @returns The media request form or a submission confirmation message.
+ */
 export function RequestForm() {
-  const [mediaTags, setMediaTags] = useState(new Array<Tag>());
+  const [mediaTags, setMediaTags] = useState(new Array<TagDTO>());
 
   useEffect(() => {
-    getAllTags(AllowedTagType.Media).then((result) => {
-      if (result.data) {
-        setMediaTags(result.data);
-      }
-    });
+    getAllTagsAction().then(setMediaTags).catch(console.error);
   }, []);
 
   const form = useForm({
@@ -54,7 +57,7 @@ export function RequestForm() {
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
-      await submitRequestForm(values);
+      await submitRequestFormAction(values);
       form.reset();
       setCompleted(true);
     } catch (e) {

@@ -41,7 +41,16 @@ export function ChangePassword() {
       }, 5000);
     }
   };
-
+  /**
+   * URT 386 changed:
+   * Added input description for new password
+   *
+   * @remarks
+   * the description from <PasswordInput> is part of "@mantine/core"
+   *
+   * @returns
+   * returns the same layout but with now the input description added for when a user wants to change password
+   */
   return (
     <Box mb="xl">
       <Title order={4} mb="5">
@@ -73,6 +82,7 @@ export function ChangePassword() {
 
           <PasswordInput
             label="New password"
+            description="Password should include capital/lowercase letters, numbers, and symbols"
             placeholder="Enter new password"
             radius="md"
             size="md"

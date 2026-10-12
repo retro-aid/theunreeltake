@@ -4,7 +4,6 @@ import {
   AllowedMediaType,
   maxTextInputLength,
   maxTextAreaLength,
-  AllowedTagType,
 } from "@/lib/constants";
 
 export type CatalogItem = z.infer<typeof CatalogItemSchema>;
@@ -16,7 +15,6 @@ export type ForgotPasswordForm = z.infer<typeof ForgotPasswordSchema>;
 export type ResetPasswordForm = z.infer<typeof ResetPasswordSchema>;
 export type InviteUserForm = z.infer<typeof InviteUserSchema>;
 export type RegisterUserForm = z.infer<typeof RegisterUserSchema>;
-export type CreateTagFom = z.infer<typeof CreateTagSchema>;
 
 const httpUrl = z.url({
   protocol: /^https?$/,
@@ -114,31 +112,6 @@ export const ChangeUsernameSchema = z.object({
 
 export type ChangeUsernameForm = z.infer<typeof ChangeUsernameSchema>;
 
-export const CreatePostSchema = z.object({
-  title: z.string().min(1, "Title is required").max(100, "Title is too long"),
-  slug: z
-    .string()
-    .min(1, "Slug is required")
-    .regex(
-      /^[a-z0-9-]+$/,
-      "Only lowercase letters, numbers, and dashes allowed",
-    ),
-  posterUrl: z.httpUrl("Invalid Url").nullable().or(z.literal("")),
-  imageUrls: z.array(z.httpUrl("Invalid Url").or(z.literal(""))).max(2),
-  mediaTagId: z.array(z.string()).default([]),
-  pageContent: z
-    .string()
-    .min(10, "Content must be at least 10 characters long"),
-});
-
-export const CreateTagSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Display name must be at least 3 characters.")
-    .max(128, "Display name must be less than 128 characters."),
-  type: z.enum(AllowedTagType),
-});
-
 export const EditUserSchema = z.object({
   name: z
     .string()
@@ -149,10 +122,4 @@ export const EditUserSchema = z.object({
       "Username can only contain letters, numbers, underscores, spaces and hyphens",
     ),
   role: z.enum(["Admin", "User"]),
-});
-
-export const TriviaQuestionSchema = z.object({
-  question: z.string(),
-  answer: z.string(),
-  category: z.string(),
 });

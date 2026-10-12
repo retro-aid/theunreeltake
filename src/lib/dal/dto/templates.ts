@@ -40,6 +40,15 @@ export async function createPostTemplate(formData: {
   }
 }
 
+/**
+ * Gets the user's own templates plus any public ones.
+ *
+ * Took out `revalidatePath` since Next.js throws if it's called while a server
+ * component is rendering, and just reading data doesn't need it. Also the
+ * owner/public filter now always applies, so passing `Id` can't pull other
+ * people's private templates.
+ *
+ */
 export async function getPostTemplates(Id?: string) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -51,20 +60,17 @@ export async function getPostTemplates(Id?: string) {
 
   try {
     const templates = await prisma.postTemplate.findMany({
-      where: Id
-        ? { NOT: { id: Id } }
-        : {
-            OR: [{ authorId: session.user.id }, { isPublic: true }],
-          },
+      where: {
+        OR: [{ authorId: session.user.id }, { isPublic: true }],
+        ...(Id && { NOT: { id: Id } }),
+      },
       orderBy: {
         updatedAt: "desc",
       },
     });
-    revalidatePath("/dashboard/templates");
     return { success: true, data: templates };
   } catch (e) {
     console.error("Error fetching post templates:", e);
-    revalidatePath("/dashboard/templates");
     return { success: false, data: [] };
   }
 }

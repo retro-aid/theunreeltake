@@ -1,16 +1,16 @@
 "use server";
 
-import { CreateTagFom, RequestForm } from "@/lib/schemas";
+import { RequestForm } from "@/lib/schemas";
 import prisma from "@/lib/prisma";
 import { cookies, headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import * as crypto from "node:crypto";
 import dayjs from "dayjs";
-import { Post, Tag, Verification } from "@/generated/prisma/client";
+import { Post, Verification } from "@/generated/prisma/client";
 import { sendInvitationEmail } from "@/lib/emailer";
 import { sendPasswordWasResetEmail } from "@/lib/emailer";
 import { revalidatePath } from "next/cache";
-import { AllowedTagType, PostItem } from "./constants";
+import { PostItem } from "./constants";
 import {
   RequestWhereInput,
   RequestOrderByWithRelationInput,
@@ -259,31 +259,6 @@ export async function savePost(
   }
 }
 
-export async function deleteTag(id: number) {
-  try {
-    await prisma.tag.delete({ where: { id: id } });
-
-    revalidatePath("/dashboard/tags");
-    return { error: null, success: true };
-  } catch (error) {
-    return { error: error, success: false };
-  }
-}
-
-export async function createTag(tag: CreateTagFom) {
-  try {
-    await prisma.tag.create({
-      data: { displayName: tag.name, type: tag.type },
-    });
-
-    revalidatePath("/dashboard/tags");
-
-    return { error: null, success: true };
-  } catch (error) {
-    return { error: error, success: false };
-  }
-}
-
 export async function getDraftPosts() {
   try {
     const session = await auth.api.getSession({
@@ -455,40 +430,6 @@ export async function updateUser(id: string, name: string, role: string) {
     return { error: "Failed to update user", success: false };
   }
 }
-
-export async function getAllTags(tagType?: AllowedTagType) {
-  try {
-    let result: Tag[];
-
-    if (!tagType) {
-      result = await prisma.tag.findMany();
-    } else {
-      result = await prisma.tag.findMany({
-        where: {
-          type: tagType,
-        },
-      });
-    }
-
-    return { error: null, data: result };
-  } catch (error) {
-    return { error: "Failed to fetch tags", data: null };
-  }
-}
-
-export async function getTotalViews(days: number = 30) {
-  try {
-    const totalViews = await prisma.post.aggregate({
-      _sum: { views: true },
-    });
-
-    return { success: true, total: totalViews._sum.views ?? 0 };
-  } catch (error) {
-    console.error("Failed to fetch total views:", error);
-    return { success: false, total: 0 };
-  }
-}
-
 export async function createTriviaQuestion(
   question: string,
   answer: string,
@@ -533,35 +474,4 @@ export async function replyToRequest(requestId: string, message: string) {
       status: "replied",
     },
   });
-}
-
-export async function getRecentUserReviews(limit: number = 5) {
-  try {
-    const posts = await prisma.post.findMany({
-      take: limit,
-      where: {
-        published: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        posterUrl: true,
-        createdAt: true,
-        author: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    return { success: true, data: posts };
-  } catch (error) {
-    console.error("Prisma error fetching recent reviews:", error);
-    return { success: false, data: [] };
-  }
 }

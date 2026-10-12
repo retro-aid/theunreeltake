@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * URT 386 changes:
+ * Added an input description to help users navigate when wanting to comment on a post
+ */
+
 import { Button, Fieldset, Group, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -22,6 +27,15 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
     commentForm.reset();
   };
 
+  /**
+   * included the input description so that the users know what to input
+   * @returns
+   * the descriptions under label to inform the user on what each will do
+   *
+   * @remarks
+   * The description = "" comes from the TextInput - part of "@mantine/core"
+   */
+
   return (
     <form onSubmit={commentForm.onSubmit(handleSubmit)}>
       <Fieldset
@@ -33,6 +47,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           <TextInput
             label={"Name:"}
             maw={250}
+            description="Username that will be shown on the comment"
             key={commentForm.key("username")}
             {...commentForm.getInputProps("username")}
           />
@@ -40,6 +55,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           <TextInput
             label={"Email:"}
             maw={250}
+            description="Email will be used to notify of any replies"
             key={commentForm.key("email")}
             {...commentForm.getInputProps("email")}
           />
@@ -51,6 +67,7 @@ export function VisitorCommentForm({ slug }: { slug: string }) {
           minRows={4}
           autosize
           maxLength={500}
+          description="Write your comment below (max 500 characters)"
           key={commentForm.key("message")}
           {...commentForm.getInputProps("message")}
         />

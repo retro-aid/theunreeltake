@@ -79,6 +79,7 @@ export async function createReply(
 
     if (parentComment.repliesToId !== null) {
       console.error("No Reply");
+      return null;
     }
 
     return await prisma.comment.create({
