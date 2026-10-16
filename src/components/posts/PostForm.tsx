@@ -3,7 +3,10 @@
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
-import { DeletePostModal } from "@/components/posts/DeletePostModal";
+import {
+  DeletePostModal,
+  CancelPostModal,
+} from "@/components/posts/DeletePostModal";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import {
   Button,
@@ -44,7 +47,20 @@ interface PostTemplate {
 }
 
 type Prefill = { title: string; message: string; mediaTags: number[] };
-
+/**
+ * Renders the post creation and editing form.
+ *
+ * The form allows admins to enter a post title, slug, media tags,
+ * poster URL, image URLs, and page content. Depending on the mode, the form provides
+ * options to publish, save as a draft, save changes, delete, or cancel.
+ *
+ * @param props - The props used to configure the post form.
+ * @param props.post - The existing post to edit. If null, the form
+ * creates a new post.
+ * @param props.prefill - Optional initial title and content used to prefill
+ * the form.
+ * @param props.mediaTags - The media tags that users can select.
+ */
 export function PostForm({
   post,
   prefill,
@@ -177,6 +193,11 @@ export function PostForm({
         onClose={close}
         onConfirm={handleDeleteConfirm}
       />
+      <CancelPostModal
+        opened={opened}
+        onClose={close}
+        onConfirm={() => router.push("/dashboard/posts")}
+      />
 
       <Paper
         withBorder
@@ -266,45 +287,52 @@ export function PostForm({
                 onChange={handlePageContentChange}
               />
             </Input.Wrapper>
-
-            <Group justify="flex-end" mt="md">
-              {!isEditMode && (
-                <>
-                  <Button color="red" onClick={open}>
-                    Discard
-                  </Button>
-                  <Button
-                    variant="default"
-                    onClick={() => handleSubmit("draft")}
-                  >
-                    Save as Draft
-                  </Button>
-                  <Button color="dark" onClick={() => handleSubmit("publish")}>
-                    Publish
-                  </Button>
-                </>
-              )}
-              {isEditMode && post && (
-                <>
-                  <Button color="red" onClick={open}>
-                    Delete
-                  </Button>
-                  <Button
-                    variant="default"
-                    onClick={() => handleSubmit("save")}
-                  >
-                    Save
-                  </Button>
-                  {!post.published && (
+            <Group justify="space-between" align="center" mt="md">
+              <Button variant="default" onClick={open}>
+                Cancel
+              </Button>
+              <Group justify="flex-end">
+                {!isEditMode && (
+                  <>
+                    <Button color="red" onClick={open}>
+                      Discard
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => handleSubmit("draft")}
+                    >
+                      Save as Draft
+                    </Button>
                     <Button
                       color="dark"
                       onClick={() => handleSubmit("publish")}
                     >
                       Publish
                     </Button>
-                  )}
-                </>
-              )}
+                  </>
+                )}
+                {isEditMode && post && (
+                  <>
+                    <Button color="red" onClick={open}>
+                      Delete
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => handleSubmit("save")}
+                    >
+                      Save
+                    </Button>
+                    {!post.published && (
+                      <Button
+                        color="dark"
+                        onClick={() => handleSubmit("publish")}
+                      >
+                        Publish
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Group>
             </Group>
           </Stack>
         </form>
