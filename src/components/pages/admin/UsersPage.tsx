@@ -1,5 +1,5 @@
 import { Box, Title } from "@mantine/core";
-import { UserTable } from "@/app/ui/admin/UserTable";
+import { UserTable } from "@/components/users/UserTable";
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/dal/utils";
 

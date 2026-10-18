@@ -25,7 +25,7 @@ import { User } from "@/generated/prisma/client";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { EditUserSchema } from "@/lib/schemas";
 import { useForm } from "@mantine/form";
-import { InviteUserModal } from "./InviteUserModal";
+import { InviteUserModal } from "../../app/ui/admin/InviteUserModal";
 
 const PAGE_SIZE = 10;
 
@@ -232,7 +232,7 @@ export function UserTable() {
         </Modal>
       )}
 
-      <Box p="lg">
+      <Box p="lg" maw={"1300"} w={"100%"} mx={"auto"}>
         <Group justify="flex-end" mb={"lg"}>
           <Button
             color="dark"
@@ -252,7 +252,10 @@ export function UserTable() {
             withBorder
             radius="md"
             shadow="md"
-            style={{ overflowX: "auto" }}
+            style={{
+              overflowX: "auto",
+              width: "100%"
+            }}
           >
             <Table
               highlightOnHover
