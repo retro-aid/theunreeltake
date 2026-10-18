@@ -1,10 +1,17 @@
 "use client";
+
 /**
- * URT 388 changes: create a ScrollableGrid that would be used for PostGrid and AdminCommentGrid
- * Grabbing the common things from both tsx and paste it here so that both Grid can be scrollable
+ * removed the URT388 changes to now include the new URT-429 changes
  */
 import React, { useRef, useState, useMemo } from "react";
-import { Group, Pagination, ScrollArea, Stack, Grid } from "@mantine/core";
+import {
+  Group,
+  Pagination,
+  ScrollArea,
+  Stack,
+  Grid,
+  Text,
+} from "@mantine/core";
 import { useRouter } from "next/navigation";
 import {
   ActionButtons,
@@ -35,21 +42,8 @@ export interface ScrollableGridProps<T> {
   onSort?: SortFunction<T>;
   onRefresh?: () => void;
   showActions?: boolean;
+  headerLeft?: React.ReactNode;
 }
-
-/**
- * URT388 chagnge:
- * Generic reusable viewport component providing scrolling, pagination, sorting,
- * and flexible layouts.
- *
- * @remarks
- * Stored in `/lib/components/generic/ScrollableGrid.tsx` and exported as a shared component
- * across the application (e.g., used by Posts and Admin Comments pages).
- *
- * @typeParam T - The entity data type rendered by the grid.
- * @param props - Configuration props defined in {@link ScrollableGridProps}.
- * @returns A scrollable container with optional sorting and pagination controls.
- */
 
 export function ScrollableGrid<T>({
   data,
@@ -63,6 +57,7 @@ export function ScrollableGrid<T>({
   onSort,
   onRefresh,
   showActions = true,
+  headerLeft,
 }: ScrollableGridProps<T>) {
   const router = useRouter();
   const viewport = useRef<HTMLDivElement>(null);
@@ -99,22 +94,38 @@ export function ScrollableGrid<T>({
 
   const handleRefresh = onRefresh ?? (() => router.refresh());
 
+  /**
+   * URT-419 changes: apply the changes like the search bar going to the left 
+   *  - puts the logos on the left together in the same row
+   *  - functions is not affected
+   *  - also included on the bottom left the page "1 of 6" example
+   */
   return (
     <>
-      {showActions && (sortOptions || onRefresh) && (
-        <Group mb="md" justify="flex-end">
-          <ActionButtons
-            sort={
-              sortOptions
-                ? {
-                    label: "Sort By",
-                    options: sortOptions,
-                    onSelect: handleSort,
-                  }
-                : undefined
-            }
-            onRefreshAction={handleRefresh}
-          />
+      {showActions && (sortOptions || onRefresh || headerLeft) && (
+        <Group mb="md" justify="space-between" align="center" wrap="nowrap">
+          {/* Left: Search Bar */}
+          {headerLeft && (
+            <div style={{ width: 500, maxWidth: "100%" }}>{headerLeft}</div>
+          )}
+
+          {/* Right: Sort and Refresh clustered tightly together */}
+          <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
+            {(sortOptions || onRefresh) && (
+              <ActionButtons
+                sort={
+                  sortOptions
+                    ? {
+                        label: "Sort By",
+                        options: sortOptions,
+                        onSelect: handleSort,
+                      }
+                    : undefined
+                }
+                onRefreshAction={handleRefresh}
+              />
+            )}
+          </Group>
         </Group>
       )}
 
@@ -125,9 +136,12 @@ export function ScrollableGrid<T>({
         bdrs="md"
         h={height}
         viewportRef={viewport}
+        styles={{
+          viewport: { paddingRight: "10px" },
+        }}
       >
         {layout === "stack" ? (
-          <Stack>
+          <Stack gap="md">
             {currentPageItems.map((item) => (
               <React.Fragment key={keyExtractor(item)}>
                 {renderItem(item)}
@@ -150,13 +164,19 @@ export function ScrollableGrid<T>({
       </ScrollArea>
 
       {pageSize > 0 && chunkedData.length > 1 && (
-        <Pagination
-          total={chunkedData.length}
-          value={page}
-          onChange={handlePageChange}
-          siblings={1}
-          py="lg"
-        />
+        <Group justify="space-between" align="center" pt="lg">
+          <Text size="sm" c="dimmed">
+            Page {page} of {chunkedData.length}
+          </Text>
+          <Pagination
+            total={chunkedData.length}
+            value={page}
+            onChange={handlePageChange}
+            siblings={1}
+            size="sm"
+            radius="sm"
+          />
+        </Group>
       )}
     </>
   );
