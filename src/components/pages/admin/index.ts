@@ -6,3 +6,4 @@ export * from "./TemplatesPage";
 export * from "./CreateTemplatePage";
 export * from "./EditTemplatePage";
 export * from "./EditPostPage";
+export * from "./UsersPage";

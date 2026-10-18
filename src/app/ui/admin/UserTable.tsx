@@ -14,7 +14,10 @@ import {
   Text,
   TextInput,
   Select,
+  Menu,
+  ActionIcon,
 } from "@mantine/core";
+import { ThreeDots, Trash, PencilSquare, Chat } from "react-bootstrap-icons";
 import { getAllUsers, deleteUser, updateUser } from "@/lib/actions";
 import { useState, useContext, useTransition, useEffect } from "react";
 import { AuthContext } from "@/app/ui/admin/AuthContext";
@@ -22,6 +25,7 @@ import { User } from "@/generated/prisma/client";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { EditUserSchema } from "@/lib/schemas";
 import { useForm } from "@mantine/form";
+import { InviteUserModal } from "./InviteUserModal";
 
 const PAGE_SIZE = 10;
 
@@ -32,6 +36,7 @@ export function UserTable() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [inviteOpened, setInviteOpened] = useState(false);
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -64,18 +69,20 @@ export function UserTable() {
   const rows = pagedData.map((user) => (
     <Table.Tr key={user.id}>
       <Table.Td>
-        <Avatar src={user.image} alt={user.name} radius="xl">
-          {user.name
-            ?.split(" ")
-            .slice(0, 2)
-            .map((x) => x[0])}
-        </Avatar>
+        <Group>
+          <Avatar src={user.image} alt={user.name} radius="xl">
+            {user.name
+              ?.split(" ")
+              .slice(0, 2)
+              .map((x) => x[0])}
+          </Avatar>
+          <Text>{user.name}</Text>
+        </Group>
       </Table.Td>
-      <Table.Td>{user.name}</Table.Td>
       <Table.Td>{user.email}</Table.Td>
       <Table.Td>
         <Badge
-          color={user.role === "admin" ? "green" : "red"}
+          color={user.role === "admin" ? "blue" : "gray"}
           variant="light"
           mr={"sm"}
         >
@@ -83,33 +90,41 @@ export function UserTable() {
         </Badge>
       </Table.Td>
       <Table.Td>
-        <Group gap="xs">
-          <Button
-            size="sm"
-            variant="light"
-            onClick={() => {
-              setSelectedUserId(user.id);
-              setModalOpened(true);
-              setActiveModal("edit");
-            }}
-          >
-            Edit
-          </Button>
-          <Button size="sm" variant="light">
-            Message
-          </Button>
-          <Button
-            size="sm"
-            color="red"
-            variant="light"
-            onClick={() => {
-              setSelectedUserId(user.id);
-              setModalOpened(true);
-              setActiveModal("delete");
-            }}
-          >
-            Delete
-          </Button>
+        <Group>
+          <Menu position="bottom-start">
+            <Menu.Target>
+              <ActionIcon variant="subtle">
+                <ThreeDots></ThreeDots>
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<PencilSquare />}
+                onClick={() => {
+                  setSelectedUserId(user.id);
+                  setModalOpened(true);
+                  setActiveModal("edit");
+                }}
+              >
+                Edit
+              </Menu.Item>
+
+              <Menu.Item leftSection={<Chat />}>Message</Menu.Item>
+
+              <Menu.Item
+                leftSection={<Trash />}
+                color="red"
+                onClick={() => {
+                  setSelectedUserId(user.id);
+                  setModalOpened(true);
+                  setActiveModal("delete");
+                }}
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
       </Table.Td>
     </Table.Tr>
@@ -218,6 +233,20 @@ export function UserTable() {
       )}
 
       <Box p="lg">
+        <Group justify="flex-end" mb={"lg"}>
+          <Button
+            color="dark"
+            radius="md"
+            onClick={() => setInviteOpened(true)}
+          >
+            Invite a New User
+          </Button>
+        </Group>
+        <InviteUserModal
+          opened={inviteOpened}
+          onCloseAction={() => setInviteOpened(false)}
+        ></InviteUserModal>
+
         <Stack style={{ flex: 1 }} gap="md">
           <Paper
             withBorder
@@ -226,19 +255,17 @@ export function UserTable() {
             style={{ overflowX: "auto" }}
           >
             <Table
-              striped
               highlightOnHover
-              verticalSpacing="md"
+              verticalSpacing="sm"
               horizontalSpacing="lg"
               style={{ whiteSpace: "nowrap" }}
             >
-              <Table.Thead style={{ backgroundColor: "#3673C9" }}>
+              <Table.Thead style={{ backgroundColor: "#ced4da" }}>
                 <Table.Tr>
-                  <Table.Th></Table.Th>
                   <Table.Th>Username</Table.Th>
                   <Table.Th>Email</Table.Th>
                   <Table.Th>Role</Table.Th>
-                  <Table.Th></Table.Th>
+                  <Table.Th>Actions</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>{rows}</Table.Tbody>
@@ -247,6 +274,7 @@ export function UserTable() {
         </Stack>
         <Group mt="lg" justify="space-between">
           <Pagination
+            color="dark"
             value={page}
             onChange={setPage}
             total={Math.ceil(users.length / PAGE_SIZE)}
