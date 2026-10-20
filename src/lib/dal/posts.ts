@@ -128,8 +128,15 @@ export async function getAllPosts({
         orderBy: POST_ORDER_BY[sort] ?? { updatedAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
+        include: {
+          author: {
+            select: { name: true },
+          },
+          tags: {
+            select: { tagId: true },
+          },
+        },
       }),
-
       prisma.post.count({
         where,
       }),
@@ -144,6 +151,9 @@ export async function getAllPosts({
       authorId: post.authorId,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
+      authorName: post.author.name,
+      tagCount: post.tags.length,
+      views: post.views,
     }));
 
     return {

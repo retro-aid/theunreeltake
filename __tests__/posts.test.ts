@@ -51,6 +51,9 @@ const postDummy = {
   authorId: "authorID",
   createdAt: now,
   updatedAt: now,
+  views: 5,
+  author: { name: "Test Author" },
+  tags: [{ tagId: 1 }, { tagId: 2 }],
 };
 
 beforeEach(() => {
@@ -237,12 +240,15 @@ describe("getAllPosts", () => {
         slug: "slug-test",
         posterUrl: "picture.png",
         published: true,
-        authorId: "authorID",
         createdAt: now,
         updatedAt: now,
+        authorName: "Test Author",
+        tagCount: 2,
+        views: 5,
       },
     ]);
     expect(result.data[0]).not.toHaveProperty("htmlContent");
+    expect(result.data[0]).not.toHaveProperty("authorId");
   });
 
   it.each([
