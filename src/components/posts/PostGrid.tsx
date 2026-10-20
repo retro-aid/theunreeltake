@@ -12,6 +12,7 @@ import {
   Badge,
   Tooltip,
   Button,
+  Stack,
 } from "@mantine/core";
 import Link from "next/link";
 import { DeletePostModal } from "@/components/posts/DeletePostModal";
@@ -21,6 +22,8 @@ import {
 } from "@/lib/actions/post-actions";
 import type { PostDTO } from "@/lib/dal/dto/posts";
 import { ScrollableGrid } from "@/components/generic/ScrollableGrid";
+import { InfoCircle } from "react-bootstrap-icons";
+import dayjs from "dayjs";
 
 type Icons = {
   Edit: React.ElementType;
@@ -104,6 +107,34 @@ export function PostCard({
               }}
               gap={10}
             >
+              <Tooltip
+                label={
+                  <Stack gap={4}>
+                    <Text size="sm">Author: {post.authorName}</Text>
+                    <Text size="sm">Views: {post.views}</Text>
+                    <Text size="sm">
+                      Created: {dayjs(post.createdAt).format("MMM D, YYYY")}
+                    </Text>
+                    <Text size="sm">
+                      Updated: {dayjs(post.updatedAt).format("MMM D, YYYY")}
+                    </Text>
+                    <Text size="sm">Tags: {post.tagCount}</Text>
+                  </Stack>
+                }
+                multiline
+                w={260}
+                withArrow
+              >
+                <ActionIcon
+                  variant="light"
+                  size="md"
+                  bdrs="xs"
+                  color="black"
+                  aria-label="Post information"
+                >
+                  <InfoCircle size={16} />
+                </ActionIcon>
+              </Tooltip>
               <Tooltip label="Edit Post">
                 <ActionIcon
                   component={Link}

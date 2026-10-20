@@ -94,7 +94,7 @@ export function PostForm({
     initialValues: {
       title: post?.title || prefill?.title || "",
       slug: post?.slug || "",
-      tagIds: new Array<{ value: number }>(), // TODO Fix this
+      tagIds: post?.tags.map((tag) => String(tag.tagId)) ?? [],
       posterUrl: post?.posterUrl ?? null,
       imageUrls: new Array<string>(), // TODO Fix this
       pageContent:
@@ -154,9 +154,9 @@ export function PostForm({
         htmlContent: values.pageContent,
         published: isPublishing,
         posterUrl: values.posterUrl,
-        tags: values.tagIds.map((i) => {
-          return { tagId: i.value };
-        }),
+        tags: values.tagIds.map((id) => ({
+          tagId: Number(id),
+        })),
         imageUrls: values.imageUrls,
       });
 
@@ -170,9 +170,9 @@ export function PostForm({
         published: isPublishing,
         posterUrl: values.posterUrl,
         imageUrls: values.imageUrls,
-        tags: values.tagIds.map((t) => {
-          return { tagId: t.value };
-        }),
+        tags: values.tagIds.map((id) => ({
+          tagId: Number(id),
+        })),
       });
       router.push("/dashboard/posts");
     }
@@ -235,10 +235,10 @@ export function PostForm({
                 placeholder="Select media type"
                 description="Can select multiple types"
                 data={mediaTags.map((tag) => ({
-                  value: tag.id,
+                  value: String(tag.id),
                   label: tag.displayName,
                 }))}
-                key="tagIds"
+                key={form.key("tagIds")}
                 {...form.getInputProps("tagIds")}
               />
               <TextInput
