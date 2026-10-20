@@ -11,7 +11,7 @@ import {
   useState,
   useTransition,
 } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CatalogItem } from "@/app/api/catalog/route";
 import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
 import { PostPageData } from "@/app/api/catalog/route";
@@ -19,25 +19,53 @@ import { allowedPostsPerPage } from "@/lib/constants";
 
 // The main page content needs to be wrapped so useSearchParams doesn't block hydration/static gen
 function MoviesPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [posts, setPosts] = useState<CatalogItem[]>([]);
   const [postsPerPage, setPostsPage] = useState(allowedPostsPerPage[0]);
   const [totalCount, setTotalCount] = useState(0);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
 
   // Initialize states with values from URL if they exist
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [tags, setTags] = useState<string[]>(searchParams.getAll("tags"));
-  const [sortBy, setSortBy] = useState("");
+  const [sortBy, setSortBy] = useState(searchParams.get("sort") ?? "");
 
   const [isLoading, startTransition] = useTransition();
 
-  const handleSearch = (value: string) => setSearch(value);
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
   const handleSortBy = (value: string) => setSortBy(value);
   const handleFilter = (value: string[]) => setTags(value);
   const handlePostsCount = (value: number) => setPostsPage(value);
 
+  /**
+   * Pushes the current catalog state onto the navigation history.
+   * @returns Nothing.
+   */
+  const pushCatalogState = useCallback(() => {
+    const params = new URLSearchParams();
+
+    if (search) params.set("search", search);
+    if (sortBy) params.set("sort", sortBy);
+
+    params.set("ppp", postsPerPage.toString());
+    params.set("page", page.toString());
+
+    tags.forEach((tag) => params.append("tags", tag));
+
+    const query = params.toString();
+    const url = query ? `/catalog?${query}` : "/catalog";
+
+    router.replace(url, { scroll: false });
+  }, [router, search, sortBy, postsPerPage, page, tags]);
+
+  useEffect(() => {
+    pushCatalogState();
+  }, [pushCatalogState]);
   const refresh = useCallback(() => {
     startTransition(async () => {
       const urlSearchParams = new URLSearchParams();
@@ -46,7 +74,6 @@ function MoviesPageContent() {
       urlSearchParams.set("sort", sortBy);
       urlSearchParams.set("ppp", postsPerPage.toString());
       urlSearchParams.set("page", page.toString());
-
       // Append each tag to the search query
       tags.forEach((tag) => urlSearchParams.append("tags", tag));
 
@@ -66,7 +93,6 @@ function MoviesPageContent() {
   useEffect(() => {
     refresh();
   }, [refresh]);
-
   return (
     <Container size="xl" w="100%" px={{ base: "lg", md: "md" }} py="xl">
       <Flex direction={"column"} gap={{ base: "sm", sm: "lg" }}>
