@@ -29,6 +29,13 @@ import { InviteUserModal } from "../../app/ui/admin/InviteUserModal";
 
 const PAGE_SIZE = 10;
 
+/**
+ * Displays a table of users with the options to edit, delete, and message.
+ * Retrieves the data from database and displays them in a table.
+ * Option to invite new users to the website.
+ * 
+ * @returns The user management table
+ */
 export function UserTable() {
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState<NonNullable<User[]>>([]);
