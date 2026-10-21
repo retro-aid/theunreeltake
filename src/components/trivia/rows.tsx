@@ -11,7 +11,6 @@ import { TriviaQuestionSchema } from "@/lib/schemas/trivia-schemas";
 import {
   Badge,
   Button,
-  Checkbox,
   Group,
   Modal,
   TableTd,

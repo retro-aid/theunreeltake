@@ -95,7 +95,7 @@ export function ScrollableGrid<T>({
   const handleRefresh = onRefresh ?? (() => router.refresh());
 
   /**
-   * URT-419 changes: apply the changes like the search bar going to the left 
+   * URT-419 changes: apply the changes like the search bar going to the left
    *  - puts the logos on the left together in the same row
    *  - functions is not affected
    *  - also included on the bottom left the page "1 of 6" example
