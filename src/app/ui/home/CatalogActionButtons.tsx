@@ -5,14 +5,13 @@ import { CardText, Funnel } from "react-bootstrap-icons";
 import { allowedPostsPerPage } from "@/lib/constants";
 import { getTagsAction } from "@/lib/actions/catalog-actions";
 import { useEffect, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
 type tag = {
   id: number;
   type: string;
   displayName: string;
 };
-
-const tagList: string[] = [];
 
 export default function CatalogActionButtons({
   onSortByAction,
@@ -23,6 +22,10 @@ export default function CatalogActionButtons({
   onFilterAction: (value: string[]) => void;
   onPostsCountAction: (value: number) => void;
 }) {
+  const searchParams = useSearchParams();
+  const [tagList, setTagList] = useState<string[]>(() =>
+    searchParams.getAll("tags"),
+  );
   const [tags, setTags] = useState<tag[]>();
   const [isLoading, startTransition] = useTransition();
 
@@ -34,16 +37,13 @@ export default function CatalogActionButtons({
   }, []);
 
   const handleArray = (id: number) => {
-    for (let i = 0; i < tagList.length; i++) {
-      if (tagList[i] === id.toString()) {
-        tagList.splice(i, i + 1);
-        onFilterAction(tagList);
-        return;
-      }
-    }
-    tagList.push(id.toString());
-    onFilterAction(tagList);
-    return;
+    const tagId = id.toString();
+    const updatedTags = tagList.includes(tagId)
+      ? tagList.filter((tag) => tag !== tagId)
+      : [...tagList, tagId];
+
+    setTagList(updatedTags);
+    onFilterAction(updatedTags);
   };
 
   const checkBool = (id: number) => {

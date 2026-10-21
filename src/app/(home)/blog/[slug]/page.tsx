@@ -19,6 +19,7 @@ import { CommentGrid, VisitorCommentForm } from "@/components/comments";
 import { getRepliesOnPostAction } from "@/lib/actions/comment-actions";
 import { PostImages } from "@/components/posts";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
+import BackLinkButton from "@/components/generic/BackLinkButton";
 
 export default async function BlogPostPage({
   params,
@@ -121,6 +122,9 @@ export default async function BlogPostPage({
       <Container px={{ base: 0, md: "md" }}>
         <Paper shadow={"sm"} p={{ base: "md", sm: "xl" }} bdrs={0}>
           <Stack>
+            <Group justify="flex-end">
+              <BackLinkButton />
+            </Group>
             <Title order={1} my={"lg"}>
               {" "}
               {data.title}{" "}
