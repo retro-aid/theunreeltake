@@ -4,12 +4,17 @@ import {
   createTriviaQuestion,
   deleteQuestion,
   getAllQuestions,
+  getRandomQuestion,
   publishQuestion,
   updateQuestion,
 } from "../dal/dto/trivia";
 
 export async function getAllQuestionsAction() {
   return getAllQuestions();
+}
+
+export async function getRandomQuestionAction() {
+  return getRandomQuestion();
 }
 
 export async function createTriviaQuestionAction(
