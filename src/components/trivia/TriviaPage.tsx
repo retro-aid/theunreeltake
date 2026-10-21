@@ -1,4 +1,4 @@
-import { TriviaFilter, TriviaTable } from "@/components/trivia";
+import { TriviaFilter } from "@/components/trivia";
 import { getAllQuestionsAction } from "@/lib/actions/trivia-actions";
 
 export default async function DashboardTriviaPage() {
