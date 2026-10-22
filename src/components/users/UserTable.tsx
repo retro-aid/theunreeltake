@@ -33,7 +33,7 @@ const PAGE_SIZE = 10;
  * Displays a table of users with the options to edit, delete, and message.
  * Retrieves the data from database and displays them in a table.
  * Option to invite new users to the website.
- * 
+ *
  * @returns The user management table
  */
 export function UserTable() {
@@ -261,7 +261,7 @@ export function UserTable() {
             shadow="md"
             style={{
               overflowX: "auto",
-              width: "100%"
+              width: "100%",
             }}
           >
             <Table

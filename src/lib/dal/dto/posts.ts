@@ -135,6 +135,7 @@ export async function getPost(id: string): Promise<GetPostEditDTO | null> {
 }
 
 export type PostDTO = {
+  authorId: string | undefined;
   id: string;
   title: string;
   slug: string;
