@@ -118,6 +118,8 @@ export function PostCard({
               </Tooltip>
               <Tooltip label="Comments">
                 <ActionIcon
+                  component={Link}
+                  href={`/dashboard/posts/comments/${post.id}`}
                   variant={"light"}
                   size={"md"}
                   bdrs={"xs"}

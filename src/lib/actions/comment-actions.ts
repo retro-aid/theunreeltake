@@ -34,8 +34,8 @@ export async function deleteCommentAction(id: string) {
   revalidatePath("/dashboard/comments");
 }
 
-export async function getAdminCommentsAction() {
-  return getAdminComments();
+export async function getAdminCommentsAction(postId?: string) {
+  return getAdminComments(postId);
 }
 
 export async function getCommentsOnPostAction(postSlug: string) {
