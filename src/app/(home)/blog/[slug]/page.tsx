@@ -119,7 +119,12 @@ export default async function BlogPostPage({
     <Flex bg={"gray.0"}>
       <ViewTracker slug={slug} />
       <Container px={{ base: 0, md: "md" }}>
-        <Paper shadow={"sm"} p={{ base: "md", sm: "xl" }} bdrs={0}>
+        <Paper
+          w={{ base: "300", sm: "700", md: "900" }}
+          shadow={"sm"}
+          p={{ base: "md", sm: "xl" }}
+          bdrs={0}
+        >
           <Stack>
             <Title order={1} my={"lg"}>
               {" "}
