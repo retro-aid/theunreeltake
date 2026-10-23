@@ -26,11 +26,13 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
   const [published, setStatus] = useState<boolean | null>(null);
   const [search, setSearch] = useState("");
 
+  let categories: string[] = [];
+
   // Filtered Data
   const filteredData = data.filter((item) => {
+    if (!categories.includes(item.category)) categories.push(item.category);
     return (
       (!category || item.category === category) &&
-      (!type || item.type === type) &&
       (!difficulty || item.difficulty === difficulty) &&
       (!published || item.published === published) &&
       item.question.toLowerCase().includes(search.toLowerCase())
@@ -154,7 +156,7 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
           <Group>
             <Select
               placeholder="Category: All"
-              data={["Horror", "Comedy", "Action", "Thriller"]}
+              data={categories}
               value={category}
               onChange={setCategory}
             />
@@ -165,14 +167,11 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
               onChange={setType}
             />
             <Select
-              placeholder="Difficulty: All"
-              data={["Easy", "Medium", "Hard", "Extreme"]}
-              value={difficulty}
-              onChange={setDifficulty}
-            />
-            <Select
               placeholder="Status: All"
-              data={[true, false]}
+              data={[
+                { value: true, label: "Published" },
+                { value: false, label: "Draft" },
+              ]}
               value={published}
               onChange={setStatus}
             />

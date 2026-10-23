@@ -39,8 +39,7 @@ export default function LandingPage({ question }: { question: Trivia | null }) {
   const handleSubmit = async (formData: typeof triviaForm.values) => {
     const userAnswer = formData.answer.trim().toLowerCase();
     const quesAnswer =
-      question?.answer.trim().toLowerCase() ||
-      "parasite".trim().toLowerCase();
+      question?.answer.trim().toLowerCase() || "parasite".trim().toLowerCase();
 
     if (userAnswer === quesAnswer) {
       setIsCorrect(true);
