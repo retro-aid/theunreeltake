@@ -6,6 +6,7 @@ import {
   getAllQuestions,
   getRandomQuestion,
   publishQuestion,
+  questionAnswered,
   updateQuestion,
 } from "../dal/dto/trivia";
 
@@ -15,6 +16,10 @@ export async function getAllQuestionsAction() {
 
 export async function getRandomQuestionAction() {
   return getRandomQuestion();
+}
+
+export async function questionAnsweredAction(id: string, correct: number) {
+  return questionAnswered(id, correct);
 }
 
 export async function createTriviaQuestionAction(

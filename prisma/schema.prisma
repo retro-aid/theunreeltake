@@ -120,8 +120,8 @@ model Trivia {
   category   String
   published  Boolean @default(false)
   difficulty String
-  sucrate    String
-  type       String
+  correct    Int
+  asked      Int
 }
 
 enum RequestStatus {
