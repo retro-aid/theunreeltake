@@ -331,6 +331,27 @@ describe("getAdminComments", () => {
     await expect(getAdminComments()).rejects.toThrow("Unauthorized");
     expect(prisma.comment.findMany).not.toHaveBeenCalled();
   });
+
+  it("should return only comments on a specific post when given a postId", async () => {
+
+    vi.mocked(getCurrentSession).mockResolvedValueOnce({
+      user: { role: "user"}
+    } as never);
+
+    prisma.comment.findMany.mockResolvedValueOnce([{
+      postId: "test-post-id"
+    }] as never);
+
+    const comments = await getAdminComments("test-post-id");
+
+    expect(comments[0].postId).toBe("test-post-id");
+    expect(prisma.comment.findMany).toHaveBeenCalledWith({
+      where: { postId: "test-post-id" },
+      include: { post: { select: { title: true } } },
+      omit: { repliesToId: true },
+      orderBy: { createdAt: "desc" },
+    });
+  });
 });
 
 /**

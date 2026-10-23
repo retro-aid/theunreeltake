@@ -7,3 +7,4 @@ export * from "./CreateTemplatePage";
 export * from "./EditTemplatePage";
 export * from "./EditPostPage";
 export * from "./UsersPage";
+export * from "./CommentsOnPostPage";
