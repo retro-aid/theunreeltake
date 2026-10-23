@@ -26,19 +26,14 @@ import {
 } from "@/lib/actions/post-actions";
 import { CreatePostSchema } from "@/lib/schemas/post-schemas";
 import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getPostTemplatesAction } from "@/lib/actions/template-actions";
 import type { TagDTO } from "@/lib/dal/dto/tags";
-
-interface PostProp {
-  id: string;
-  title: string;
-  slug: string;
-  htmlContent: string;
-  posterUrl: string | null;
-  published: boolean;
-  tags: { tagId: number }[];
-}
+import type { GetPostEditDTO } from "@/lib/dal/dto/posts";
+import { Eye } from "react-bootstrap-icons";
+import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { PreviewPostModal } from "@/components/posts/PreviewPostModal";
+import type { PostContentData } from "@/components/posts/post-content";
 
 interface PostTemplate {
   id: string;
@@ -47,6 +42,10 @@ interface PostTemplate {
 }
 
 type Prefill = { title: string; message: string; mediaTags: number[] };
+
+/** The maximum number of image URLs a post can have. */
+const MAX_POST_IMAGES = 2;
+
 /**
  * Renders the post creation and editing form.
  *
@@ -66,11 +65,14 @@ export function PostForm({
   prefill,
   mediaTags,
 }: {
-  post?: PostProp | null;
+  post?: GetPostEditDTO | null;
   prefill?: Prefill;
   mediaTags: TagDTO[];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [previewOpened, { open: openPreview, close: closePreview }] =
+    useDisclosure(false);
+  const { user } = useContext(AuthContext);
   const [templates, setTemplate] = useState<PostTemplate[]>([]);
   const router = useRouter();
 
@@ -96,7 +98,10 @@ export function PostForm({
       slug: post?.slug || "",
       tagIds: new Array<{ value: number }>(), // TODO Fix this
       posterUrl: post?.posterUrl ?? null,
-      imageUrls: new Array<string>(), // TODO Fix this
+      imageUrls: Array.from(
+        { length: MAX_POST_IMAGES },
+        (_, index) => post?.imageUrls[index] ?? "",
+      ),
       pageContent:
         post?.htmlContent ||
         (prefill?.message ? "<p>" + prefill.message + "</p>" : ""),
@@ -143,6 +148,7 @@ export function PostForm({
       return;
     }
     const values = form.getValues();
+    const imageUrls = values.imageUrls.filter(Boolean);
 
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
@@ -157,7 +163,7 @@ export function PostForm({
         tags: values.tagIds.map((i) => {
           return { tagId: i.value };
         }),
-        imageUrls: values.imageUrls,
+        imageUrls: imageUrls,
       });
 
       router.push("/dashboard/posts");
@@ -169,7 +175,7 @@ export function PostForm({
         htmlContent: values.pageContent,
         published: isPublishing,
         posterUrl: values.posterUrl,
-        imageUrls: values.imageUrls,
+        imageUrls: imageUrls,
         tags: values.tagIds.map((t) => {
           return { tagId: t.value };
         }),
@@ -186,6 +192,28 @@ export function PostForm({
     router.push("/dashboard/posts");
   };
 
+  /**
+   * Builds the data shown in the preview modal from the form's current,
+   * unsaved values.
+   *
+   * @returns The post data to preview. Empty image URLs are removed, the
+   * creation date is the saved one (or now for a new post), and the update
+   * date is now.
+   */
+  const getPreviewPost = (): PostContentData => {
+    const { title, imageUrls, pageContent } = form.getValues();
+    const now = new Date();
+
+    return {
+      title,
+      imageUrls: imageUrls.filter(Boolean),
+      htmlContent: pageContent,
+      authorName: user.name,
+      createdAt: post?.createdAt ?? now,
+      updatedAt: now,
+    };
+  };
+
   return (
     <>
       <DeletePostModal
@@ -197,6 +225,11 @@ export function PostForm({
         opened={opened}
         onClose={close}
         onConfirm={() => router.push("/dashboard/posts")}
+      />
+      <PreviewPostModal
+        opened={previewOpened}
+        onClose={closePreview}
+        post={getPreviewPost()}
       />
 
       <Paper
@@ -288,9 +321,19 @@ export function PostForm({
               />
             </Input.Wrapper>
             <Group justify="space-between" align="center" mt="md">
-              <Button variant="default" onClick={open}>
-                Cancel
-              </Button>
+              <Group>
+                <Button variant="default" onClick={open}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="light"
+                  color="dark"
+                  leftSection={<Eye size={16} />}
+                  onClick={openPreview}
+                >
+                  Preview
+                </Button>
+              </Group>
               <Group justify="flex-end">
                 {!isEditMode && (
                   <>
