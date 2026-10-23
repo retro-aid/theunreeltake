@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import type { CulledAdminComment } from "@/lib/dal/dto/comments";
 import { AdminCommentGrid } from "./AdminCommentGrid";
 import { SearchBar } from "@/components/generic/SearchBar";
-import { Flex } from "@mantine/core";
 
 export function filterAdminComments(
   comments: CulledAdminComment[],
@@ -21,15 +20,9 @@ export function filterAdminComments(
 }
 
 /**
- * URT 388 change: updated the search value so it looks like the PostGrid Search
- *
- * @remarks
- * Updated search bar layout: Wrapped within a constrained Mantine Flex box
- * to prevent full-width expansion, matching the visual layout of
- * the Posts page.
- *
- * @param props - Props containing the list of comments to search and manage.
- * @returns The search input paired with the filtered {@link AdminCommentGrid}.
+ * URT-419: the main changes in this is to adjust the search bar so that
+ *  the size is appropriotate and the search be on the left to try make it on the same row as the
+ * logos on the right
  */
 export function AdminCommentSearch({
   comments,
@@ -42,20 +35,21 @@ export function AdminCommentSearch({
     [comments, search],
   );
 
+  const searchElement = (
+    <div style={{ width: 500, maxWidth: "100%" }}>
+      <SearchBar
+        initialValue={search}
+        placeholderText="Search by post, message, username, email or user ID"
+        onSearchAction={setSearch}
+      />
+    </div>
+  );
+
   return (
-    <>
-      <Flex justify={"space-between"} gap={"md"}>
-        <Flex miw={500}>
-          <SearchBar
-            initialValue={search}
-            placeholderText={
-              "Search by post, message, username, email or user ID"
-            }
-            onSearchAction={setSearch}
-          />
-        </Flex>
-      </Flex>
-      <AdminCommentGrid key={search} comments={filtered} />
-    </>
+    <AdminCommentGrid
+      key={search}
+      comments={filtered}
+      headerLeft={searchElement}
+    />
   );
 }

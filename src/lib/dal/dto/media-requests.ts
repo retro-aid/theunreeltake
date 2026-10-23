@@ -149,8 +149,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  */
 export async function replyToRequest(requestId: string, message: string) {
   if (!message.trim()) {
-  	throw new Error("Message cannot be empty");
-	}
+    throw new Error("Message cannot be empty");
+  }
   const request = await prisma.request.findUnique({
     where: { id: requestId },
   });
@@ -184,7 +184,7 @@ export async function deleteRequest(id: string) {
   if (!id.trim()) {
     throw new Error("Request ID cannot be empty");
   }
-	try {
+  try {
     await prisma.request.delete({
       where: { id },
     });

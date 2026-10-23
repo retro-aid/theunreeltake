@@ -6,18 +6,31 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 import { RegisterUserForm, RegisterUserSchema } from "@/lib/schemas";
 import { authClient } from "@/lib/auth-client";
 import {
-  Box,
   Button,
-  Group,
   PasswordInput,
-  Stack,
   Text,
   TextInput,
   Title,
+  Flex,
+  Overlay,
+  Paper,
+  Container,
+  Center,
+  Anchor,
 } from "@mantine/core";
 import { deleteInvitationToken } from "@/lib/actions";
 import { redirect } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
+/**
+ *
+ * Renders the user registration form so the invited user can create an acccount
+ *
+ * @param verificationID - ID associated with the user who was invited
+ * @param email - The email associated with the user who was invited
+ * @returns The registration form UI
+ */
 export function RegisterUser({
   verificationID,
   email,
@@ -59,45 +72,130 @@ export function RegisterUser({
   };
 
   return (
-    <Box maw={300} p={"lg"}>
-      <Title order={3} mb={"sm"}>
-        Setup Your Account
-      </Title>
+    <Flex
+      mih={"100vh"}
+      w="100%"
+      pos="relative"
+      align="center"
+      justify="center"
+      style={{
+        overflow: "hidden",
+        backgroundImage: "url(/img/popcorn.jpg)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <Overlay color="#000" backgroundOpacity={0.3} zIndex={0} />
+      <Image
+        src={"/img/white_logo_transparent_background.png"}
+        width={3050}
+        height={1138}
+        placeholder="blur"
+        blurDataURL="/img/white_logo_transparent_background.png"
+        alt="Unreel Take"
+        loading={"eager"}
+        style={{
+          position: "absolute",
+          width: 180,
+          height: "auto",
+          top: 30,
+          left: 25,
+        }}
+      />
 
-      {errorMessage ? <Text c={"red"}>{errorMessage}</Text> : null}
+      <Container w="100%" maw={480} px={25}>
+        <Paper
+          withBorder
+          shadow="md"
+          p={45}
+          mt={10}
+          radius={"md"}
+          pos={"relative"}
+        >
+          <Title
+            ta="center"
+            style={{
+              fontSize: 42,
+              lineHeight: 1.1,
+              marginBottom: 55,
+            }}
+          >
+            Setup Your Account
+          </Title>
+          {errorMessage ? <Text c={"red"}>{errorMessage}</Text> : null}
 
-      <form onSubmit={registerUserForm.onSubmit(handleCreateUser)}>
-        <Stack gap={"xs"}>
-          <TextInput
-            label={"Display Name"}
-            placeholder={"Name"}
-            key={"name"}
-            {...registerUserForm.getInputProps("name")}
-          />
+          <form onSubmit={registerUserForm.onSubmit(handleCreateUser)}>
+            <TextInput
+              size="lg"
+              label={"Display Name"}
+              placeholder={"Name"}
+              radius={"lg"}
+              key={"name"}
+              {...registerUserForm.getInputProps("name")}
+            />
 
-          <PasswordInput
-            label={"Password"}
-            key={"password"}
-            {...registerUserForm.getInputProps("password")}
-          />
+            <TextInput
+              size="lg"
+              label={"Email"}
+              placeholder={"Email"}
+              radius={"lg"}
+              key={"email"}
+              autoComplete="off"
+              {...registerUserForm.getInputProps("email")}
+            />
 
-          <PasswordInput
-            label={"Verify Password"}
-            key={"confirmPassword"}
-            {...registerUserForm.getInputProps("confirmPassword")}
-          />
+            <PasswordInput
+              size="lg"
+              label={"Password"}
+              placeholder={"Your password"}
+              mt={"lg"}
+              radius={"md"}
+              key={"password"}
+              autoComplete="off"
+              {...registerUserForm.getInputProps("password")}
+            />
 
-          <Group justify={"center"}>
+            <PasswordInput
+              size="lg"
+              label={"Verify Password"}
+              placeholder={"Your password"}
+              mt={"lg"}
+              radius={"md"}
+              key={"confirmPassword"}
+              {...registerUserForm.getInputProps("confirmPassword")}
+            />
+
             <Button
+              fullWidth
+              size="lg"
+              mt={"xl"}
+              radius={"md"}
               type={"submit"}
-              w={"50%"}
               loading={registerUserForm.submitting}
+              color="dark"
             >
               Submit
             </Button>
-          </Group>
-        </Stack>
-      </form>
-    </Box>
+          </form>
+        </Paper>
+
+        <Center m={"lg"} pos={"relative"}>
+          <Anchor
+            component={Link}
+            href={"/login"}
+            c={"white"}
+            style={{
+              padding: "10px 24px",
+              borderRadius: "999px",
+              border: "1px solid white",
+              display: "inline-block",
+            }}
+          >
+            Back to Login
+          </Anchor>
+        </Center>
+      </Container>
+    </Flex>
   );
 }
