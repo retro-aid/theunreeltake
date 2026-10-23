@@ -237,12 +237,12 @@ describe("getAllPosts", () => {
         slug: "slug-test",
         posterUrl: "picture.png",
         published: true,
+        authorId: "authorID",
         createdAt: now,
         updatedAt: now,
       },
     ]);
     expect(result.data[0]).not.toHaveProperty("htmlContent");
-    expect(result.data[0]).not.toHaveProperty("authorId");
   });
 
   it.each([
