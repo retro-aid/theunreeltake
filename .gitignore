@@ -16,6 +16,9 @@
 # testing
 /coverage
 
+# typedoc
+/docs/api/
+
 # next.js
 /.next/
 /out/
