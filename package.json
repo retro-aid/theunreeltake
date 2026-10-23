@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "eslint .",
     "postinstall": "prisma generate",
-    "test": "vitest"
+    "test": "vitest",
+    "docs": "typedoc",
+    "docs:coverage": "typedoc --validation.notDocumented",
+    "docs:sprint": "pnpm run docs && pnpm run docs:coverage"
   },
   "dependencies": {
     "@gfazioli/mantine-flip": "^2.5.9",
