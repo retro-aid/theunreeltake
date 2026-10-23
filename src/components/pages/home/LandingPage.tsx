@@ -23,6 +23,7 @@ import Link from "next/link";
 import { ArrowRight, X, XCircle } from "react-bootstrap-icons"; //for the arrow on the guess button and the x on the give up button
 import { createTriviaCookie } from "@/lib/actions";
 import { Trivia } from "@/generated/prisma/client";
+import { questionAnsweredAction } from "@/lib/actions/trivia-actions";
 
 const MAX_ATTEMPTS = 3;
 
@@ -42,6 +43,9 @@ export default function LandingPage({ question }: { question: Trivia | null }) {
       question?.answer.trim().toLowerCase() || "parasite".trim().toLowerCase();
 
     if (userAnswer === quesAnswer) {
+      if (question != null) {
+        await questionAnsweredAction(question.id, 1);
+      }
       setIsCorrect(true);
       await createTriviaCookie();
       return;
@@ -49,6 +53,7 @@ export default function LandingPage({ question }: { question: Trivia | null }) {
 
     triviaForm.reset();
     setAttempts(attempts + 1);
+    if (question != null) await questionAnsweredAction(question.id, 0);
 
     if (attempts + 1 >= MAX_ATTEMPTS) await createTriviaCookie();
   };

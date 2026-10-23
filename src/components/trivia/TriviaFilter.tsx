@@ -21,7 +21,6 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 export function TriviaFilter({ data }: { data: Trivia[] }) {
   // Filter States
   const [category, setCategory] = useState<string | null>(null);
-  const [type, setType] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [published, setStatus] = useState<boolean | null>(null);
   const [search, setSearch] = useState("");
@@ -161,10 +160,17 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
               onChange={setCategory}
             />
             <Select
-              placeholder="Type: All"
-              data={["Multiple Choice", "True/False"]}
-              value={type}
-              onChange={setType}
+              placeholder="Difficulty: All"
+              data={[
+                "Unknown",
+                "Very Easy",
+                "Easy",
+                "Medium",
+                "Hard",
+                "Extreme",
+              ]}
+              value={difficulty}
+              onChange={setDifficulty}
             />
             <Select
               placeholder="Status: All"
