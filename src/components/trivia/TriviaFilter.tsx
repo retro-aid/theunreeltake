@@ -21,18 +21,19 @@ import { zod4Resolver } from "mantine-form-zod-resolver";
 export function TriviaFilter({ data }: { data: Trivia[] }) {
   // Filter States
   const [category, setCategory] = useState<string | null>(null);
-  const [type, setType] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [published, setStatus] = useState<boolean | null>(null);
   const [search, setSearch] = useState("");
 
+  let categories: string[] = [];
+
   // Filtered Data
   const filteredData = data.filter((item) => {
+    if (!categories.includes(item.category)) categories.push(item.category);
     return (
       (!category || item.category === category) &&
-      (!type || item.type === type) &&
       (!difficulty || item.difficulty === difficulty) &&
-      (!published || item.published === published) &&
+      (published === null || item.published === published) &&
       item.question.toLowerCase().includes(search.toLowerCase())
     );
   });
@@ -154,25 +155,29 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
           <Group>
             <Select
               placeholder="Category: All"
-              data={["Horror", "Comedy", "Action", "Thriller"]}
+              data={categories}
               value={category}
               onChange={setCategory}
             />
             <Select
-              placeholder="Type: All"
-              data={["Multiple Choice", "True/False"]}
-              value={type}
-              onChange={setType}
-            />
-            <Select
               placeholder="Difficulty: All"
-              data={["Easy", "Medium", "Hard", "Extreme"]}
+              data={[
+                "Unknown",
+                "Very Easy",
+                "Easy",
+                "Medium",
+                "Hard",
+                "Extreme",
+              ]}
               value={difficulty}
               onChange={setDifficulty}
             />
             <Select
               placeholder="Status: All"
-              data={[true, false]}
+              data={[
+                { value: true, label: "Published" },
+                { value: false, label: "Draft" },
+              ]}
               value={published}
               onChange={setStatus}
             />
