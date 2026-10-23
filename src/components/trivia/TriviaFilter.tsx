@@ -34,7 +34,7 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
     return (
       (!category || item.category === category) &&
       (!difficulty || item.difficulty === difficulty) &&
-      (!published || item.published === published) &&
+      (published === null || item.published === published) &&
       item.question.toLowerCase().includes(search.toLowerCase())
     );
   });
