@@ -14,7 +14,7 @@ import {
   Button,
   Flex,
   Popover,
-  useMatches
+  useMatches,
 } from "@mantine/core";
 
 import classes from "./MoviePostCard.module.css";
@@ -29,11 +29,11 @@ import dayjs from "dayjs";
 
 /**
  * Displays the layout and basic information of the post card
- * 
+ *
  * @remarks Gets import to these files:
  * Blog Post Page: /src/app/(home)/blog/[slug]/page.tsx
  * PostGrid.tsx: /src/app/ui/home/PostGrid.tsx
- * 
+ *
  * @returns Information such as Title, Author, Date Published, Tags, and Preview of Post Content
  */
 
@@ -57,15 +57,20 @@ export function MoviePostCard({ postData }: { postData: CatalogItem }) {
 
   //Remove HTML Tags from htmlContent for the preview
   const preview = (postData.htmlContent ?? "")
-  .replace(/<br\s*\/?>/gi, "\n")
-  .replace(/<\/(p|div|li|h[1-6])>/gi, "\n")
-  .replace(/<[^>]+>/g, "")
-  .replace(/&nbsp;/g, " ")
-  .replace(/&amp;/g, "&")
-  .trim();
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6])>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .trim();
 
   return (
-    <AspectRatio ratio={2 / 3} maw={{ base: 250, lg: 300, xl: 400 }} mx="auto" ref={ref}>
+    <AspectRatio
+      ratio={2 / 3}
+      maw={{ base: 250, lg: 300, xl: 400 }}
+      mx="auto"
+      ref={ref}
+    >
       <Flip flipped={isFlipped} duration={0.6}>
         <Card
           className={classes.card}
@@ -114,97 +119,95 @@ export function MoviePostCard({ postData }: { postData: CatalogItem }) {
                 </Text>
 
                 {/*applied here to map over all tags without crashing */}
-            {allTags.length > 0 && (
-              <Group gap={1} wrap="wrap">
-                {visibleTags.map((tag) => (
-                  <Badge
-                    key={tag.id}
-                    color="blue"
-                    variant="light"
-                    maw="100%"
-                    size="xs"
-                    fz="9"
-                  >
-                    {tag.displayName}
-                  </Badge>
-                ))}
-                {hiddenTags.length > 0 && (
-                  <Popover
-                    opened={tagsOpen}
-                    onChange={setTagsOpen}
-                    position="bottom"
-                    width={"max-content"}
-                  >
-                    <Popover.Target>
-                    <Badge
-                      color="gray"
-                      variant="outline"
-                      fz={"9"}
-                      size="xs"
-                      style={{ cursor: "default" }}
-                      aria-label={`Show ${hiddenTags.length} more tags`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTagsOpen((o)=>!o);}}
-                    >
-                      More Tags
-                    </Badge>
-                    </Popover.Target>
-                    <Popover.Dropdown p="xs" onClick={(e) => e.stopPropagation()}>
-                      <Group gap={4} wrap="wrap">
-                        {hiddenTags.map((tag) => (
+                {allTags.length > 0 && (
+                  <Group gap={1} wrap="wrap">
+                    {visibleTags.map((tag) => (
+                      <Badge
+                        key={tag.id}
+                        color="blue"
+                        variant="light"
+                        maw="100%"
+                        size="xs"
+                        fz="9"
+                      >
+                        {tag.displayName}
+                      </Badge>
+                    ))}
+                    {hiddenTags.length > 0 && (
+                      <Popover
+                        opened={tagsOpen}
+                        onChange={setTagsOpen}
+                        position="bottom"
+                        width={"max-content"}
+                      >
+                        <Popover.Target>
                           <Badge
-                            key={tag.id}
-                            color="blue"
-                            variant="light"
-                            
+                            color="gray"
+                            variant="outline"
                             fz={"9"}
                             size="xs"
-                            maw="100%"
-                            
-                            onClick={(e) => e.stopPropagation()}
+                            style={{ cursor: "default" }}
+                            aria-label={`Show ${hiddenTags.length} more tags`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTagsOpen((o) => !o);
+                            }}
                           >
-                            {tag.displayName}
+                            More Tags
                           </Badge>
-                        ))}
-                      </Group>
-                    </Popover.Dropdown>
-                  </Popover>
+                        </Popover.Target>
+                        <Popover.Dropdown
+                          p="xs"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Group gap={4} wrap="wrap">
+                            {hiddenTags.map((tag) => (
+                              <Badge
+                                key={tag.id}
+                                color="blue"
+                                variant="light"
+
+                                fz={"9"}
+                                size="xs"
+                                maw="100%"
+
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {tag.displayName}
+                              </Badge>
+                            ))}
+                          </Group>
+                        </Popover.Dropdown>
+                      </Popover>
+                    )}
+                  </Group>
                 )}
-              </Group>
-            )}
-           
-                
-                
-              <Group gap={1} wrap="nowrap" align="center">
-                <Text 
-                  size={rem(width / 16)}
-                  fz={ {base: 12, sm: 11, md: 12, lg: 12 }}
-                  
+
+                <Group gap={1} wrap="nowrap" align="center">
+                  <Text
+                    size={rem(width / 16)}
+                    fz={{ base: 12, sm: 11, md: 12, lg: 12 }}
                   >
                     Post By: {postData.author.name}
+                  </Text>
+                </Group>
+
+                <Group gap={3} wrap="nowrap" align="center">
+                  <Text
+                    size={rem(width / 16)}
+                    fz={{ base: 12, sm: 12, md: 12, lg: 12 }}
+                    lineClamp={1}
+                  >
+                    Published: {dayjs(postData.createdAt).format("MMM D, YYYY")}
+                  </Text>
+                </Group>
+
+                <Text lineClamp={clamp} fz="xs" c="dimmed">
+                  {preview}
                 </Text>
-              </Group>
-
-              <Group gap={3} wrap="nowrap" align="center">
-                <Text 
-                  size={rem(width / 16)}
-                  fz={ {base: 12, sm: 12, md: 12, lg: 12 }}
-                  lineClamp={1}>
-                  Published: {dayjs(postData.createdAt).format("MMM D, YYYY")}
-                </Text>
-              </Group>
-
-              <Text lineClamp={clamp} fz="xs" c="dimmed">
-                {preview}
-
-              </Text>
-
               </Stack>
             </Flex>
           </Group>
-
-          
 
           <Button
             component={Link}
