@@ -1,40 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-
-import {
-  Text,
-  Card,
-  Image,
-  Box,
-  Group,
-  ActionIcon,
-  Badge,
-  Tooltip,
-  Button,
-} from "@mantine/core";
-import Link from "next/link";
-import { DeletePostModal } from "@/components/posts/DeletePostModal";
-import {
-  deletePostAction,
-  togglePublishedAction,
-} from "@/lib/actions/post-actions";
-import type { PostDTO } from "@/lib/dal/dto/posts";
-import { ScrollableGrid } from "@/components/generic/ScrollableGrid";
-
-type Icons = {
-  Edit: React.ElementType;
-  Chat: React.ElementType;
-  Stats: React.ElementType;
-  Delete: React.ElementType;
-};
-
 /**
- * Icon component mapping required by the post card actions.
+ * URT-413 changes:
+ *  Part of the implementation is to refactor the components of the PostCard and create its own called PostCard.tsx
+ *  This ensures it follows the team's code structure and easier to navigate
  */
+import { ScrollableGrid } from "@/components/generic/ScrollableGrid";
+import { PostCard, type Icons } from "@/components/posts/PostCard";
+import type { PostDTO } from "@/lib/dal/dto/posts";
+
 type GridProps = {
   data: PostDTO[];
   icons: Icons;
+  isAdmin?: boolean;
   onPostUpdatedAction: () => void;
 };
 
@@ -177,24 +155,20 @@ export function PostCard({
 }
 
 /**
- * URT388 change:
- * Grid layout view for rendering posts using the generic {@link ScrollableGrid}.
- *
- * @remarks
- * - Refactored to delegate layout, responsiveness, and scrolling to the generic `ScrollableGrid` component.
- * - height can be adjusted such that if, ex. 600, it can make the posts scrollable
- * - Preserves existing post functionality and cards intact.
- *
- * @param props - Grid configuration props defined in {@link GridProps}.
- * @returns The posts collection rendered inside a scrollable grid container.
+ * Grid layout view for rendering posts using {@link ScrollableGrid}.
  */
-export function PostGrid({ data, icons, onPostUpdatedAction }: GridProps) {
+export function PostGrid({
+  data,
+  icons,
+  isAdmin = false,
+  onPostUpdatedAction,
+}: GridProps) {
   return (
     <ScrollableGrid<PostDTO>
       data={data}
       layout="grid"
-      pageSize={0} // Disable pagination so all posts display in a single scrollable viewport
-      height={600} // Change the height to check the scroll works
+      pageSize={0}
+      height={600}
       showActions={false}
       keyExtractor={(post) => post.id}
       gridColProps={{
@@ -205,6 +179,7 @@ export function PostGrid({ data, icons, onPostUpdatedAction }: GridProps) {
         <PostCard
           post={post}
           icons={icons}
+          isAdmin={isAdmin}
           onPostUpdatedAction={onPostUpdatedAction}
         />
       )}

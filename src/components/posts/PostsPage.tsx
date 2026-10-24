@@ -1,6 +1,12 @@
 "use client";
 import { Flex, Pagination, Group } from "@mantine/core";
-import { PencilSquare, Chat, Trash, BarChart } from "react-bootstrap-icons";
+import {
+  PencilSquare,
+  Chat,
+  Trash,
+  BarChart,
+  PersonCheck,
+} from "react-bootstrap-icons";
 import { PostGrid } from "@/components/posts/PostGrid";
 import { NewPostButton } from "@/components/posts/NewPostButton";
 import React, {
@@ -20,12 +26,13 @@ import {
 } from "@/components/generic/ActionButtons";
 
 const postsPerPage = 10;
-
+//added the new icon here to be displayed in the card
 const icons = {
   Edit: PencilSquare,
   Chat: Chat,
   Stats: BarChart,
   Delete: Trash,
+  User: PersonCheck,
 };
 
 const filterOptions: ActionMenuOption[] = [
@@ -42,6 +49,8 @@ const sortOptions: ActionMenuOption[] = [
 
 export default function DashboardPostsPage() {
   const authContext = useContext(AuthContext);
+  const isAdmin = authContext?.user?.role?.toLowerCase() === "admin"; //added a const to check if the user is admin
+
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
 
@@ -115,7 +124,12 @@ export default function DashboardPostsPage() {
       </Flex>
 
       <Flex style={{ marginTop: "32px" }}>
-        <PostGrid data={posts} icons={icons} onPostUpdatedAction={refresh} />
+        <PostGrid
+          data={posts}
+          icons={icons}
+          isAdmin={isAdmin}
+          onPostUpdatedAction={refresh}
+        />
       </Flex>
 
       <Pagination

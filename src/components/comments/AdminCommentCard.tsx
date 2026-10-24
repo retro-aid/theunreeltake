@@ -76,7 +76,9 @@ export function AdminCommentCard({
             style={{ minWidth: 0, flex: 1 }}
           >
             <Avatar
-              src={null}
+              src={
+                (comment as any).avatarUrl ?? (comment as any).userImage ?? null
+              }
               color={isAnonymous ? "gray" : "blue"}
               radius="xl"
               size="lg"

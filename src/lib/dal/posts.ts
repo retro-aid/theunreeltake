@@ -6,6 +6,49 @@ import type { PostEditDTO, PostDTO } from "./dto/posts";
 import { Prisma } from "@/generated/prisma/client";
 import { getCurrentSession } from "@/lib/dal/utils";
 
+/**
+ * Updates the author ID of a post.
+ * Restricted to admin sessions.
+ * @param id - The ID of the post to update.
+ * @param newAuthorId - The ID of the new author.
+ * @returns Status object indicating success or error.
+ */
+export async function updatePostAuthor(id: string, newAuthorId: string) {
+  try {
+    const session = await getCurrentSession();
+
+    if (session?.user?.role?.toLowerCase() !== "admin") {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    await prisma.post.update({
+      where: { id },
+      data: { authorId: newAuthorId },
+    });
+
+    return { success: true, error: null };
+  } catch (error) {
+    console.error("Failed to update post author:", error);
+    return { success: false, error: "Failed to update author" };
+  }
+}
+
+/**
+ * Fetches all users for selection.
+ * @returns An array of users.
+ */
+export async function getAllUsers() {
+  return prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+    },
+    orderBy: { name: "asc" },
+  });
+}
+
 export async function deletePost(id: string) {
   try {
     await prisma.post.delete({
@@ -98,6 +141,7 @@ export async function getAllPosts({
       slug: post.slug,
       posterUrl: post.posterUrl,
       published: post.published,
+      authorId: post.authorId,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
     }));
