@@ -116,9 +116,9 @@ export default async function BlogPostPage({
   const comments = await getRepliesOnPostAction(slug);
 
   return (
-    <Flex bg={"gray.0"}>
+    <Box bg={"gray.0"}>
       <ViewTracker slug={slug} />
-      <Container px={{ base: 0, md: "md" }}>
+      <Container size="md" px={{ base: 0, md: "md" }}>
         <Paper shadow={"sm"} p={{ base: "md", sm: "xl" }} bdrs={0}>
           <Stack>
             <Title order={1} my={"lg"}>
@@ -194,6 +194,6 @@ export default async function BlogPostPage({
           </Stack>
         </Paper>
       </Container>
-    </Flex>
+    </Box>
   );
 }
