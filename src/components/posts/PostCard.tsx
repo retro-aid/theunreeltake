@@ -135,7 +135,8 @@ export function PostCard({
               </Tooltip>
 
               <Tooltip label="Comments">
-                <ActionIcon variant="light" size="md" bdrs="xs" color="black">
+                <ActionIcon component={Link}
+                  href={`/dashboard/posts/comments/${post.id}`} variant="light" size="md" bdrs="xs" color="black">
                   <icons.Chat size={16} />
                 </ActionIcon>
               </Tooltip>
@@ -203,7 +204,7 @@ export function PostCard({
           opened={authorModalOpened}
           onClose={() => setAuthorModalOpened(false)}
           onConfirm={onConfirmAuthorChange}
-          currentAuthorId={(post as any).authorId}
+          currentAuthorId={post.authorId ?? ""}
           fetchUsersAction={getAllUsersAction}
         />
       )}
