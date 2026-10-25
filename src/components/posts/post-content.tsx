@@ -62,7 +62,12 @@ export function PostDetail({ label, value }: { label: string; value: string }) {
 export function PostLayout({ children }: { children: React.ReactNode }) {
   return (
     <Container px={{ base: 0, md: "md" }}>
-      <Paper shadow={"sm"} p={{ base: "md", sm: "xl" }} bdrs={0}>
+      <Paper
+        w={{ base: "300", sm: "700", md: "900" }}
+        shadow={"sm"}
+        p={{ base: "md", sm: "xl" }}
+        bdrs={0}
+      >
         <Stack>{children}</Stack>
       </Paper>
     </Container>
