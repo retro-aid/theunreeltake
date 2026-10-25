@@ -6,6 +6,22 @@ export async function getAllQuestions() {
   return prisma.trivia.findMany();
 }
 
+/**
+ * A function that queries all the published questions from the trivia database and selects one to return
+ * @returns A random question from the trivia table if successful, null if unsuccessful
+ */
+export async function getRandomQuestion() {
+  try {
+    const questions = await prisma.trivia.findMany({
+      where: { published: true },
+    });
+    const chosenNum = Math.floor(Math.random() * questions.length);
+    return questions[chosenNum];
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function createTriviaQuestion(
   question: string,
   answer: string,
