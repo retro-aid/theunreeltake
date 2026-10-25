@@ -32,7 +32,7 @@ const MAX_ATTEMPTS = 3;
  * @param param0 Takes in either a trivia question or null
  * @returns The landing page
  */
-export default function LandingPage({ question }: { question: Trivia | null }) {
+export default function LandingFunctionality({ question }: { question: Trivia | null }) {
   const [attempts, setAttempts] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
 
@@ -40,7 +40,7 @@ export default function LandingPage({ question }: { question: Trivia | null }) {
     const userAnswer = formData.answer.trim().toLowerCase();
     const quesAnswer =
       question?.answer.trim().toLowerCase() ||
-      "parasite".trim().toLowerCase();
+      "parasite".trim();
 
     if (userAnswer === quesAnswer) {
       setIsCorrect(true);
