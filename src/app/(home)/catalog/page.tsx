@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Group, Loader, Pagination } from "@mantine/core";
+import { Flex, Group, Loader, Pagination, Container } from "@mantine/core";
 import { SearchBar } from "@/components/generic/SearchBar";
 import PostGrid from "@/app/ui/home/PostGrid";
 import CatalogActionButtons from "@/app/ui/home/CatalogActionButtons";
@@ -68,44 +68,46 @@ function MoviesPageContent() {
   }, [refresh]);
 
   return (
-    <Flex direction={"column"} p={{ base: "sm", sm: "lg" }}>
-      <Group gap={"xs"}>
-        <Flex w={{ base: "100%", sm: "80%", md: "40%" }}>
-          <SearchBar
-            initialValue={search}
-            onSearchAction={(value) => {
-              handleSearch(value);
-              setPage(1);
-            }}
-          />
-        </Flex>
-        <Group gap={"xs"} ml={{ base: "lg", md: 0 }}>
-          <CatalogActionButtons
-            onSortByAction={handleSortBy}
-            onFilterAction={handleFilter}
-            onPostsCountAction={handlePostsCount}
-          />
-          <RefreshDataButton updateData={refresh} />
-        </Group>
-      </Group>
-
-      {isLoading ? (
-        <CatalogLoader />
-      ) : (
-        <>
-          <PostGrid posts={posts} />
-          {totalCount > 0 && (
-            <Pagination
-              color={"dark"}
-              total={Math.ceil(totalCount / postsPerPage)}
-              value={page}
-              onChange={setPage}
-              mb={"md"}
+    <Container size="xl" w="100%" px={{ base: "lg", md: "md" }} py="xl">
+      <Flex direction={"column"} gap={{ base: "sm", sm: "lg" }}>
+        <Group gap={"xs"}>
+          <Flex w={{ base: "100%", sm: "80%", md: "40%" }}>
+            <SearchBar
+              initialValue={search}
+              onSearchAction={(value) => {
+                handleSearch(value);
+                setPage(1);
+              }}
             />
-          )}
-        </>
-      )}
-    </Flex>
+          </Flex>
+          <Group gap={"xs"} ml={{ base: "lg", md: 0 }}>
+            <CatalogActionButtons
+              onSortByAction={handleSortBy}
+              onFilterAction={handleFilter}
+              onPostsCountAction={handlePostsCount}
+            />
+            <RefreshDataButton updateData={refresh} />
+          </Group>
+        </Group>
+
+        {isLoading ? (
+          <CatalogLoader />
+        ) : (
+          <>
+            <PostGrid posts={posts} />
+            {totalCount > 0 && (
+              <Pagination
+                color={"dark"}
+                total={Math.ceil(totalCount / postsPerPage)}
+                value={page}
+                onChange={setPage}
+                mb={"md"}
+              />
+            )}
+          </>
+        )}
+      </Flex>
+    </Container>
   );
 }
 
