@@ -1,0 +1,19 @@
+{
+  "entryPoints": ["src/**/*.ts", "src/**/*.tsx"],
+  "entryPointStrategy": "expand",
+  "tsconfig": "tsconfig.typedoc.json",
+  "out": "docs/api",
+  "name": "TheUnreelTake API",
+  "exclude": ["src/lib/__mocks__/**", "src/generated/**"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "readme": "none",
+  "requiredToBeDocumented": ["Function", "Class", "TypeAlias", "Variable", "Enum"],
+  "validation": {
+    "notDocumented": true,
+    "notExported": true,
+    "invalidLink": true,
+    "invalidPath": true
+  }
+}
