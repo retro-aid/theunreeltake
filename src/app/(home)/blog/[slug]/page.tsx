@@ -112,7 +112,7 @@ export default async function BlogPostPage({
   const comments = await getRepliesOnPostAction(slug);
 
   return (
-    <Flex bg={"gray.0"}>
+    <Box bg={"gray.0"}>
       <ViewTracker slug={slug} />
       <PostLayout>
         <PostContent post={{ ...data, authorName: data.author.name }} />
@@ -144,6 +144,6 @@ export default async function BlogPostPage({
 
         <CommentGrid comments={comments} />
       </PostLayout>
-    </Flex>
+    </Box>
   );
 }
