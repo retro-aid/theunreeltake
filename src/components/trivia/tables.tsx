@@ -27,7 +27,6 @@ export function TriviaTable({ data }: { data: Trivia[] }) {
               <Table.Th>Question</Table.Th>
               <Table.Th>Category</Table.Th>
               <Table.Th>Difficulty</Table.Th>
-              <Table.Th>Type</Table.Th>
               <Table.Th>Status</Table.Th>
               <Table.Th>% Correct</Table.Th>
               <Table.Th>Actions</Table.Th>

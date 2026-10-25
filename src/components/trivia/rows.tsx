@@ -237,7 +237,6 @@ export function TriviaRow({ question }: { question: Trivia }) {
         <TableTd>{question.question}</TableTd>
         <TableTd>{question.category}</TableTd>
         <TableTd>{question.difficulty}</TableTd>
-        <TableTd>{question.type}</TableTd>
         <TableTd>
           <Badge
             color={question.published === true ? "green" : "red"}
@@ -246,7 +245,12 @@ export function TriviaRow({ question }: { question: Trivia }) {
             {question.published === true ? "Published" : "Draft"}
           </Badge>
         </TableTd>
-        <TableTd>{question.sucrate}</TableTd>
+        <TableTd>
+          {question.asked === 0
+            ? "0%"
+            : ((question.correct / question.asked) * 100).toFixed().toString() +
+              "%"}
+        </TableTd>
         <TableTd>
           <Group gap="xs">
             <Button
