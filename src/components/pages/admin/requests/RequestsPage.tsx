@@ -5,7 +5,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { useCallback, useEffect, useState, useTransition } from "react";
 
 import GridReview from "@/components/media-requests/GridReview";
-import RequestDetailProp from "@/components/media-requests/RequestDetailProp";
 import ReplyRequestModal from "@/components/media-requests/ReplyRequestModal";
 import DeleteRequestModal from "@/components/media-requests/DeleteRequestModal";
 
@@ -26,7 +25,7 @@ const limit = 10;
  *
  * @returns The interactive media request management interface.
  */
-export default function RequestsClient() {
+export default function RequestsPage() {
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [requests, setRequests] = useState<RequestDTO[]>([]);
   const selectedItem = requests.find((item) => item.id === selectedId);
@@ -76,6 +75,27 @@ export default function RequestsClient() {
     setPage(1);
     setSelectedId(undefined);
   };
+
+  /**
+   * Opens the reply modal for the request whose card was clicked.
+   *
+   * @param id - ID of the request being replied to.
+   */
+  const startReply = (id: string) => {
+    setSelectedId(id);
+    openReply();
+  };
+
+  /**
+   * Opens the delete confirmation for the request whose card was clicked.
+   *
+   * @param id - ID of the request being deleted.
+   */
+  const startDelete = (id: string) => {
+    setSelectedId(id);
+    openDelete();
+  };
+
   const refresh = useCallback(() => {
     startTransition(async () => {
       try {
@@ -144,12 +164,6 @@ export default function RequestsClient() {
         Requests
       </Title>
 
-      <RequestDetailProp
-        request={selectedItem}
-        onReply={openReply}
-        onDelete={openDelete}
-      />
-
       {selectedItem && (
         <>
           <ReplyRequestModal
@@ -189,8 +203,8 @@ export default function RequestsClient() {
         <>
           <GridReview
             data={requests}
-            selectedId={selectedId}
-            onSelectAction={setSelectedId}
+            onReplyAction={startReply}
+            onDeleteAction={startDelete}
           />
 
           <Group mt="xl">

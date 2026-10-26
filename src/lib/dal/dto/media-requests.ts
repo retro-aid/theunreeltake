@@ -39,7 +39,7 @@ export async function getPendingRequestCount() {
  * Creates a new media request in the database.
  *
  * Uses the provided form data to create a request, defaulting an omitted
- * message to an empty string and an omitted name to null.
+ * message to an empty string and an omitted or blank name to null.
  *
  * @param data - The validated media request form data.
  * @returns An object indicating whether the submission succeeded and an
@@ -53,7 +53,7 @@ export async function submitRequestForm(data: RequestForm) {
         title: data.title,
         message: data.message ?? "",
         type: data.mediaType,
-        name: data.name ?? null,
+        name: data.name?.trim() || null,
       },
     });
     return { e: null, success: true };
