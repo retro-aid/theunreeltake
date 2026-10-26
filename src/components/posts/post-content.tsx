@@ -10,6 +10,7 @@ import {
 import dayjs from "dayjs";
 import React from "react";
 import { PostImages } from "@/components/posts/PostImages";
+import BackLinkButton from "@/components/generic/BackLinkButton";
 
 /** Format used for every date shown on a post. */
 const POST_DATE_FORMAT = "MMM D, YYYY h:mm A";
@@ -93,6 +94,9 @@ export function PostContent({ post }: { post: PostContentData }) {
 
   return (
     <>
+      <Group justify="flex-end">
+        <BackLinkButton />
+      </Group>
       <Title order={1} my={"lg"}>
         {post.title}
       </Title>
