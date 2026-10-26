@@ -38,11 +38,30 @@ export async function getAdminPosts({
         orderBy: POST_ORDER_BY[sort] ?? { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
+        include: {
+          author: {
+            select: { name: true },
+          },
+          tags: {
+            select: { tagId: true },
+          },
+        },
       }),
       prisma.post.count({ where }),
     ]);
-
-    return { success: true, data, total };
+    const posts: PostDTO[] = data.map((post) => ({
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      posterUrl: post.posterUrl,
+      published: post.published,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      authorName: post.author.name,
+      tagCount: post.tags.length,
+      views: post.views,
+    }));
+    return { success: true, data: posts, total };
   } catch (e) {
     console.error(e);
     return { success: false, data: [], total: 0 };
@@ -143,6 +162,9 @@ export type PostDTO = {
   published: boolean;
   createdAt: Date;
   updatedAt: Date;
+  authorName: string;
+  tagCount: number;
+  views: number;
 };
 
 export type PostEditDTO = {
