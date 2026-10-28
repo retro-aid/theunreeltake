@@ -67,6 +67,10 @@ export async function createComment(
   }
 }
 
+/**
+ * URT-422 changes: update the reply so that it can reply to a comment or an existing reply on a post
+ * - If parentComment is already a reply, attach this new reply to the top-level root comment
+ */
 export async function createReply(
   parentCommentId: string,
   messageContent: string,
@@ -78,10 +82,7 @@ export async function createReply(
       select: { id: true, postId: true, postSlug: true, repliesToId: true },
     });
 
-    if (parentComment.repliesToId !== null) {
-      console.error("No Reply");
-      return null;
-    }
+    const rootCommentId = parentComment.repliesToId ?? parentComment.id;
 
     return await prisma.comment.create({
       data: {
@@ -91,7 +92,7 @@ export async function createReply(
         userId: session.user.id,
         postId: parentComment.postId,
         postSlug: parentComment.postSlug,
-        repliesToId: parentComment.id,
+        repliesToId: rootCommentId, // Attach to root
       },
     });
   } catch (error) {
