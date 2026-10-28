@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import * as crypto from "node:crypto";
 import { getCurrentSession } from "@/lib/dal/utils";
 import dayjs from "dayjs";
+import type { Prisma } from "@/generated/prisma/client";
 
 type CommentWithPostTitle = Awaited<
   ReturnType<typeof getAdminComments>
@@ -116,37 +117,45 @@ export async function deleteComment(id: string) {
   }
 }
 
-export async function getAdminComments() {
+/**
+ * Gets dashboard specific comments based on user role or for a specific post
+ *
+ * @remarks
+ * If a postId is provided, returns only comments for that post.
+ * If no postId is provided, returns the general comments for either only a user's posts;
+ * Or if the user is an admin, all comments site-wide
+ *
+ * @param postId - The id of the post to retrieve comments for
+ * @returns A list of dashboard-specific comments
+ */
+export async function getAdminComments(postId?: string) {
   const session = await getCurrentSession();
 
-  if (session.user.role === "user") {
-    return prisma.comment.findMany({
-      where: {
-        post: {
-          author: {
-            id: session.user.id,
-          },
-        },
-      },
-      include: {
-        post: {
-          select: { title: true },
-        },
-      },
-      omit: { repliesToId: true },
-      orderBy: { createdAt: "desc" },
-    });
-  } else if (session.user.role === "admin") {
-    return prisma.comment.findMany({
-      omit: { repliesToId: true },
-      include: {
-        post: { select: { title: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-  } else {
+  if(
+    !session.user.role ||
+    (session.user.role !== "admin" && session.user.role !== "user")
+  )
     return [];
+
+  let whereClause: Prisma.CommentWhereInput | undefined;
+
+  if(postId) {
+    whereClause = { postId: postId };
   }
+  else if(session.user.role === "user") {
+    whereClause = { post: { author: { id: session.user.id } } };
+  }
+
+  return prisma.comment.findMany({
+    where: whereClause,
+    include: {
+      post: {
+        select: { title: true },
+      },
+    },
+    omit: { repliesToId: true },
+    orderBy: { createdAt: "desc" }
+  });
 }
 
 export async function getCommentsOnPost(postSlug: string) {

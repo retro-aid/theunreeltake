@@ -22,6 +22,7 @@ export interface CatalogItem {
   title: string;
   posterUrl: string | null;
   createdAt: Date;
+  htmlContent: string;
   author: {
     name: string;
   };
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
       orderBy: orderByList,
       omit: {
         id: true,
-        htmlContent: true,
+        //htmlContent: true,
         published: true,
         imageUrls: true,
         updatedAt: true,

@@ -3,7 +3,10 @@
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
-import { DeletePostModal } from "@/components/posts/DeletePostModal";
+import {
+  DeletePostModal,
+  CancelPostModal,
+} from "@/components/posts/DeletePostModal";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import {
   Button,
@@ -23,19 +26,14 @@ import {
 } from "@/lib/actions/post-actions";
 import { CreatePostSchema } from "@/lib/schemas/post-schemas";
 import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getPostTemplatesAction } from "@/lib/actions/template-actions";
 import type { TagDTO } from "@/lib/dal/dto/tags";
-
-interface PostProp {
-  id: string;
-  title: string;
-  slug: string;
-  htmlContent: string;
-  posterUrl: string | null;
-  published: boolean;
-  tags: { tagId: number }[];
-}
+import type { GetPostEditDTO } from "@/lib/dal/dto/posts";
+import { Eye } from "react-bootstrap-icons";
+import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { PreviewPostModal } from "@/components/posts/PreviewPostModal";
+import type { PostContentData } from "@/components/posts/post-content";
 
 interface PostTemplate {
   id: string;
@@ -45,16 +43,36 @@ interface PostTemplate {
 
 type Prefill = { title: string; message: string; mediaTags: number[] };
 
+/** The maximum number of image URLs a post can have. */
+const MAX_POST_IMAGES = 2;
+
+/**
+ * Renders the post creation and editing form.
+ *
+ * The form allows admins to enter a post title, slug, media tags,
+ * poster URL, image URLs, and page content. Depending on the mode, the form provides
+ * options to publish, save as a draft, save changes, delete, or cancel.
+ *
+ * @param props - The props used to configure the post form.
+ * @param props.post - The existing post to edit. If null, the form
+ * creates a new post.
+ * @param props.prefill - Optional initial title and content used to prefill
+ * the form.
+ * @param props.mediaTags - The media tags that users can select.
+ */
 export function PostForm({
   post,
   prefill,
   mediaTags,
 }: {
-  post?: PostProp | null;
+  post?: GetPostEditDTO | null;
   prefill?: Prefill;
   mediaTags: TagDTO[];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [previewOpened, { open: openPreview, close: closePreview }] =
+    useDisclosure(false);
+  const { user } = useContext(AuthContext);
   const [templates, setTemplate] = useState<PostTemplate[]>([]);
   const router = useRouter();
 
@@ -78,9 +96,12 @@ export function PostForm({
     initialValues: {
       title: post?.title || prefill?.title || "",
       slug: post?.slug || "",
-      tagIds: new Array<{ value: number }>(), // TODO Fix this
+      tagIds: post?.tags.map((tag) => String(tag.tagId)) ?? [],
       posterUrl: post?.posterUrl ?? null,
-      imageUrls: new Array<string>(), // TODO Fix this
+      imageUrls: Array.from(
+        { length: MAX_POST_IMAGES },
+        (_, index) => post?.imageUrls[index] ?? "",
+      ),
       pageContent:
         post?.htmlContent ||
         (prefill?.message ? "<p>" + prefill.message + "</p>" : ""),
@@ -127,6 +148,7 @@ export function PostForm({
       return;
     }
     const values = form.getValues();
+    const imageUrls = values.imageUrls.filter(Boolean);
 
     if (isEditMode && post) {
       const isPublishing = action === "publish" ? true : post.published;
@@ -138,9 +160,9 @@ export function PostForm({
         htmlContent: values.pageContent,
         published: isPublishing,
         posterUrl: values.posterUrl,
-        tags: values.tagIds.map((i) => {
-          return { tagId: i.value };
-        }),
+        tags: values.tagIds.map((id) => ({
+          tagId: Number(id),
+        })),
         imageUrls: values.imageUrls,
       });
 
@@ -154,9 +176,9 @@ export function PostForm({
         published: isPublishing,
         posterUrl: values.posterUrl,
         imageUrls: values.imageUrls,
-        tags: values.tagIds.map((t) => {
-          return { tagId: t.value };
-        }),
+        tags: values.tagIds.map((id) => ({
+          tagId: Number(id),
+        })),
       });
       router.push("/dashboard/posts");
     }
@@ -170,12 +192,44 @@ export function PostForm({
     router.push("/dashboard/posts");
   };
 
+  /**
+   * Builds the data shown in the preview modal from the form's current,
+   * unsaved values.
+   *
+   * @returns The post data to preview. Empty image URLs are removed, the
+   * creation date is the saved one (or now for a new post), and the update
+   * date is now.
+   */
+  const getPreviewPost = (): PostContentData => {
+    const { title, imageUrls, pageContent } = form.getValues();
+    const now = new Date();
+
+    return {
+      title,
+      imageUrls: imageUrls.filter(Boolean),
+      htmlContent: pageContent,
+      authorName: user.name,
+      createdAt: post?.createdAt ?? now,
+      updatedAt: now,
+    };
+  };
+
   return (
     <>
       <DeletePostModal
         opened={opened}
         onClose={close}
         onConfirm={handleDeleteConfirm}
+      />
+      <CancelPostModal
+        opened={opened}
+        onClose={close}
+        onConfirm={() => router.push("/dashboard/posts")}
+      />
+      <PreviewPostModal
+        opened={previewOpened}
+        onClose={closePreview}
+        post={getPreviewPost()}
       />
 
       <Paper
@@ -214,10 +268,10 @@ export function PostForm({
                 placeholder="Select media type"
                 description="Can select multiple types"
                 data={mediaTags.map((tag) => ({
-                  value: tag.id,
+                  value: String(tag.id),
                   label: tag.displayName,
                 }))}
-                key="tagIds"
+                key={form.key("tagIds")}
                 {...form.getInputProps("tagIds")}
               />
               <TextInput
@@ -266,45 +320,62 @@ export function PostForm({
                 onChange={handlePageContentChange}
               />
             </Input.Wrapper>
-
-            <Group justify="flex-end" mt="md">
-              {!isEditMode && (
-                <>
-                  <Button color="red" onClick={open}>
-                    Discard
-                  </Button>
-                  <Button
-                    variant="default"
-                    onClick={() => handleSubmit("draft")}
-                  >
-                    Save as Draft
-                  </Button>
-                  <Button color="dark" onClick={() => handleSubmit("publish")}>
-                    Publish
-                  </Button>
-                </>
-              )}
-              {isEditMode && post && (
-                <>
-                  <Button color="red" onClick={open}>
-                    Delete
-                  </Button>
-                  <Button
-                    variant="default"
-                    onClick={() => handleSubmit("save")}
-                  >
-                    Save
-                  </Button>
-                  {!post.published && (
+            <Group justify="space-between" align="center" mt="md">
+              <Group>
+                <Button variant="default" onClick={open}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="light"
+                  color="dark"
+                  leftSection={<Eye size={16} />}
+                  onClick={openPreview}
+                >
+                  Preview
+                </Button>
+              </Group>
+              <Group justify="flex-end">
+                {!isEditMode && (
+                  <>
+                    <Button color="red" onClick={open}>
+                      Discard
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => handleSubmit("draft")}
+                    >
+                      Save as Draft
+                    </Button>
                     <Button
                       color="dark"
                       onClick={() => handleSubmit("publish")}
                     >
                       Publish
                     </Button>
-                  )}
-                </>
-              )}
+                  </>
+                )}
+                {isEditMode && post && (
+                  <>
+                    <Button color="red" onClick={open}>
+                      Delete
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => handleSubmit("save")}
+                    >
+                      Save
+                    </Button>
+                    {!post.published && (
+                      <Button
+                        color="dark"
+                        onClick={() => handleSubmit("publish")}
+                      >
+                        Publish
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Group>
             </Group>
           </Stack>
         </form>

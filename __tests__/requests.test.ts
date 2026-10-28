@@ -30,7 +30,7 @@ describe("getMediaRequests", () => {
     vi.clearAllMocks();
   });
 
-   /**
+  /**
    * Verifies that media requests and their total count are returned
    * successfully when the database query succeeds.
    */
@@ -157,7 +157,7 @@ describe("replyToRequest", () => {
     vi.clearAllMocks();
   });
 
- /**
+  /**
    * Verifies that a reply email is sent to the requester and the request
    * status is updated to "replied" after successful email delivery.
    */
@@ -254,7 +254,7 @@ describe("deleteRequest", () => {
     vi.clearAllMocks();
   });
 
-   /**
+  /**
    * Verifies that the specified request is deleted and a successful
    * result is returned.
    */
@@ -273,7 +273,7 @@ describe("deleteRequest", () => {
       success: true,
     });
   });
-   /**
+  /**
    * Verifies that a database deletion failure throws an error.
    */
   it("throws an error when deletion fails", async () => {
@@ -283,7 +283,7 @@ describe("deleteRequest", () => {
     await expect(deleteRequest("1")).rejects.toThrow("Delete failed");
   });
 
-   /**
+  /**
    * Verifies that an empty or whitespace-only request ID is rejected
    * without attempting to delete a database record.
    */

@@ -7,18 +7,14 @@ import {
   GridCol,
   Text,
   Group,
-  Stack,
   Flex,
-  Paper,
   Button,
-  Container,
   Box,
 } from "@mantine/core";
-import dayjs from "dayjs";
 import { CommentGrid, VisitorCommentForm } from "@/components/comments";
 import { getRepliesOnPostAction } from "@/lib/actions/comment-actions";
-import { PostImages } from "@/components/posts";
 import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
+import { PostContent, PostLayout } from "@/components/posts";
 
 export default async function BlogPostPage({
   params,
@@ -116,84 +112,38 @@ export default async function BlogPostPage({
   const comments = await getRepliesOnPostAction(slug);
 
   return (
-    <Flex bg={"gray.0"}>
+    <Box bg={"gray.0"}>
       <ViewTracker slug={slug} />
-      <Container px={{ base: 0, md: "md" }}>
-        <Paper shadow={"sm"} p={{ base: "md", sm: "xl" }} bdrs={0}>
-          <Stack>
-            <Title order={1} my={"lg"}>
-              {" "}
-              {data.title}{" "}
-            </Title>
+      <PostLayout>
+        <PostContent post={{ ...data, authorName: data.author.name }} />
 
-            <PostImages urls={data.imageUrls} title={data.title} />
-
-            <Group gap={"md"}>
-              <Paper shadow={"xs"} bg={"gray.0"} p={"xs"} bdrs={0} miw={175}>
-                <Stack gap={0}>
-                  <Text component={"span"} size={"xs"} fw={500}>
-                    Written By:
-                  </Text>
-                  <Text>{data.author.name}</Text>
-                </Stack>
-              </Paper>
-
-              <Paper shadow={"xs"} bg={"gray.0"} p={"xs"} bdrs={0} miw={175}>
-                <Stack gap={0}>
-                  <Text component={"span"} size={"xs"} fw={500}>
-                    Posted:
-                  </Text>
-                  <Text>
-                    {dayjs(data.createdAt).format("MMM D, YYYY h:mm A")}
-                  </Text>
-                </Stack>
-              </Paper>
-
-              <Paper shadow={"xs"} bg={"gray.0"} p={"xs"} bdrs={0} miw={175}>
-                <Stack gap={0}>
-                  <Text component={"span"} size={"xs"} fw={500}>
-                    Updated:
-                  </Text>
-                  <Text>
-                    {dayjs(data.updatedAt).format("MMM D, YYYY h:mm A")}
-                  </Text>
-                </Stack>
-              </Paper>
-            </Group>
-
-            <Box>
-              <div dangerouslySetInnerHTML={{ __html: data.htmlContent }}></div>
-            </Box>
-
-            {relatedPosts.length > 0 && (
-              <Box>
-                <Text component={"span"} size={"lg"} fw={700}>
-                  Related Posts:
-                </Text>
-
-                <Grid>
-                  {relatedPosts.map((post) => (
-                    <GridCol key={post.slug} span={{ base: 12, sm: 6, md: 3 }}>
-                      <MoviePostCard postData={post}></MoviePostCard>
-                    </GridCol>
-                  ))}
-                </Grid>
-              </Box>
-            )}
-
-            <Text size="sm" ta="left" fw={500}>
-              Tags:
+        {relatedPosts.length > 0 && (
+          <Box>
+            <Text component={"span"} size={"lg"} fw={700}>
+              Related Posts:
             </Text>
-            <Group>{tagElements}</Group>
 
-            <VisitorCommentForm slug={slug} />
+            <Grid>
+              {relatedPosts.map((post) => (
+                <GridCol key={post.slug} span={{ base: 12, sm: 6, md: 3 }}>
+                  <MoviePostCard postData={post}></MoviePostCard>
+                </GridCol>
+              ))}
+            </Grid>
+          </Box>
+        )}
 
-            <Title order={4}>Recent Comments</Title>
+        <Text size="sm" ta="left" fw={500}>
+          Tags:
+        </Text>
+        <Group>{tagElements}</Group>
 
-            <CommentGrid comments={comments} />
-          </Stack>
-        </Paper>
-      </Container>
-    </Flex>
+        <VisitorCommentForm slug={slug} />
+
+        <Title order={4}>Recent Comments</Title>
+
+        <CommentGrid comments={comments} />
+      </PostLayout>
+    </Box>
   );
 }
