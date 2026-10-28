@@ -1,27 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import prisma from "@/lib/__mocks__/prisma";
 import {
-  getAdminPosts,
-  updatePost,
-  createPost,
-  getPost,
-} from "@/lib/dal/dto/posts";
-import {
   deletePost,
   getAllPosts,
   getPostForEdit,
   togglePublished,
 } from "@/lib/dal/posts";
-import {
-  getPostAction,
-  createPostAction,
-  deletePostAction,
-  getPostForEditAction,
-  getAllPostsAction,
-  togglePublishedAction,
-  updatePostAction,
-  getAdminPostsAction,
-} from "@/lib/actions/post-actions";
 import { getCurrentSession } from "@/lib/dal/utils";
 
 vi.mock(import("server-only"), () => {
@@ -33,7 +17,7 @@ vi.mock(import("@/lib/prisma"));
 //Checks user's login
 vi.mock("@/lib/dal/utils", () => ({ getCurrentSession: vi.fn() }));
 function mockSession(user: Record<string, unknown>) {
-  vi.mocked(getCurrentSession).mockResolvedValue({ user } as any);
+  vi.mocked(getCurrentSession).mockResolvedValue({ user } as never);
 }
 function mockUnauthorized() {
   vi.mocked(getCurrentSession).mockRejectedValue(new Error("Unauthorized"));
@@ -74,7 +58,7 @@ beforeEach(() => {
  */
 describe("deletePost", () => {
   it("Successfully deleted a post", async () => {
-    prisma.post.delete.mockResolvedValue(postDummy as any);
+    prisma.post.delete.mockResolvedValue(postDummy as never);
     const result = await deletePost("idDummy");
     expect(prisma.post.delete).toHaveBeenCalledWith({
       where: { id: "idDummy" },
@@ -120,7 +104,7 @@ describe("getPostForEdit", () => {
     prisma.post.findUnique.mockResolvedValue({
       ...postDummy,
       tags: [{ tagId: "Tag1" }, { tagId: "Tag2" }],
-    } as any);
+    } as never);
 
     const result = await getPostForEdit("idDummy");
     expect(prisma.post.findUnique).toHaveBeenCalledWith({
@@ -147,7 +131,7 @@ describe("getPostForEdit", () => {
     prisma.post.findUnique.mockResolvedValue({
       ...postDummy,
       tags: [],
-    } as any);
+    } as never);
 
     const result = await getPostForEdit("idDummy");
     expect(result?.mediaTagId).toEqual([]);
@@ -165,8 +149,8 @@ describe("getPostForEdit", () => {
  */
 describe("togglePublished", () => {
   it("unpublishes a published post", async () => {
-    prisma.post.findUnique.mockResolvedValue({ published: true } as any);
-    prisma.post.update.mockResolvedValue({} as any);
+    prisma.post.findUnique.mockResolvedValue({ published: true } as never);
+    prisma.post.update.mockResolvedValue({} as never);
 
     const result = await togglePublished("idDummy");
     expect(prisma.post.update).toHaveBeenCalledWith({
@@ -177,8 +161,8 @@ describe("togglePublished", () => {
   });
 
   it("publishes a draft post", async () => {
-    prisma.post.findUnique.mockResolvedValue({ published: false } as any);
-    prisma.post.update.mockResolvedValue({} as any);
+    prisma.post.findUnique.mockResolvedValue({ published: false } as never);
+    prisma.post.update.mockResolvedValue({} as never);
 
     const result = await togglePublished("idDummy");
 
@@ -212,7 +196,7 @@ describe("togglePublished", () => {
  */
 describe("getAllPosts", () => {
   beforeEach(() => {
-    prisma.post.findMany.mockResolvedValue([postDummy] as any);
+    prisma.post.findMany.mockResolvedValue([postDummy] as never);
     prisma.post.count.mockResolvedValue(1);
   });
 
@@ -243,12 +227,12 @@ describe("getAllPosts", () => {
         createdAt: now,
         updatedAt: now,
         authorName: "Test Author",
+        authorId: "authorID",
         tagCount: 2,
         views: 5,
       },
     ]);
     expect(result.data[0]).not.toHaveProperty("htmlContent");
-    expect(result.data[0]).not.toHaveProperty("authorId");
   });
 
   it.each([

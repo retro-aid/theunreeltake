@@ -60,6 +60,7 @@ export async function getAdminPosts({
       authorName: post.author.name,
       tagCount: post.tags.length,
       views: post.views,
+      authorId: post.authorId,
     }));
     return { success: true, data: posts, total };
   } catch (e) {

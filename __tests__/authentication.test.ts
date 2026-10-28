@@ -18,7 +18,7 @@ vi.mock("better-auth", () => ({
     capturedConfigs.betterAuth = config;
     return {
       $Infer: {
-        Session: {} as any,
+        Session: {} as never,
       },
     };
   }),
@@ -86,7 +86,7 @@ describe("auth.ts Unit Tests", () => {
    */
   describe("emailAndPassword.sendResetPassword", () => {
     it("calls sendResetPasswordEmail with correct email and url payload", async () => {
-      vi.mocked(sendResetPasswordEmail).mockResolvedValueOnce(undefined as any);
+      vi.mocked(sendResetPasswordEmail).mockResolvedValueOnce(undefined);
 
       const callback =
         capturedConfigs.betterAuth.emailAndPassword.sendResetPassword;
@@ -121,7 +121,7 @@ describe("auth.ts Unit Tests", () => {
     });
 
     it("handles edge case when url contains query strings, fragments, and special characters", async () => {
-      vi.mocked(sendResetPasswordEmail).mockResolvedValueOnce(undefined as any);
+      vi.mocked(sendResetPasswordEmail).mockResolvedValueOnce(undefined);
 
       const complexUrl =
         "https://theunreeltake.vercel.app/reset?token=abc-123&redirect=%2Fdashboard#step2";
@@ -140,7 +140,7 @@ describe("auth.ts Unit Tests", () => {
     });
 
     it("handles edge case when user payload includes extra properties along with email", async () => {
-      vi.mocked(sendResetPasswordEmail).mockResolvedValueOnce(undefined as any);
+      vi.mocked(sendResetPasswordEmail).mockResolvedValueOnce(undefined);
 
       const callback =
         capturedConfigs.betterAuth.emailAndPassword.sendResetPassword;
@@ -174,9 +174,7 @@ describe("auth.ts Unit Tests", () => {
    */
   describe("emailAndPassword.onPasswordReset", () => {
     it("calls sendPasswordWasResetEmail passing the user object", async () => {
-      vi.mocked(sendPasswordWasResetEmail).mockResolvedValueOnce(
-        undefined as any,
-      );
+      vi.mocked(sendPasswordWasResetEmail).mockResolvedValueOnce(undefined);
 
       const callback =
         capturedConfigs.betterAuth.emailAndPassword.onPasswordReset;
@@ -204,9 +202,7 @@ describe("auth.ts Unit Tests", () => {
     });
 
     it("handles edge case when user object is minimal (only email, no name)", async () => {
-      vi.mocked(sendPasswordWasResetEmail).mockResolvedValueOnce(
-        undefined as any,
-      );
+      vi.mocked(sendPasswordWasResetEmail).mockResolvedValueOnce(undefined);
 
       const callback =
         capturedConfigs.betterAuth.emailAndPassword.onPasswordReset;
@@ -218,9 +214,7 @@ describe("auth.ts Unit Tests", () => {
     });
 
     it("handles edge case with extra nested metadata on user object", async () => {
-      vi.mocked(sendPasswordWasResetEmail).mockResolvedValueOnce(
-        undefined as any,
-      );
+      vi.mocked(sendPasswordWasResetEmail).mockResolvedValueOnce(undefined);
 
       const callback =
         capturedConfigs.betterAuth.emailAndPassword.onPasswordReset;
@@ -250,7 +244,7 @@ describe("auth.ts Unit Tests", () => {
    */
   describe("magicLink.sendMagicLink", () => {
     it("calls sendMagicLinkEmail with destination email and url", async () => {
-      vi.mocked(sendMagicLinkEmail).mockResolvedValueOnce(undefined as any);
+      vi.mocked(sendMagicLinkEmail).mockResolvedValueOnce(undefined);
 
       const callback = capturedConfigs.magicLink.sendMagicLink;
       await callback({
@@ -283,7 +277,7 @@ describe("auth.ts Unit Tests", () => {
     });
 
     it("handles edge case when magic link contains complex callback parameters", async () => {
-      vi.mocked(sendMagicLinkEmail).mockResolvedValueOnce(undefined as any);
+      vi.mocked(sendMagicLinkEmail).mockResolvedValueOnce(undefined);
 
       const callback = capturedConfigs.magicLink.sendMagicLink;
       const destinationUrl =
@@ -301,7 +295,7 @@ describe("auth.ts Unit Tests", () => {
     });
 
     it("handles edge case with subdomain-formatted recipient email", async () => {
-      vi.mocked(sendMagicLinkEmail).mockResolvedValueOnce(undefined as any);
+      vi.mocked(sendMagicLinkEmail).mockResolvedValueOnce(undefined);
 
       const callback = capturedConfigs.magicLink.sendMagicLink;
       await callback({

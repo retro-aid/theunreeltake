@@ -69,19 +69,15 @@ export function ChangeAuthorModal({
     currentAuthorId ?? null,
   );
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
 
   useEffect(() => {
-    if (opened) {
-      setSelectedAuthorId(currentAuthorId ?? null);
-      if (fetchUsersAction) {
-        setIsLoadingUsers(true);
-        fetchUsersAction()
-          .then((res) => setUsers(res || []))
-          .finally(() => setIsLoadingUsers(false));
-      }
-    }
-  }, [opened, currentAuthorId, fetchUsersAction]);
+    if (!opened || !fetchUsersAction) return;
+
+    fetchUsersAction()
+      .then((res) => setUsers(res || []))
+      .finally(() => setIsLoadingUsers(false));
+  }, [opened, fetchUsersAction]);
 
   const selectData = users.map((u) => ({
     value: u.id,

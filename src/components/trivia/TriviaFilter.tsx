@@ -25,7 +25,7 @@ export function TriviaFilter({ data }: { data: Trivia[] }) {
   const [published, setStatus] = useState<boolean | null>(null);
   const [search, setSearch] = useState("");
 
-  let categories: string[] = [];
+  const categories: string[] = [];
 
   // Filtered Data
   const filteredData = data.filter((item) => {
