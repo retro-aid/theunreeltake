@@ -18,6 +18,13 @@ import {
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import { CulledAdminComment } from "@/lib/dal/dto/comments";
+/**
+ * URT-422 changes: added the new imports that is also used in cards.tsx to create the pop up to comment
+ * In addition, the ability to comment from a comment, so only in dashboard, you can reply to anyone.
+ */
+import { postReplyAction } from "@/lib/actions/comment-actions";
+import { useDisclosure } from "@mantine/hooks";
+import { ReplyActionModal } from "../generic/modals";
 
 export interface AdminCommentCardProps {
   comment: CulledAdminComment;
@@ -31,6 +38,8 @@ export function AdminCommentCard({
   onReply,
 }: AdminCommentCardProps) {
   const router = useRouter();
+  const [replyOpened, { open: openReply, close: closeReply }] =
+    useDisclosure(false);
 
   const rawName = comment.username?.trim();
   const isAnonymous =
@@ -57,7 +66,22 @@ export function AdminCommentCard({
     ? `${comment.userId.slice(0, 6)}...${comment.userId.slice(-5)}`
     : null;
 
+  /**
+   * URT-422 change: uses the same functionalities from the card.tsx for the pop up to comment
+   */
+  const handleConfirmReply = async (message: string) => {
+    await postReplyAction(comment.postSlug, comment.id, message);
+    onReply?.(comment);
+    closeReply();
+  };
+
   return (
+    <>
+      <ReplyActionModal //came from the cards.tsx 
+        opened={replyOpened}
+        onClose={closeReply}
+        onConfirm={handleConfirmReply}
+      />
     <Card
       withBorder
       radius="md"
@@ -133,7 +157,7 @@ export function AdminCommentCard({
               variant="default"
               radius="sm"
               px="xs"
-              onClick={() => onReply?.(comment)}
+              onClick={openReply}// comes from the const created near the top
             >
               Reply
             </Button>
@@ -173,5 +197,6 @@ export function AdminCommentCard({
         </Paper>
       </Stack>
     </Card>
+    </>
   );
 }
