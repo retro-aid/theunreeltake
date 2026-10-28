@@ -430,26 +430,6 @@ export async function updateUser(id: string, name: string, role: string) {
     return { error: "Failed to update user", success: false };
   }
 }
-export async function createTriviaQuestion(
-  question: string,
-  answer: string,
-  category: string,
-) {
-  const data = {
-    id: crypto.randomUUID(),
-    question: question,
-    answer: answer,
-    category: category,
-    difficulty: "Medium",
-    type: "Fill in the blank",
-    sucrate: "50%",
-    published: false,
-  };
-
-  await prisma.trivia.create({
-    data: data,
-  });
-}
 
 // Resend email service setup
 const resend = new Resend(process.env.RESEND_API_KEY);
