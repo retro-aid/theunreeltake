@@ -20,6 +20,7 @@ import { SearchBar } from "@/components/generic/SearchBar";
 import { useRouter } from "next/navigation";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
+import { createSubscriberAction } from "@/lib/actions/subscriber-actions";
 
 export default function HomePage() {
   const router = useRouter();
@@ -37,6 +38,8 @@ export default function HomePage() {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
+      firstName: "",
+      lastName: "",
       email: "",
     },
 
@@ -213,12 +216,41 @@ export default function HomePage() {
               <Text c={"green"}>Thanks for subscribing!</Text>
             ) : (
               <form
-                onSubmit={form.onSubmit((values) => {
-                  console.log(values);
-                  setSubmitted(true);
+                onSubmit={form.onSubmit(async(values) => {
+                  try {
+                    await createSubscriberAction({
+                      firstName: values.firstName.trim() || null,
+                      lastName: values.lastName.trim() || null,
+                      email: values.email.trim(),
+                    });
+                    console.log(values);
+                    setSubmitted(true);
+                  }catch (error) {
+                    console.log("Failed to subscribe:", error)
+                  }
                 })}
               >
                 <Stack gap={"xs"} ta={"center"} mx={"md"}>
+                   <Flex w="100%" justify="center">
+                    <TextInput
+                      key={form.key("firstName")}
+                      {...form.getInputProps("firstName")}
+                      placeholder="First name"
+                      radius="md"
+                      maw={300}
+                      w="100%"
+                    />
+                  </Flex>
+                  <Flex w="100%" justify="center">
+                    <TextInput
+                      key={form.key("lastName")}
+                      {...form.getInputProps("lastName")}
+                      placeholder="Last name"
+                      radius="md"
+                      maw={300}
+                      w="100%"
+                    />
+                  </Flex>
                   <Flex w={"100%"} justify={"center"}>
                     <TextInput
                       withAsterisk
