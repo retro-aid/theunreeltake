@@ -8,6 +8,11 @@ import { AppError } from "@/lib/errors";
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
+ * The default reply from address to be used if not specified
+ */
+export const resendFrom = process.env.RESEND_FROM ?? "";
+
+/**
  * Returns the data from a resend response, or throws its error.
  *
  * @remarks
