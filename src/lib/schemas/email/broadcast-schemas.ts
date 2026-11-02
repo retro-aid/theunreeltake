@@ -16,10 +16,10 @@ export type ListBroadcastFormInput = z.input<typeof ListBroadcastSchema>;
  */
 export const CreateBroadcastSchema = z.object({
   segmentId: z.string(),
-  from: z.string().default(resendFrom),
+  from: z.string().nonempty().default(resendFrom),
   subject: z.string(),
   html: z.string(),
-  scheduledAt: z.iso.datetime().default(new Date().toISOString()),
+  scheduledAt: z.iso.datetime().default(() => new Date().toISOString()),
 });
 
 /**
