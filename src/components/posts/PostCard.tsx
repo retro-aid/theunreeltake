@@ -16,7 +16,7 @@ import {
   Badge,
   Tooltip,
   Button,
-  Stack
+  Stack,
 } from "@mantine/core";
 import Link from "next/link";
 import { DeletePostModal } from "@/components/posts/DeletePostModal";
@@ -124,7 +124,7 @@ export function PostCard({
               }}
               gap={10}
             >
-            <Tooltip
+              <Tooltip
                 label={
                   <Stack gap={4}>
                     <Text size="sm">Author: {post.authorName}</Text>
@@ -166,8 +166,14 @@ export function PostCard({
               </Tooltip>
 
               <Tooltip label="Comments">
-                <ActionIcon component={Link}
-                  href={`/dashboard/posts/comments/${post.id}`} variant="light" size="md" bdrs="xs" color="black">
+                <ActionIcon
+                  component={Link}
+                  href={`/dashboard/posts/comments/${post.id}`}
+                  variant="light"
+                  size="md"
+                  bdrs="xs"
+                  color="black"
+                >
                   <icons.Chat size={16} />
                 </ActionIcon>
               </Tooltip>

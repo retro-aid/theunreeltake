@@ -9,7 +9,13 @@
   "excludeProtected": true,
   "excludeInternal": true,
   "readme": "none",
-  "requiredToBeDocumented": ["Function", "Class", "TypeAlias", "Variable", "Enum"],
+  "requiredToBeDocumented": [
+    "Function",
+    "Class",
+    "TypeAlias",
+    "Variable",
+    "Enum"
+  ],
   "validation": {
     "notDocumented": true,
     "notExported": true,

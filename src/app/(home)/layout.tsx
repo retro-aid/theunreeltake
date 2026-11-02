@@ -12,6 +12,8 @@ import "@gfazioli/mantine-flip/styles.css";
 import Head from "next/head";
 import { HomeShell } from "@/app/ui/home/HomeShell";
 
+import { GoogleTagManager } from "@next/third-parties/google";
+
 export const metadata: Metadata = {
   title: "The Unreel Take",
   description: "Unprofessional Reviews That Give you Reel Information",
@@ -24,6 +26,7 @@ export default function HomeLayout({
 }>) {
   return (
     <html lang={"en"} {...mantineHtmlProps}>
+      <GoogleTagManager gtmId="GTM-5P9SX8T8" />
       <Head>
         <ColorSchemeScript />
       </Head>

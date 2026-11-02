@@ -131,7 +131,7 @@ export async function deleteComment(id: string) {
 export async function getAdminComments(postId?: string) {
   const session = await getCurrentSession();
 
-  if(
+  if (
     !session.user.role ||
     (session.user.role !== "admin" && session.user.role !== "user")
   )
@@ -139,10 +139,9 @@ export async function getAdminComments(postId?: string) {
 
   let whereClause: Prisma.CommentWhereInput | undefined;
 
-  if(postId) {
+  if (postId) {
     whereClause = { postId: postId };
-  }
-  else if(session.user.role === "user") {
+  } else if (session.user.role === "user") {
     whereClause = { post: { author: { id: session.user.id } } };
   }
 
@@ -154,7 +153,7 @@ export async function getAdminComments(postId?: string) {
       },
     },
     omit: { repliesToId: true },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 }
 
