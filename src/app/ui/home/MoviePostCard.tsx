@@ -65,12 +65,14 @@ export function MoviePostCard({ postData }: { postData: CatalogItem }) {
     .trim();
 
   //Searches through preview (htmlContent) for 'Food:' or 'Drink:'
-  //If it doesn't exist display from the start. 
+  //If it doesn't exist display from the start.
   const previewContent =
     preview
-        .match(/^(?:Food|Drink):[\s\S]*?(?=^[A-Za-z][A-Za-z ]{0,30}:|(?![\s\S]))/gim)
-        ?.map((section) => section.trim())
-        .join("\n") || preview;
+      .match(
+        /^(?:Food|Drink):[\s\S]*?(?=^[A-Za-z][A-Za-z ]{0,30}:|(?![\s\S]))/gim,
+      )
+      ?.map((section) => section.trim())
+      .join("\n") || preview;
 
   return (
     <AspectRatio

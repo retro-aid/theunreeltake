@@ -5,9 +5,6 @@ import React, { useState } from "react";
 import type { PostDTO } from "@/lib/dal/dto/posts";
 import { ScrollableGrid } from "@/components/generic/ScrollableGrid";
 
-
-
-
 /**
  * URT-413 changes:
  *  Part of the implementation is to refactor the components of the PostCard and create its own called PostCard.tsx
@@ -21,7 +18,6 @@ type GridProps = {
   isAdmin?: boolean;
   onPostUpdatedAction: () => void;
 };
-
 
 /**
  * Grid layout view for rendering posts using {@link ScrollableGrid}.
