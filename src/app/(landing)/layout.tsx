@@ -6,9 +6,11 @@ import {
 } from "@mantine/core";
 
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
 import Head from "next/head";
 import type { Metadata } from "next";
+import { Notifications } from "@mantine/notifications";
 
 export const metadata: Metadata = {
   title: "The Unreel Take",
@@ -27,6 +29,7 @@ export default function RootAdminLayout({
       </Head>
       <body>
         <MantineProvider defaultColorScheme={"light"}>
+          <Notifications position="top-center" />
           {children}
         </MantineProvider>
       </body>
