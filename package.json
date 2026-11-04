@@ -42,7 +42,7 @@
     "react": "^19.2.3",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.2.3",
-    "resend": "^6.7.0",
+    "resend": "6.37.0",
     "vitest-mock-extended": "^5.1.1",
     "zod": "^4.0.0"
   },
