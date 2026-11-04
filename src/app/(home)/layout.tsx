@@ -8,9 +8,11 @@ import {
 
 import "@mantine/core/styles.css";
 import "@gfazioli/mantine-flip/styles.css";
+import "@mantine/notifications/styles.css";
 
 import Head from "next/head";
 import { HomeShell } from "@/app/ui/home/HomeShell";
+import { Notifications } from "@mantine/notifications";
 
 import { GoogleTagManager } from "@next/third-parties/google";
 
@@ -32,6 +34,7 @@ export default function HomeLayout({
       </Head>
       <body>
         <MantineProvider defaultColorScheme={"light"}>
+          <Notifications position="top-center" />
           <HomeShell>{children}</HomeShell>
         </MantineProvider>
       </body>
