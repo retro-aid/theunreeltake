@@ -1,26 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import * as email from "@/lib/dal/dto/email";
 import { toResult } from "@/lib/errors";
 import type { EmailTemplateForm } from "@/lib/schemas/email/templates-schemas";
 
-/**
- * Runs a create/update/delete, returns the standard result, and refreshes
- * the email pages.
- *
- * @remarks
- * The pages are refreshed even when the mutation fails, because a failed
- * publish still saves a draft that should show up in the list.
- *
- * @param mutation - The DAL call to run.
- * @returns The DAL call's result in the standard `{ data, error }` shape.
- */
-async function runMutation<T>(mutation: () => Promise<T>) {
-  const result = await toResult(mutation);
-  revalidatePath("/dashboard/email", "layout");
-  return result;
-}
+const EMAIL_PAGES = "/dashboard/email";
 
 /**
  * Server action wrapper for {@link email.templates.list}.
@@ -45,7 +29,7 @@ export async function get(id: string) {
  * to publish the template.
  */
 export async function create(template: EmailTemplateForm) {
-  return runMutation(() => email.templates.create(template));
+  return toResult(() => email.templates.create(template), EMAIL_PAGES);
 }
 
 /**
@@ -56,7 +40,7 @@ export async function create(template: EmailTemplateForm) {
  * whether to publish the changes.
  */
 export async function update(id: string, template: EmailTemplateForm) {
-  return runMutation(() => email.templates.update(id, template));
+  return toResult(() => email.templates.update(id, template), EMAIL_PAGES);
 }
 
 /**
@@ -65,5 +49,5 @@ export async function update(id: string, template: EmailTemplateForm) {
  * @param id - The Resend ID of the template to delete.
  */
 export async function remove(id: string) {
-  return runMutation(() => email.templates.remove(id));
+  return toResult(() => email.templates.remove(id), EMAIL_PAGES);
 }
