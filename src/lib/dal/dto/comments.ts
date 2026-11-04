@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import * as crypto from "node:crypto";
 import { getCurrentSession } from "@/lib/dal/utils";
+import * as email from "@/lib/dal/dto/email";
 import dayjs from "dayjs";
 import type { Prisma } from "@/generated/prisma/client";
 
@@ -75,7 +76,15 @@ export async function createReply(
     const session = await getCurrentSession();
     const parentComment = await prisma.comment.findUniqueOrThrow({
       where: { id: parentCommentId },
-      select: { id: true, postId: true, postSlug: true, repliesToId: true },
+      select: {
+        id: true,
+        postId: true,
+        postSlug: true,
+        repliesToId: true,
+        email: true,
+        username: true,
+        post: { select: { title: true } },
+      },
     });
 
     if (parentComment.repliesToId !== null) {
@@ -83,7 +92,7 @@ export async function createReply(
       return null;
     }
 
-    return await prisma.comment.create({
+    const reply = await prisma.comment.create({
       data: {
         username: session.user.name,
         email: session.user.email ?? null,
@@ -94,6 +103,17 @@ export async function createReply(
         repliesToId: parentComment.id,
       },
     });
+
+    if (parentComment.email && parentComment.email !== session.user.email)
+      await email.events.commentReplied({
+        email: parentComment.email,
+        name: parentComment.username,
+        postTitle: parentComment.post.title,
+        postSlug: parentComment.postSlug,
+        message: messageContent,
+      });
+
+    return reply;
   } catch (error) {
     console.error("No reply", error);
     return null;
