@@ -1,6 +1,6 @@
 import "server-only";
 import { requireAdmin } from "@/lib/dal/utils";
-import { resend } from "@/lib/dal/dto/email/resend";
+import { resend, unwrap } from "@/lib/dal/dto/email/resend";
 import { CreateBroadcastOptions, ListBroadcastsOptions } from "resend";
 import {
   CreateBroadcastFormInput,
@@ -29,12 +29,10 @@ export async function list(params: ListBroadcastFormInput) {
     limit: limit,
   };
 
-  if(paginateOption === "after")
-    options.after = parsedParams.after;
-  else if(paginateOption === "before")
-    options.before = parsedParams.before;
+  if (paginateOption === "after") options.after = parsedParams.after;
+  else if (paginateOption === "before") options.before = parsedParams.before;
 
-  return resend.broadcasts.list(options);
+  return unwrap(await resend.broadcasts.list(options));
 }
 
 /**
@@ -56,5 +54,5 @@ export async function create(params: CreateBroadcastFormInput) {
     ...parsed,
   };
 
-  return resend.broadcasts.create(options);
+  return unwrap(await resend.broadcasts.create(options));
 }
