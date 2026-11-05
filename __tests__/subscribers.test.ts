@@ -17,9 +17,21 @@ const { contacts, requireAdmin } = vi.hoisted(() => ({
 
 vi.mock(import("server-only"), () => ({}));
 vi.mock("@/lib/dal/utils", () => ({ requireAdmin }));
-vi.mock("@/lib/dal/dto/email/resend", () => ({
-  resend: { contacts },
+vi.mock("resend", () => ({
+  Resend: class {
+    contacts = contacts;
+  },
 }));
+
+/** Builds a successful Resend response. */
+const ok = (data: unknown) => ({ data, error: null, headers: null });
+
+/** Builds a failed Resend response. */
+const fail = (message: string, statusCode = 500) => ({
+  data: null,
+  error: { message, statusCode },
+  headers: null,
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -33,31 +45,22 @@ beforeEach(() => {
  * Checks:
  *    Loads every page and passes the pagination cursor to Resend
  *    Requires an administrator before calling Resend
- *    Returns Resend API failures without discarding their details
+ *    Throws Resend API failures with their status
  */
 describe("list subscribers", () => {
   it("loads every page of subscribers", async () => {
     contacts.list
-      .mockResolvedValueOnce({
-        data: { data: [{ id: "contact-1" }], has_more: true },
-        error: null,
-        headers: null,
-      })
-      .mockResolvedValueOnce({
-        data: { data: [{ id: "contact-2" }], has_more: false },
-        error: null,
-        headers: null,
-      });
+      .mockResolvedValueOnce(
+        ok({ data: [{ id: "contact-1" }], has_more: true }),
+      )
+      .mockResolvedValueOnce(
+        ok({ data: [{ id: "contact-2" }], has_more: false }),
+      );
 
-    await expect(list()).resolves.toEqual({
-      data: {
-        object: "list",
-        data: [{ id: "contact-1" }, { id: "contact-2" }],
-        has_more: false,
-      },
-      error: null,
-      headers: null,
-    });
+    await expect(list()).resolves.toEqual([
+      { id: "contact-1" },
+      { id: "contact-2" },
+    ]);
     expect(contacts.list).toHaveBeenNthCalledWith(1, {
       audienceId: "audience-1",
       limit: 100,
@@ -78,14 +81,11 @@ describe("list subscribers", () => {
   });
 
   it("throws when Resend returns a list error", async () => {
-    contacts.list.mockResolvedValueOnce({
-      data: null,
-      error: { message: "Resend unavailable" },
-    });
+    contacts.list.mockResolvedValueOnce(fail("Resend unavailable", 503));
 
-    await expect(list()).resolves.toMatchObject({
-      data: null,
-      error: { message: "Resend unavailable" },
+    await expect(list()).rejects.toMatchObject({
+      message: "Resend unavailable",
+      status: 503,
     });
   });
 });
@@ -96,19 +96,15 @@ describe("list subscribers", () => {
  * Checks:
  *    Validates subscriber fields before calling Resend
  *    Passes the audience ID, email, and optional names to Resend
- *    Returns duplicate-contact errors from Resend
+ *    Throws duplicate-contact errors from Resend
  */
 describe("add subscriber", () => {
   it("creates a valid contact in the configured audience", async () => {
-    contacts.create.mockResolvedValueOnce({
-      data: { id: "contact-1" },
-      error: null,
-      headers: null,
-    });
+    contacts.create.mockResolvedValueOnce(ok({ id: "contact-1" }));
 
     await expect(
       add({ email: "reader@example.com", firstName: "Reader" }),
-    ).resolves.toEqual({ data: { id: "contact-1" }, error: null, headers: null });
+    ).resolves.toEqual({ id: "contact-1" });
     expect(requireAdmin).toHaveBeenCalledOnce();
     expect(contacts.create).toHaveBeenCalledWith({
       audienceId: "audience-1",
@@ -124,14 +120,11 @@ describe("add subscriber", () => {
   });
 
   it("throws Resend duplicate-contact errors", async () => {
-    contacts.create.mockResolvedValueOnce({
-      data: null,
-      error: { message: "Contact already exists" },
-    });
+    contacts.create.mockResolvedValueOnce(fail("Contact already exists", 409));
 
-    await expect(add({ email: "reader@example.com" })).resolves.toMatchObject({
-      data: null,
-      error: { message: "Contact already exists" },
+    await expect(add({ email: "reader@example.com" })).rejects.toMatchObject({
+      message: "Contact already exists",
+      status: 409,
     });
   });
 });
@@ -142,20 +135,14 @@ describe("add subscriber", () => {
  * Checks:
  *    Creates a subscriber without requiring an admin session
  *    Rejects invalid details before calling Resend
- *    Returns Resend API failures without discarding their details
+ *    Throws Resend API failures with their status
  */
 describe("create subscriber", () => {
   it("creates a contact without requiring an administrator", async () => {
-    contacts.create.mockResolvedValueOnce({
-      data: { id: "contact-1" },
-      error: null,
-      headers: null,
-    });
+    contacts.create.mockResolvedValueOnce(ok({ id: "contact-1" }));
 
     await expect(create({ email: "reader@example.com" })).resolves.toEqual({
-      data: { id: "contact-1" },
-      error: null,
-      headers: null,
+      id: "contact-1",
     });
     expect(requireAdmin).not.toHaveBeenCalled();
   });
@@ -166,16 +153,13 @@ describe("create subscriber", () => {
   });
 
   it("throws Resend sign-up failures", async () => {
-    contacts.create.mockResolvedValueOnce({
-      data: null,
-      error: { message: "Contact already exists" },
-    });
+    contacts.create.mockResolvedValueOnce(fail("Contact already exists", 409));
 
     await expect(
       create({ email: "reader@example.com" }),
-    ).resolves.toMatchObject({
-      data: null,
-      error: { message: "Contact already exists" },
+    ).rejects.toMatchObject({
+      message: "Contact already exists",
+      status: 409,
     });
   });
 });
@@ -187,20 +171,18 @@ describe("create subscriber", () => {
  *    Passes the contact and audience IDs to Resend
  *    Requires an administrator before deletion
  *    Rejects an empty contact ID without calling Resend
- *    Returns API failures instead of reporting a successful deletion
+ *    Throws API failures instead of reporting a successful deletion
  */
 describe("remove subscriber", () => {
   it("deletes the selected contact from the configured audience", async () => {
-    contacts.remove.mockResolvedValueOnce({
-      data: { object: "contact", deleted: true, contact: "contact-1" },
-      error: null,
-      headers: null,
-    });
+    contacts.remove.mockResolvedValueOnce(
+      ok({ object: "contact", deleted: true, contact: "contact-1" }),
+    );
 
     await expect(remove("contact-1")).resolves.toEqual({
-      data: { object: "contact", deleted: true, contact: "contact-1" },
-      error: null,
-      headers: null,
+      object: "contact",
+      deleted: true,
+      contact: "contact-1",
     });
     expect(contacts.remove).toHaveBeenCalledWith({
       id: "contact-1",
@@ -214,14 +196,11 @@ describe("remove subscriber", () => {
   });
 
   it("throws deletion API errors", async () => {
-    contacts.remove.mockResolvedValueOnce({
-      data: null,
-      error: { message: "Resend unavailable" },
-    });
+    contacts.remove.mockResolvedValueOnce(fail("Resend unavailable", 503));
 
-    await expect(remove("contact-1")).resolves.toMatchObject({
-      data: null,
-      error: { message: "Resend unavailable" },
+    await expect(remove("contact-1")).rejects.toMatchObject({
+      message: "Resend unavailable",
+      status: 503,
     });
   });
 });
