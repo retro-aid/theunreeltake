@@ -16,6 +16,10 @@ import {
   Group,
   Stack,
   Divider,
+  Tabs,
+  TabsList,
+  TabsTab,
+  TabsPanel,
 } from "@mantine/core";
 import { redirect } from "next/navigation";
 import { useContext, useState } from "react";
@@ -65,6 +69,53 @@ const MOCK_PAST_SENDS: PastSend[] = [
   },
 ];
 
+type subscriber = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  createdAt: string,
+  curSub: boolean,
+}
+
+type mailingList = {
+  name: String,
+  subs: subscriber[]
+}
+
+const MOCK_MAILING_LISTS: mailingList[] = [
+  {
+    name: "default",
+    subs: [
+      {
+        id: "0",
+        firstName: "Jim",
+        lastName: "Jones",
+        createdAt: "Some time",
+        curSub: true
+      },
+      {
+        id: "1",
+        firstName: "Stacy",
+        lastName: "Second",
+        createdAt: "Never",
+        curSub: true
+      }
+    ]
+  },
+  {
+    name: "unique",
+    subs: [
+      {
+        id: "2",
+        firstName: "The",
+        lastName: "Third",
+        createdAt: "Always",
+        curSub: false
+      }
+    ]
+  }
+]
+
 /**
  * Creates the UI component for the Newsletter page. Redirects back to dashboard if the user isn't an admin
  * @returns renders the page
@@ -89,7 +140,52 @@ export default function NewsletterPage() {
    * returns the same layout but with now the input description added for the body of the newsletter
    */
 
+  const tables = (
+    <Card withBorder padding="lg" radius="md">
+      {MOCK_MAILING_LISTS.map((item) => (
+        <>
+          <Title order={4} mb="md">
+            {item.name}
+          </Title>
+
+          <Table verticalSpacing="sm" highlightOnHover>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>First Name</Table.Th>
+                <Table.Th>Last Name</Table.Th>
+                <Table.Th>Created At</Table.Th>
+                <Table.Th>Currently Subscribed</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {item.subs.map((sub) => (
+                <Table.Tr key={sub.id}>
+                  <Table.Td>{sub.firstName}</Table.Td>
+                  <Table.Td>{sub.lastName}</Table.Td>
+                  <Table.Td>{sub.createdAt}</Table.Td>
+                  <Table.Td>{sub.curSub}</Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </>
+      ))}
+    </Card>
+  )
+
   return (
+    <>
+    <Tabs color="gray" variant="outline" defaultValue="Newsletter">
+      <TabsList>
+        <TabsTab value="Newsletter">
+          Newsletter
+        </TabsTab>
+        <TabsTab value="Mailing List Table">
+          Mailing List Table
+        </TabsTab>
+      </TabsList>
+
+    <TabsPanel value="Newsletter">
     <Container size="lg" py="xl">
       <Title order={2} mb="lg">
         Newsletter
@@ -222,5 +318,12 @@ export default function NewsletterPage() {
         </Table>
       </Card>
     </Container>
+    </TabsPanel>
+
+    <TabsPanel value="Mailing List Table">
+      {tables}
+    </TabsPanel>
+  </Tabs>
+  </>
   );
 }
