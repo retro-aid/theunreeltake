@@ -39,7 +39,7 @@ export const ListBroadcastItemSchema = z.object({
   id: z.string(),
   name: z.string(),
   segment_id: z.string(),
-  status: z.literal("draft").or(z.literal("sent")),
+  status: z.literal(["draft", "sent", "scheduled", "queued", "canceled"]),
 });
 
 export const ListBroadcastOutputSchema = z.object({
