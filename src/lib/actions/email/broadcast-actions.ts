@@ -2,17 +2,17 @@
 
 import * as email from "@/lib/dal/dto/email";
 import {
-  CreateBroadcastFormInput,
-  ListBroadcastFormInput,
+  CreateBroadcastInputDTO,
+  ListBroadcastInputDTO,
 } from "@/lib/schemas/email/broadcast-schemas";
 import { toResult } from "@/lib/errors";
 
 /**
  * Creates and sends an email broadcast
  *
- * @param formData - The parameters for broadcast creation. See {@link CreateBroadcastSchema}
+ * @param formData - The parameters for broadcast creation. See {@link CreateBroadcastInputSchema}
  */
-export async function create(formData: CreateBroadcastFormInput) {
+export async function create(formData: CreateBroadcastInputDTO) {
   return toResult(() => email.broadcast.create(formData));
 }
 
@@ -22,7 +22,7 @@ export async function create(formData: CreateBroadcastFormInput) {
  * @param limit - The amount of items to get. Default 25
  */
 export async function list(limit?: number) {
-  const params: ListBroadcastFormInput = {
+  const params: ListBroadcastInputDTO = {
     limit: limit,
     paginateOption: "none",
   };
@@ -37,7 +37,7 @@ export async function list(limit?: number) {
  * @param limit - The amount of items to get. Default 25
  */
 export async function nextPage(fromId: string, limit?: number) {
-  const params: ListBroadcastFormInput = {
+  const params: ListBroadcastInputDTO = {
     limit: limit,
     paginateOption: "after",
     after: fromId,
@@ -53,7 +53,7 @@ export async function nextPage(fromId: string, limit?: number) {
  * @param limit - The amount of items to get. Default 25
  */
 export async function previousPage(fromId: string, limit?: number) {
-  const params: ListBroadcastFormInput = {
+  const params: ListBroadcastInputDTO = {
     limit: limit,
     paginateOption: "before",
     before: fromId,

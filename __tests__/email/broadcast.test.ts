@@ -1,10 +1,11 @@
 import { beforeEach, vi, describe, it, expect, afterEach } from "vitest";
 import { requireAdmin } from "@/lib/dal/utils";
 import type {
-  ListBroadcastFormInput,
-  CreateBroadcastFormInput,
+  ListBroadcastInputDTO,
+  CreateBroadcastInputDTO,
 } from "@/lib/schemas/email/broadcast-schemas";
 import * as emailBroadcast from "@/lib/dal/dto/email/broadcast";
+import { AppError } from "@/lib/errors";
 
 vi.mock(import("server-only"), () => {
   return {};
@@ -29,11 +30,6 @@ beforeEach(() => {
   vi.resetAllMocks();
 });
 
-const ok = (data: unknown) => ({ data, error: null });
-
-/** Builds a failed Resend response. */
-const fail = (message: string) => ({ data: null, error: { message } });
-
 /**
  * Tests that every function blocks non-admins
  *
@@ -42,8 +38,8 @@ const fail = (message: string) => ({ data: null, error: { message } });
  *    Never calls Resend
  */
 describe("admin access", () => {
-  const mockList: ListBroadcastFormInput = { paginateOption: "none" };
-  const mockCreate: CreateBroadcastFormInput = {
+  const mockList: ListBroadcastInputDTO = { paginateOption: "none" };
+  const mockCreate: CreateBroadcastInputDTO = {
     html: "",
     segmentId: "",
     subject: "",
@@ -61,40 +57,54 @@ describe("admin access", () => {
       expect(broadcasts[method]).not.toHaveBeenCalled();
     },
   );
-
-  it.each([
-    ["list", () => emailBroadcast.list(mockList)],
-    ["create", () => emailBroadcast.create(mockCreate)],
-  ] as const)("%s returns a success response", async (method, call) => {
-    const mockSuccess = ok({ data: [], has_more: false });
-
-    broadcasts[method].mockResolvedValueOnce(mockSuccess);
-
-    await expect(call()).resolves.toEqual(mockSuccess);
-  });
-
-  it.each([
-    ["list", () => emailBroadcast.list(mockList)],
-    ["create", () => emailBroadcast.create(mockCreate)],
-  ] as const)("%s returns an error response", async (method, call) => {
-    const mockFail = fail("Failed");
-
-    broadcasts[method].mockResolvedValueOnce(mockFail);
-
-    await expect(call()).resolves.toEqual(mockFail);
-  });
 });
 
 describe("list", () => {
-  const mockListNone: ListBroadcastFormInput = { paginateOption: "none" };
-  const mockListBefore: ListBroadcastFormInput = {
+  const resendSuccess = {
+    data: { object: "list", data: [], has_more: false },
+    error: null,
+    headers: null,
+  };
+
+  const mockListNone: ListBroadcastInputDTO = { paginateOption: "none" };
+
+  const mockListBefore: ListBroadcastInputDTO = {
     paginateOption: "before",
     before: "id",
   };
-  const mockListAfter: ListBroadcastFormInput = {
+
+  const mockListAfter: ListBroadcastInputDTO = {
     paginateOption: "after",
     after: "id",
   };
+
+  beforeEach(() => {
+    broadcasts.list.mockResolvedValue(resendSuccess);
+  });
+
+  it("returns the correct DTO object", async () => {
+    const mockOutput = { data: [], has_more: false };
+
+    broadcasts.list.mockResolvedValueOnce(resendSuccess);
+
+    await expect(emailBroadcast.list(mockListNone)).resolves.toStrictEqual(
+      mockOutput,
+    );
+  });
+
+  it("resolves errors gracefully", async () => {
+    const resendFail = {
+      data: null,
+      error: { message: "A", statusCode: 500, name: "A" },
+      headers: null,
+    };
+
+    broadcasts.list.mockResolvedValueOnce(resendFail);
+
+    await expect(emailBroadcast.list(mockListNone)).rejects.toThrow(
+      new AppError("A", 500),
+    );
+  });
 
   it("queries for 25 items by default", async () => {
     await emailBroadcast.list(mockListNone);
@@ -130,9 +140,15 @@ describe("list", () => {
 });
 
 describe("create", () => {
+  const resendSuccess = {
+    data: { id: "A" },
+    error: null,
+    headers: null,
+  };
+
   const fakeNow = new Date(1900, 1, 1);
 
-  const mockCreateInput: CreateBroadcastFormInput = {
+  const mockCreateInput: CreateBroadcastInputDTO = {
     html: "",
     segmentId: "",
     subject: "",
@@ -147,10 +163,35 @@ describe("create", () => {
 
   beforeEach(() => {
     vi.useFakeTimers().setSystemTime(fakeNow);
+    broadcasts.create.mockResolvedValue(resendSuccess);
   });
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("returns the correct DTO object", async () => {
+    const mockOutput = { id: "A" };
+
+    broadcasts.create.mockResolvedValueOnce(resendSuccess);
+
+    await expect(emailBroadcast.create(mockCreateInput)).resolves.toStrictEqual(
+      mockOutput,
+    );
+  });
+
+  it("resolves errors gracefully", async () => {
+    const resendFail = {
+      data: null,
+      error: { message: "A", statusCode: 500, name: "A" },
+      headers: null,
+    };
+
+    broadcasts.create.mockResolvedValueOnce(resendFail);
+
+    await expect(emailBroadcast.create(mockCreateInput)).rejects.toThrow(
+      new AppError("A", 500),
+    );
   });
 
   it("defaults to now if a scheduledAt is not passed", async () => {

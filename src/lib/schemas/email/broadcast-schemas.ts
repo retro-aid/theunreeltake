@@ -2,8 +2,15 @@ import * as z from "zod";
 import { resendFrom } from "@/lib/dal/dto/email/resend";
 import { PaginationSchema } from "@/lib/schemas/email/util-schemas";
 
-export type CreateBroadcastFormInput = z.input<typeof CreateBroadcastSchema>;
-export type ListBroadcastFormInput = z.input<typeof ListBroadcastSchema>;
+export type CreateBroadcastInputDTO = z.input<
+  typeof CreateBroadcastInputSchema
+>;
+export type CreateBroadcastOutputDTO = z.output<
+  typeof CreateBroadcastOutputSchema
+>;
+export type ListBroadcastInputDTO = z.input<typeof ListBroadcastInputSchema>;
+export type ListBroadcastItemDTO = z.output<typeof ListBroadcastItemSchema>;
+export type ListBroadcastOutputDTO = z.output<typeof ListBroadcastOutputSchema>;
 
 /**
  * Validates the create broadcast options passed to Resend
@@ -14,7 +21,7 @@ export type ListBroadcastFormInput = z.input<typeof ListBroadcastSchema>;
  * @param html - The email message content for this broadcast
  * @param scheduledAt - The {@link Date} that this email will be sent at. Must be formatted as ISO string
  */
-export const CreateBroadcastSchema = z.object({
+export const CreateBroadcastInputSchema = z.object({
   segmentId: z.string(),
   from: z.string().nonempty().default(resendFrom),
   subject: z.string(),
@@ -22,10 +29,20 @@ export const CreateBroadcastSchema = z.object({
   scheduledAt: z.iso.datetime().default(() => new Date().toISOString()),
 });
 
-/**
- * Validates the list broadcast options passed to Resend
- *
- * @remarks
- * Uses the default list pagination schema
- */
-export const ListBroadcastSchema = PaginationSchema;
+export const CreateBroadcastOutputSchema = z.object({
+  id: z.string(),
+});
+
+export const ListBroadcastInputSchema = PaginationSchema;
+
+export const ListBroadcastItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  segment_id: z.string(),
+  status: z.literal("draft").or(z.literal("sent")),
+});
+
+export const ListBroadcastOutputSchema = z.object({
+  has_more: z.boolean(),
+  data: z.array(ListBroadcastItemSchema),
+});

@@ -1,5 +1,5 @@
 import "server-only";
-import { Resend } from "resend";
+import { Resend, Response } from "resend";
 import { AppError } from "@/lib/errors";
 
 /**
@@ -23,11 +23,7 @@ export const resendFrom = process.env.RESEND_FROM ?? "";
  * @returns The response data.
  * @throws An {@link AppError} with Resend's message and status code
  */
-export function unwrap<T>(
-  response:
-    | { data: T; error: null }
-    | { data: null; error: { message: string; statusCode: number | null } },
-) {
+export function unwrap<T>(response: Response<T>): T {
   if (response.error)
     throw new AppError(
       response.error.message,

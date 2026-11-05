@@ -1,13 +1,17 @@
 import "server-only";
+
+import {
+  CreateBroadcastInputDTO,
+  CreateBroadcastInputSchema, CreateBroadcastOutputSchema,
+  ListBroadcastInputDTO,
+  ListBroadcastInputSchema,
+  ListBroadcastOutputDTO,
+  ListBroadcastOutputSchema,
+} from "@/lib/schemas/email/broadcast-schemas";
+
 import { requireAdmin } from "@/lib/dal/utils";
 import { resend, unwrap } from "@/lib/dal/dto/email/resend";
 import { CreateBroadcastOptions, ListBroadcastsOptions } from "resend";
-import {
-  CreateBroadcastFormInput,
-  CreateBroadcastSchema,
-  ListBroadcastFormInput,
-  ListBroadcastSchema,
-} from "@/lib/schemas/email/broadcast-schemas";
 
 /**
  * Gets a list of broadcast objects from Resend
@@ -18,21 +22,25 @@ import {
  *
  * @param params - The pagination and limit options to apply. Uses the default {@link PaginationSchema}
  */
-export async function list(params: ListBroadcastFormInput) {
+export async function list(
+  params: ListBroadcastInputDTO,
+): Promise<ListBroadcastOutputDTO> {
   await requireAdmin();
 
-  const parsedParams = ListBroadcastSchema.parse(params);
+  const validatedParams = ListBroadcastInputSchema.parse(params);
 
-  const { paginateOption, limit } = parsedParams;
+  const { paginateOption, limit } = validatedParams;
 
   const options: ListBroadcastsOptions = {
     limit: limit,
   };
 
-  if (paginateOption === "after") options.after = parsedParams.after;
-  else if (paginateOption === "before") options.before = parsedParams.before;
+  if (paginateOption === "after") options.after = validatedParams.after;
+  else if (paginateOption === "before") options.before = validatedParams.before;
 
-  return unwrap(await resend.broadcasts.list(options));
+  const resolvedResponse = unwrap(await resend.broadcasts.list(options));
+
+  return ListBroadcastOutputSchema.parse(resolvedResponse);
 }
 
 /**
@@ -41,18 +49,20 @@ export async function list(params: ListBroadcastFormInput) {
  * @remarks
  * This function will always create a broadcast and then send
  *
- * @param params - The required parameters needed to send a broadcast. See {@link CreateBroadcastSchema}
+ * @param params - The required parameters needed to send a broadcast. See {@link CreateBroadcastInputDTO}
  */
-export async function create(params: CreateBroadcastFormInput) {
+export async function create(params: CreateBroadcastInputDTO) {
   await requireAdmin();
 
-  const parsed = CreateBroadcastSchema.parse(params);
+  const validatedParams = CreateBroadcastInputSchema.parse(params);
 
   // Always create & send
   const options: CreateBroadcastOptions = {
     send: true,
-    ...parsed,
+    ...validatedParams,
   };
 
-  return unwrap(await resend.broadcasts.create(options));
+  const resolvedResponse = unwrap(await resend.broadcasts.create(options));
+
+  return CreateBroadcastOutputSchema.parse(resolvedResponse);
 }
