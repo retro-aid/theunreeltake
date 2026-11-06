@@ -1,11 +1,16 @@
 import "server-only";
-import { Resend } from "resend";
+import { Resend, Response } from "resend";
 import { AppError } from "@/lib/errors";
 
 /**
  * Shared resend client used by every email feature.
  */
 export const resend = new Resend(process.env.RESEND_API_KEY);
+
+/**
+ * The default reply from address to be used if not specified
+ */
+export const resendFrom = process.env.RESEND_FROM ?? "";
 
 /**
  * Returns the data from a resend response, or throws its error.
@@ -18,11 +23,7 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
  * @returns The response data.
  * @throws An {@link AppError} with Resend's message and status code
  */
-export function unwrap<T>(
-  response:
-    | { data: T; error: null }
-    | { data: null; error: { message: string; statusCode: number | null } },
-) {
+export function unwrap<T>(response: Response<T>): T {
   if (response.error)
     throw new AppError(
       response.error.message,
