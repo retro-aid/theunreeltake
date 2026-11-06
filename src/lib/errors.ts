@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import * as z from "zod";
 
 /**
@@ -29,10 +30,12 @@ export type UnreelResult<T> =
  * Anything else becomes a generic 500 so internal details aren't shown.
  *
  * @param fn - The function to run, usually a DAL call.
+ * @param revalidate - A page to refresh afterwards, even if `fn` fails.
  * @returns `{ data, error: null }`, or `{ data: null, error }` if it threw.
  */
 export async function toResult<T>(
   fn: () => Promise<T>,
+  revalidate?: string,
 ): Promise<UnreelResult<T>> {
   try {
     return { data: await fn(), error: null };
@@ -53,5 +56,7 @@ export async function toResult<T>(
       data: null,
       error: { message: "Something went wrong", status: 500 },
     };
+  } finally {
+    if (revalidate) revalidatePath(revalidate, "layout");
   }
 }
