@@ -16,13 +16,13 @@ import {
 import * as templates from "@/lib/actions/email/templates-actions";
 import { useState } from "react";
 import Link from "next/link";
-import { PencilSquare, Trash, PlusSquare, PlusLg } from "react-bootstrap-icons";
+import { PencilSquare, Trash, PlusLg } from "react-bootstrap-icons";
 import { useDisclosure } from "@mantine/hooks";
 
 /**
  * Displays the table of email templates
  *
- * @params Takes the list (Template Summary) of email templates and put it in an array (EmailGridProps) to display it.
+ * @params EmailGridProps - Takes the list (Template Summary) of email templates and put it in an array (EmailGridProps) to display it.
  * @returns The table component of Email Templates
  */
 type TemplateSummary = NonNullable<
@@ -40,6 +40,8 @@ const formatDate = (iso: string) =>
 export function EmailTemplateTable({ data }: EmailGridProps) {
   const [opened, { open, close }] = useDisclosure();
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
+
+  //Pagination
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(data.length/PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -47,14 +49,24 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   )
+
+  /**
+   * Deletes email template
+   * 
+   * @param id - Takes id of the email template that will be deleted
+   * @returns Deletes the email template
+   */
   const handleDelete = async (id: string) => {
-    const { error } = await templates.remove(id); // revalidates the list
+    const { error } = await templates.remove(id);
 
     if (error) {
       console.log(error);
     }
   };
 
+  /**
+   * How the table data is being displayed
+   */
   const tableData: TableData = {
     head: ["Name", "Status", "Last Updated", "Actions"],
     body: pageRows.map((template) => {
@@ -94,6 +106,13 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
       ];
     }),
   };
+
+  /**
+   * Modal ask for delete confirmation
+   * Email Template Table Display
+   * Add Button for new Template
+   * Text for when email table is empty
+   */
   return (
     <>
       <Modal
@@ -145,7 +164,7 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
 
       {data.length === 0 && (
         <Text c="dimmed" ta="center" mt="md">
-          No email templates yet. Use "New Template" to create one.
+          No email templates yet. Click the add button to create one.
         </Text>
       )}
     </>
