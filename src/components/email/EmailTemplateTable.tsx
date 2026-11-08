@@ -19,7 +19,7 @@ import { PencilSquare, Trash, PlusSquare, PlusLg } from "react-bootstrap-icons";
 import { useDisclosure } from "@mantine/hooks";
 
 /**
- * Displays the table of email
+ * Displays the table of email templates
  *
  * @params Takes the list (Template Summary) of email templates and put it in an array (EmailGridProps) to display it.
  * @returns The table component of Email Templates
@@ -61,7 +61,7 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
           <ActionIcon
             color="blue"
             component={Link}
-            href={`/dashboard/email/edit/${template.id}`}
+            href={`/dashboard/email/templates/${template.id}/edit`}
           >
             <PencilSquare />
           </ActionIcon>
@@ -133,7 +133,7 @@ export function NewEmailTemplateButton() {
     <Button
       leftSection={<PlusLg />}
       component={Link}
-      href={`/dashboard/email/create`}
+      href={`/dashboard/email/templates/create`}
     >
       Add
     </Button>
