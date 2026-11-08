@@ -16,8 +16,8 @@ export async function getCurrentSession() {
 /**
  * Gets the current session and makes sure the user is an admin.
  *
- * @returns The current session
- * @throws "Unauthorized" if no one is logged in, "Forbidden" if the user
+ * @returns The current session.
+ * @throws "Unauthorized" if no one is logged in, or "Forbidden" if the user
  * is not an admin.
  */
 export async function requireAdmin() {
