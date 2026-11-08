@@ -28,7 +28,11 @@ export async function createTriviaQuestionAction(
   answer: string,
   category: string,
 ) {
-  const createdQuestion = await createTriviaQuestion(question, answer, category);
+  const createdQuestion = await createTriviaQuestion(
+    question,
+    answer,
+    category,
+  );
   revalidatePath("/dashboard/trivia");
   return createdQuestion;
 }

@@ -14,8 +14,7 @@ export async function getRandomQuestion() {
     const questions = await prisma.trivia.findMany({
       where: { published: true },
     });
-    if(questions.length === 0)
-      return null
+    if (questions.length === 0) return null;
     const chosenNum = Math.floor(Math.random() * questions.length);
     return questions[chosenNum];
   } catch (error) {
@@ -74,17 +73,16 @@ export async function createTriviaQuestion(
   answer: string,
   category: string,
 ) {
-  try{
-    
+  try {
     const data = {
-    id: crypto.randomUUID(),
-    question: question,
-    answer: answer,
-    category: category,
-    difficulty: "Unknown",
-    correct: 0,
-    asked: 0,
-    published: false,
+      id: crypto.randomUUID(),
+      question: question,
+      answer: answer,
+      category: category,
+      difficulty: "Unknown",
+      correct: 0,
+      asked: 0,
+      published: false,
     };
 
     await prisma.trivia.create({
