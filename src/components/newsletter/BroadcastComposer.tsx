@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Alert,
   Badge,
@@ -24,15 +24,16 @@ import {
 } from "@mantine/core";
 import { Clock, Envelope, PencilSquare, Send } from "react-bootstrap-icons";
 import BackLinkButton from "@/components/generic/BackLinkButton";
+import { ErrorNotification } from "@/components/email/ErrorNotification";
 import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
+import { create as createBroadcast } from "@/lib/actions/email/broadcast-actions";
+import { get as getTemplate } from "@/lib/actions/email/templates-actions";
 import classes from "@/components/newsletter/BroadcastComposer.module.css";
 
 export type BroadcastTemplate = {
   value: string;
   label: string;
-  subject: string;
-  html: string;
-  description?: string;
+  status?: string;
 };
 
 export type BroadcastSegment = {
@@ -42,52 +43,21 @@ export type BroadcastSegment = {
 };
 
 type BroadcastComposerProps = {
-  templates?: BroadcastTemplate[];
-  segments?: BroadcastSegment[];
+  templates: BroadcastTemplate[];
+  segments: BroadcastSegment[];
+  loadError?: string;
 };
 
-const MOCK_TEMPLATES: BroadcastTemplate[] = [
-  {
-    value: "weekly-reel",
-    label: "Weekly Reel",
-    subject: "This week at The Unreel Take",
-    description: "A weekly roundup of new reviews and recommendations.",
-    html: `
-      <h2>This week at The Unreel Take</h2>
-      <p>Here are the stories, reviews, and recommendations you may have missed.</p>
-      <p><strong>Featured review:</strong> Add this week's featured story here.</p>
-      <p>Thanks for reading!</p>
-    `,
-  },
-  {
-    value: "new-review",
-    label: "New Review",
-    subject: "A new review just landed",
-    description: "Highlights one newly published movie or television review.",
-    html: `
-      <h2>A new review just landed</h2>
-      <p>We watched it, took notes, and have thoughts.</p>
-      <p>Add a short review teaser and link here.</p>
-    `,
-  },
-  {
-    value: "monthly-recap",
-    label: "Monthly Recap",
-    subject: "The month in movies",
-    description: "A recap of the month's most popular posts.",
-    html: `
-      <h2>The month in movies</h2>
-      <p>Catch up on the conversations our readers enjoyed most this month.</p>
-      <ul><li>Top story</li><li>Most discussed review</li><li>Editor's pick</li></ul>
-    `,
-  },
-];
+type TemplateContent = {
+  subject: string;
+  html: string;
+};
 
-const MOCK_SEGMENTS: BroadcastSegment[] = [
-  { value: "all-subscribers", label: "All subscribers", recipientCount: 1284 },
-  { value: "active-readers", label: "Active readers", recipientCount: 842 },
-  { value: "new-subscribers", label: "New subscribers", recipientCount: 196 },
-];
+type Feedback = {
+  color: "red" | "teal";
+  title: string;
+  message: string;
+};
 
 function hasVisibleContent(html: string) {
   return (
@@ -99,23 +69,27 @@ function hasVisibleContent(html: string) {
 }
 
 /**
- * UI-only draft of the one-time broadcast workflow.
- *
- * Templates and segments are optional props so a server page can provide live
- * data later without changing the composer interface.
+ * Creates and sends a one-time broadcast from live Resend templates and
+ * mailing lists.
  */
 export function BroadcastComposer({
-  templates = MOCK_TEMPLATES,
-  segments = MOCK_SEGMENTS,
+  templates,
+  segments,
+  loadError,
 }: BroadcastComposerProps) {
   const [templateId, setTemplateId] = useState<string | null>(null);
   const [segmentId, setSegmentId] = useState<string | null>(null);
+  const [templateContent, setTemplateContent] =
+    useState<TemplateContent | null>(null);
   const [subject, setSubject] = useState("");
   const [html, setHtml] = useState("");
   const [customMode, setCustomMode] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduledAt, setScheduledAt] = useState("");
-  const [notice, setNotice] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const templateRequest = useRef(0);
 
   const selectedTemplate = useMemo(
     () => templates.find((template) => template.value === templateId),
@@ -126,30 +100,107 @@ export function BroadcastComposer({
     [segmentId, segments],
   );
 
+  const activeContent = customMode ? { subject, html } : templateContent;
   const canSend = Boolean(
     segmentId &&
-    (customMode ? subject.trim() && hasVisibleContent(html) : selectedTemplate),
+    activeContent?.subject.trim() &&
+    hasVisibleContent(activeContent.html),
   );
 
-  const handleTemplateChange = (value: string | null) => {
+  const handleTemplateChange = async (value: string | null) => {
+    const request = ++templateRequest.current;
     setTemplateId(value);
-    setNotice(null);
+    setTemplateContent(null);
+    setSubject("");
+    setHtml("");
+    setFeedback(null);
 
-    const template = templates.find((item) => item.value === value);
-    if (!template) return;
+    if (!value) {
+      setIsLoadingTemplate(false);
+      return;
+    }
 
-    setSubject(template.subject);
-    setHtml(template.html);
+    setIsLoadingTemplate(true);
+    const result = await getTemplate(value);
+
+    if (request !== templateRequest.current) return;
+    setIsLoadingTemplate(false);
+
+    if (result.error) {
+      setFeedback({
+        color: "red",
+        title: "Could not load template",
+        message: result.error.message,
+      });
+      ErrorNotification({
+        title: "Could not load template",
+        message: result.error.message,
+        httpCode: result.error.status,
+      });
+      return;
+    }
+
+    const content = {
+      subject: result.data.subject ?? "",
+      html: result.data.html,
+    };
+    setTemplateContent(content);
+    setSubject(content.subject);
+    setHtml(content.html);
   };
 
-  const showDraftNotice = (action: "send" | "schedule") => {
-    if (!canSend) return;
+  const submitBroadcast = async (schedule?: string) => {
+    if (!segmentId || !canSend || isSubmitting) return;
 
-    setNotice(
-      action === "send"
-        ? "Send-now is ready for backend wiring. No broadcast was sent."
-        : "Scheduling is ready for backend wiring. No broadcast was scheduled.",
-    );
+    const content = customMode ? { subject, html } : templateContent;
+    if (!content) return;
+
+    let scheduledAtIso: string | undefined;
+    if (schedule) {
+      const date = new Date(schedule);
+      if (Number.isNaN(date.getTime()) || date.getTime() <= Date.now()) {
+        setFeedback({
+          color: "red",
+          title: "Choose a future time",
+          message: "The scheduled send time must be in the future.",
+        });
+        return;
+      }
+      scheduledAtIso = date.toISOString();
+    }
+
+    setIsSubmitting(true);
+    setFeedback(null);
+    const result = await createBroadcast({
+      segmentId,
+      subject: content.subject.trim(),
+      html: content.html,
+      ...(scheduledAtIso ? { scheduledAt: scheduledAtIso } : {}),
+    });
+    setIsSubmitting(false);
+
+    if (result.error) {
+      setFeedback({
+        color: "red",
+        title: "Broadcast was not sent",
+        message: result.error.message,
+      });
+      ErrorNotification({
+        title: "Broadcast was not sent",
+        message: result.error.message,
+        httpCode: result.error.status,
+      });
+      return;
+    }
+
+    setScheduleOpen(false);
+    setFeedback({
+      color: "teal",
+      title: scheduledAtIso ? "Broadcast scheduled" : "Broadcast sent",
+      message: scheduledAtIso
+        ? `Broadcast ${result.data.id} is scheduled for ${new Date(scheduledAtIso).toLocaleString()}.`
+        : `Broadcast ${result.data.id} was queued for immediate delivery.`,
+    });
   };
 
   return (
@@ -172,14 +223,20 @@ export function BroadcastComposer({
           </ThemeIcon>
         </Group>
 
-        {notice && (
+        {loadError && (
+          <Alert color="red" title="Some options could not be loaded">
+            {loadError}
+          </Alert>
+        )}
+
+        {feedback && (
           <Alert
-            color="teal"
-            title="UI preview"
+            color={feedback.color}
+            title={feedback.title}
             withCloseButton
-            onClose={() => setNotice(null)}
+            onClose={() => setFeedback(null)}
           >
-            {notice}
+            {feedback.message}
           </Alert>
         )}
 
@@ -201,6 +258,9 @@ export function BroadcastComposer({
                 data={templates.map(({ value, label }) => ({ value, label }))}
                 value={templateId}
                 onChange={handleTemplateChange}
+                disabled={templates.length === 0}
+                rightSection={isLoadingTemplate ? "Loading…" : undefined}
+                rightSectionWidth={isLoadingTemplate ? 80 : undefined}
                 searchable
                 clearable={customMode}
               />
@@ -218,8 +278,9 @@ export function BroadcastComposer({
                 value={segmentId}
                 onChange={(value) => {
                   setSegmentId(value);
-                  setNotice(null);
+                  setFeedback(null);
                 }}
+                disabled={segments.length === 0}
                 searchable
               />
             </SimpleGrid>
@@ -235,11 +296,16 @@ export function BroadcastComposer({
                       {selectedTemplate.label}
                     </Text>
                     <Text size="sm" c="dimmed" mt={4}>
-                      {selectedTemplate.description}
+                      {templateContent
+                        ? "Subject and HTML loaded from Resend."
+                        : "Loading subject and HTML…"}
                     </Text>
                   </div>
-                  <Badge variant="outline" color="teal">
-                    Ready
+                  <Badge
+                    variant="outline"
+                    color={templateContent ? "teal" : "gray"}
+                  >
+                    {templateContent ? "Ready" : "Loading"}
                   </Badge>
                 </Group>
               </Card>
@@ -256,7 +322,7 @@ export function BroadcastComposer({
                       value={subject}
                       onChange={(event) => {
                         setSubject(event.currentTarget.value);
-                        setNotice(null);
+                        setFeedback(null);
                       }}
                     />
                     <Input.Wrapper
@@ -268,7 +334,7 @@ export function BroadcastComposer({
                           value={html}
                           onChange={(value) => {
                             setHtml(value);
-                            setNotice(null);
+                            setFeedback(null);
                           }}
                         />
                       </Box>
@@ -311,14 +377,15 @@ export function BroadcastComposer({
                     value={scheduledAt}
                     onChange={(event) => {
                       setScheduledAt(event.currentTarget.value);
-                      setNotice(null);
+                      setFeedback(null);
                     }}
                   />
                   <Button
                     color="teal"
                     variant="light"
-                    disabled={!canSend || !scheduledAt}
-                    onClick={() => showDraftNotice("schedule")}
+                    disabled={!canSend || !scheduledAt || isSubmitting}
+                    loading={isSubmitting}
+                    onClick={() => submitBroadcast(scheduledAt)}
                   >
                     Confirm schedule
                   </Button>
@@ -332,7 +399,9 @@ export function BroadcastComposer({
               <Text size="sm" c="dimmed">
                 {selectedSegment?.recipientCount !== undefined
                   ? `${selectedSegment.recipientCount.toLocaleString()} recipients selected`
-                  : "Select a segment to see the audience size"}
+                  : selectedSegment
+                    ? `Sending to ${selectedSegment.label}`
+                    : "Select a mailing list"}
               </Text>
               <Group>
                 <Button
@@ -340,8 +409,15 @@ export function BroadcastComposer({
                   color="gray"
                   leftSection={<PencilSquare size={17} />}
                   onClick={() => {
-                    setCustomMode((value) => !value);
-                    setNotice(null);
+                    setCustomMode((value) => {
+                      const nextValue = !value;
+                      if (!nextValue && templateContent) {
+                        setSubject(templateContent.subject);
+                        setHtml(templateContent.html);
+                      }
+                      return nextValue;
+                    });
+                    setFeedback(null);
                   }}
                 >
                   {customMode ? "Use template only" : "Send custom"}
@@ -351,7 +427,7 @@ export function BroadcastComposer({
                   leftSection={<Clock size={17} />}
                   onClick={() => {
                     setScheduleOpen((value) => !value);
-                    setNotice(null);
+                    setFeedback(null);
                   }}
                 >
                   {scheduleOpen ? "Hide schedule" : "Schedule"}
@@ -359,8 +435,9 @@ export function BroadcastComposer({
                 <Button
                   color="teal"
                   leftSection={<Send size={17} />}
-                  disabled={!canSend}
-                  onClick={() => showDraftNotice("send")}
+                  disabled={!canSend || isSubmitting}
+                  loading={isSubmitting}
+                  onClick={() => submitBroadcast()}
                 >
                   Send now
                 </Button>
