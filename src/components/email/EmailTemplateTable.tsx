@@ -11,6 +11,7 @@ import {
   Stack,
   Title,
   Table,
+  Pagination,
 } from "@mantine/core";
 import * as templates from "@/lib/actions/email/templates-actions";
 import { useState } from "react";
@@ -34,9 +35,18 @@ const formatDate = (iso: string) =>
     timeStyle: "short",
   });
 
+  const PAGE_SIZE = 10;
+
 export function EmailTemplateTable({ data }: EmailGridProps) {
   const [opened, { open, close }] = useDisclosure();
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(data.length/PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageRows = data.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  )
   const handleDelete = async (id: string) => {
     const { error } = await templates.remove(id); // revalidates the list
 
@@ -47,7 +57,7 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
 
   const tableData: TableData = {
     head: ["Name", "Status", "Last Updated", "Actions"],
-    body: data.map((template) => {
+    body: pageRows.map((template) => {
       const isPublished = template.status === "published";
 
       const statusColumn = (
@@ -113,7 +123,25 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
           </Button>
         </Group>
       </Modal>
+
+      
       <Table data={tableData} withRowBorders highlightOnHover maw={900} />
+      <Button
+      leftSection={<PlusLg />}
+      component={Link}
+      href={`/dashboard/email/templates/create`}>
+      Add
+      </Button>
+
+      {totalPages > 1 || (
+        <Pagination
+          total={totalPages}
+          value={currentPage}
+          onChange={setPage}
+          color={"gray"}
+          mt="md"
+          />
+      )}
 
       {data.length === 0 && (
         <Text c="dimmed" ta="center" mt="md">
@@ -121,21 +149,5 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
         </Text>
       )}
     </>
-  );
-}
-
-/**
- * NOTE: The URL would need to lineup with Creation Email Template Page
- * @returns Create Button for New Email Template
- */
-export function NewEmailTemplateButton() {
-  return (
-    <Button
-      leftSection={<PlusLg />}
-      component={Link}
-      href={`/dashboard/email/templates/create`}
-    >
-      Add
-    </Button>
   );
 }
