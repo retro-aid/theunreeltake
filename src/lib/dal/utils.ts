@@ -8,9 +8,7 @@ export async function getCurrentSession() {
     headers: await headers(),
   });
 
-  if (!session || !session.user) {
-    throw new Error("Unauthorized");
-  }
+  if (!session || !session.user) throw new AppError("Unauthorized", 401);
 
   return session;
 }
@@ -25,9 +23,7 @@ export async function getCurrentSession() {
 export async function requireAdmin() {
   const session = await getCurrentSession();
 
-  if (session.user.role !== "admin") {
-    throw new Error("Forbidden");
-  }
+  if (session.user.role !== "admin") throw new AppError("Forbidden", 403);
 
   return session;
 }
