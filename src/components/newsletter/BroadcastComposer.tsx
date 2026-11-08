@@ -160,7 +160,7 @@ export function BroadcastComposer({
         <Group justify="space-between" align="flex-start">
           <div>
             <Group gap="xs" mb={4}>
-              <Title order={2}>One-time broadcast</Title>
+              <Title order={2}>Send broadcast</Title>
             </Group>
             <Text c="dimmed">
               Choose an audience and template, then send immediately, schedule
@@ -205,7 +205,7 @@ export function BroadcastComposer({
                 clearable={customMode}
               />
               <Select
-                label="Subscriber segment"
+                label="Mailing list"
                 description="Select who should receive this broadcast."
                 placeholder="Choose a segment"
                 data={segments.map((segment) => ({

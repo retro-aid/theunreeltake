@@ -14,7 +14,7 @@ export function BroadcastButton() {
       color="teal"
       prefetch={false}
     >
-      Send one-time broadcast
+      Send a broadcast
     </Button>
   );
 }
