@@ -1,111 +1,91 @@
 import "server-only";
-import type { Contact } from "resend";
 import { requireAdmin } from "@/lib/dal/utils";
-import {
-  SubscriberIdSchema,
-  SubscriberSchema,
-  type SubscriberForm,
-} from "@/lib/schemas/subscriber-schemas";
 import { resend, unwrap } from "./resend";
+import type { ListContactsOptions } from "resend";
+import type {
+  ListSubscribersInputDTO,
+  ListSubscriberOutputDTO,
+  RemoveSubscriberInputDTO,
+  RemoveSubscriberOutputDTO,
+  CreateSubscriberInputDTO,
+  CreateSubscriberOutputDTO,
+} from "@/lib/schemas/email/subscriber-schemas";
+import {
+  ListSubscriberInputSchema,
+  ListSubscriberOutputSchema,
+  CreateSubscriberInputSchema,
+  CreateSubscriberOutputSchema,
+  RemoveSubscriberInputSchema,
+  RemoveSubscriberOutputSchema,
+} from "@/lib/schemas/email/subscriber-schemas";
 
 /**
- * Returns the configured Resend audience identifier.
- *
- * @returns The Resend audience ID.
- * @throws If no audience ID is configured.
- */
-function getAudienceId(): string {
-  const id = process.env.RESEND_AUDIENCE_ID;
-  if (!id) throw new Error("Resend audience is not configured.");
-  return id;
-}
-
-/**
- * Retrieves every subscriber in the configured Resend audience.
+ * Retrieves every subscriber in the configured Resend segment.
  *
  * @returns All subscriber contacts in the audience.
  * @throws If the user is not an admin, the audience is not configured, or
  * Resend fails.
  */
-export async function list(): Promise<Contact[]> {
+export async function list(
+  params: ListSubscribersInputDTO,
+): Promise<ListSubscriberOutputDTO> {
   await requireAdmin();
-  const audienceId = getAudienceId();
-  const subscribers: Contact[] = [];
-  let cursor: string | undefined;
 
-  do {
-    const page = unwrap(
-      await resend.contacts.list({
-        audienceId,
-        limit: 100,
-        after: cursor,
-      }),
-    );
+  //Apply any defaults
+  const validatedParams = ListSubscriberInputSchema.parse(params);
 
-    subscribers.push(...page.data);
-    cursor = page.has_more ? page.data.at(-1)?.id : undefined;
-    if (page.has_more && !cursor) break;
-  } while (cursor);
+  const { paginateOption, limit } = validatedParams;
 
-  return subscribers;
-}
+  const options: ListContactsOptions = {
+    limit: limit,
+  };
 
-/**
- * Adds a subscriber from the administrator dashboard.
- *
- * @param input Subscriber email and optional name fields.
- * @returns The created contact data.
- * @throws If the user is not an admin, the input is invalid, or Resend fails.
- */
-export async function add(input: SubscriberForm) {
-  await requireAdmin();
-  return createContact(input);
+  if (paginateOption === "after") options.after = validatedParams.after;
+  else if (paginateOption === "before") options.before = validatedParams.before;
+
+  const resolvedResponse = unwrap(await resend.contacts.list(options));
+
+  return ListSubscriberOutputSchema.parse(resolvedResponse);
 }
 
 /**
  * Deletes a subscriber from the configured Resend audience.
  *
- * @param id Resend contact ID.
+ * @param params.id The id of the subscriber to remove
  * @returns The deleted contact data.
  * @throws If the user is not an admin, the ID is invalid, or Resend fails.
  */
-export async function remove(id: string) {
+export async function remove(
+  params: RemoveSubscriberInputDTO,
+): Promise<RemoveSubscriberOutputDTO> {
   await requireAdmin();
-  const contactId = SubscriberIdSchema.parse(id);
-  return unwrap(
-    await resend.contacts.remove({
-      id: contactId,
-      audienceId: getAudienceId(),
-    }),
-  );
-}
 
-/**
- * Validates subscriber details and creates a Resend contact.
- *
- * @param input Subscriber email and optional name fields.
- * @returns The created contact data.
- * @throws If the input is invalid or Resend fails.
- */
-async function createContact(input: SubscriberForm) {
-  const subscriber = SubscriberSchema.parse(input);
-  return unwrap(
-    await resend.contacts.create({
-      audienceId: getAudienceId(),
-      email: subscriber.email,
-      firstName: subscriber.firstName || undefined,
-      lastName: subscriber.lastName || undefined,
-    }),
+  const validatedParams = RemoveSubscriberInputSchema.parse(params);
+
+  const resolvedResponse = unwrap(
+    await resend.contacts.remove(validatedParams),
   );
+
+  return RemoveSubscriberOutputSchema.parse(resolvedResponse);
 }
 
 /**
  * Signs up a subscriber through the public newsletter form.
  *
- * @param input Subscriber email and optional name fields.
+ * @param params Subscriber email and optional name fields.
  * @returns The created contact data.
  * @throws If the input is invalid or Resend fails.
  */
-export async function create(input: SubscriberForm) {
-  return createContact(input);
+export async function create(
+  params: CreateSubscriberInputDTO,
+): Promise<CreateSubscriberOutputDTO> {
+  await requireAdmin();
+
+  const validatedParams = CreateSubscriberInputSchema.parse(params);
+
+  const resolvedResponse = unwrap(
+    await resend.contacts.create(validatedParams),
+  );
+
+  return CreateSubscriberOutputSchema.parse(resolvedResponse);
 }
