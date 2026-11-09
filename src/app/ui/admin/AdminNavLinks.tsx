@@ -14,6 +14,7 @@ import {
   Tag,
   Postcard,
   Envelope,
+  Newspaper,
 } from "react-bootstrap-icons";
 import { usePathname } from "next/navigation";
 import { AuthContext } from "./AuthContext";
@@ -86,6 +87,13 @@ const data = [
     link: "/dashboard/email",
     label: "Email",
     icon: Envelope,
+    disabled: false,
+    adminOnly: true,
+  },
+  {
+    link: "/dashboard/maillist",
+    label: "Mail List",
+    icon: Newspaper,
     disabled: false,
     adminOnly: true,
   },

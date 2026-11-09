@@ -19,6 +19,11 @@ export async function get(id: string) {
   return toResult(() => email.mailingLists.get(id));
 }
 
+/** Server action for {@link email.mailingLists.listExtra} */
+export async function listExtra() {
+  return toResult(() => email.mailingLists.listExtra());
+}
+
 /** Server action for {@link email.mailingLists.create}. */
 export async function create(mailingList: MailingListInputDTO) {
   return toResult(() => email.mailingLists.create(mailingList), EMAIL_PAGES);
