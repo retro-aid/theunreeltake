@@ -9,7 +9,7 @@ export function BroadcastButton() {
   return (
     <Button
       component={Link}
-      href="/dashboard/newsletter/broadcast"
+      href="/dashboard/email/broadcast"
       leftSection={<Send size={18} />}
       color="teal"
       prefetch={false}

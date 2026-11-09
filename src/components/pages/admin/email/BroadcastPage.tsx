@@ -1,16 +1,8 @@
-import { redirect } from "next/navigation";
 import { BroadcastComposer } from "@/components/newsletter";
 import { list as listMailingLists } from "@/lib/actions/email/mailing-lists-actions";
 import { list as listTemplates } from "@/lib/actions/email/templates-actions";
-import { requireAdmin } from "@/lib/dal/utils";
 
-export default async function BroadcastPage() {
-  try {
-    await requireAdmin();
-  } catch {
-    redirect("/dashboard");
-  }
-
+export async function BroadcastPage() {
   const [templateResult, mailingListResult] = await Promise.all([
     listTemplates(),
     listMailingLists(),
