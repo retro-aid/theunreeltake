@@ -38,8 +38,11 @@ export const ListBroadcastInputSchema = PaginationSchema;
 export const ListBroadcastItemSchema = z.object({
   id: z.string(),
   name: z.string(),
-  segment_id: z.string(),
+  segment_id: z.string().nullable(),
   status: z.literal(["draft", "sent", "scheduled", "queued", "canceled"]),
+  created_at: z.string(),
+  scheduled_at: z.string().nullable(),
+  sent_at: z.string().nullable(),
 });
 
 export const ListBroadcastOutputSchema = z.object({
