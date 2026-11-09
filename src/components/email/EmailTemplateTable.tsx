@@ -35,7 +35,7 @@ const formatDate = (iso: string) =>
     timeStyle: "short",
   });
 
-  const PAGE_SIZE = 10;
+const PAGE_SIZE = 10;
 
 export function EmailTemplateTable({ data }: EmailGridProps) {
   const [opened, { open, close }] = useDisclosure();
@@ -43,16 +43,16 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
 
   //Pagination
   const [page, setPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(data.length/PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageRows = data.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
-  )
+  );
 
   /**
    * Deletes email template
-   * 
+   *
    * @param id - Takes id of the email template that will be deleted
    * @returns Deletes the email template
    */
@@ -143,13 +143,13 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
         </Group>
       </Modal>
 
-      
       <Table data={tableData} withRowBorders highlightOnHover maw={900} />
       <Button
-      leftSection={<PlusLg />}
-      component={Link}
-      href={`/dashboard/email/templates/create`}>
-      Add
+        leftSection={<PlusLg />}
+        component={Link}
+        href={`/dashboard/email/templates/create`}
+      >
+        Add
       </Button>
 
       {totalPages > 1 || (
@@ -159,7 +159,7 @@ export function EmailTemplateTable({ data }: EmailGridProps) {
           onChange={setPage}
           color={"gray"}
           mt="md"
-          />
+        />
       )}
 
       {data.length === 0 && (

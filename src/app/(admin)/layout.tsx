@@ -31,7 +31,7 @@ export default function RootAdminLayout({
       </Head>
       <body>
         <MantineProvider defaultColorScheme={"light"}>
-          <Notifications position="top-center" />
+          <Notifications position={"bottom-right"} />
           {children}
         </MantineProvider>
       </body>
