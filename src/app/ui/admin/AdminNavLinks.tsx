@@ -14,6 +14,7 @@ import {
   Tag,
   Postcard,
   Newspaper,
+  Mailbox,
 } from "react-bootstrap-icons";
 import { usePathname } from "next/navigation";
 import { AuthContext } from "./AuthContext";
@@ -83,9 +84,9 @@ const data = [
     adminOnly: true,
   },
   {
-    link: "/dashboard/newsletter",
-    label: "Newsletter",
-    icon: Newspaper,
+    link: "/dashboard/email",//update the nav to display the subscriber table
+    label: "Email",
+    icon: Mailbox,
     disabled: false,
     adminOnly: true,
   },
