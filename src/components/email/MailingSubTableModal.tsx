@@ -6,6 +6,11 @@ import {MailingListDetailOutputDTO} from "@/lib/schemas/email/mailing-lists-sche
 import { get } from "@/lib/actions/email/mailing-lists-actions";
 import { MailSubRow } from "./MailingSubRow";
 
+/**
+ * 
+ * @param param0 Takes in a specific MailingListDetailOutputDTO (Mailing List + Subs)
+ * @returns The modal for handling the display of each subscriber in a Mailing List as its own table
+ */
 export function SubTableModal({ MailingList }: { MailingList: MailingListDetailOutputDTO}) {
 
     const subRows = MailingList.subscribers.map((item) => (

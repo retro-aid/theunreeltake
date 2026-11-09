@@ -88,6 +88,12 @@ export async function list(): Promise<MailingListOutputDTO[]> {
   return MailingListOutputSchema.array().parse(await listAll());
 }
 
+/**
+ * Gets all mailing lists + each lists' subscribers
+ * 
+ * @returns An array of Mailing Lists and their subscribers
+ * @throws If you're not an admin or Resend has a problem.
+ */
 export async function listExtra(): Promise<MailingListDetailOutputDTO[]> {
   await requireAdmin();
 

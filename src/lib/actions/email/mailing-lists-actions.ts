@@ -14,6 +14,7 @@ export async function list() {
   return toResult(() => email.mailingLists.list());
 }
 
+/** Server action for {@link email.mailingLists.listExtra} */
 export async function listExtra() {
   return toResult(() => email.mailingLists.listExtra());
 }

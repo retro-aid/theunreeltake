@@ -5,15 +5,11 @@ import { MailingListDetailOutputDTO, MailingListMemberInputDTO } from "@/lib/sch
 import { Badge, Button, Group, Modal, Table } from "@mantine/core"
 import { useState } from "react";
 
-type subscriber = {
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    createdAt: string,
-    curSub: boolean,
-}
-
+/**
+ * 
+ * @param param0 The subscribers for a specific mailing lsit and the mailing list's id
+ * @returns An individual row in the mailing list's subscribers table, as well as a modal for removing a subscriber
+ */
 export function MailSubRow({ Subscriber, MailId }: { Subscriber: MailingListDetailOutputDTO["subscribers"][number], MailId: string}){
     const [modalOpened, setModalOpened] = useState(false);
     const [activeModal, setActiveModal] = useState<string | null>(null);

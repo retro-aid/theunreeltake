@@ -2,27 +2,17 @@
 
 import { Table, Button, Modal, Group, TextInput } from "@mantine/core"
 import { useState } from "react";
-import { MailSubRow } from "./MailingSubRow";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { MailingListDetailOutputDTO, MailingListMemberInputDTO, MailingListMemberInputSchema, MailingListOutputDTO } from "@/lib/schemas/email/mailing-lists-schemas";
 import { addSubscriber, get, remove } from "@/lib/actions/email/mailing-lists-actions";
 import { SubTableModal } from "./MailingSubTableModal";
 
-type subscriber = {
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    createdAt: string,
-    curSub: boolean,
-}
-
-type mailingList = {
-    id: string,
-    name: string,
-    subs: subscriber[]
-}
+/**
+ * 
+ * @param param0 Takes in a specific MailingListDetailOutputDTO (Mailing List + Subs)
+ * @returns An individual row for the Mailing List table, as well as the Add Member and Delete Mailing List modals
+ */
 export function MailListRow({ MailingList }: { MailingList: MailingListDetailOutputDTO}){
     const [modalOpened, setModalOpened] = useState(false);
     const [activeModal, setActiveModal] = useState<string | null>(null);

@@ -8,61 +8,12 @@ import { zod4Resolver } from "mantine-form-zod-resolver"
 import { MailingListDetailOutputDTO, MailingListInputDTO, MailingListInputSchema, MailingListOutputDTO } from "@/lib/schemas/email/mailing-lists-schemas"
 import { create } from "@/lib/actions/email/mailing-lists-actions"
 
+/**
+ * A function that displays the basic Mailing List Table
+ * @param param0 Takes in an array of MailingListDetailOutputDTO (Mailing List + Subs)
+ * @returns The Add Mailing List modal and the Mailing List Table
+ */
 export function MailingListTable({ MailingLists }: { MailingLists: MailingListDetailOutputDTO[]}){
-    type subscriber = {
-      id: string,
-      firstName: string,
-      lastName: string,
-      email: string,
-      createdAt: string,
-      curSub: boolean,
-    }
-    
-    type mailingList = {
-      id: string,
-      name: string,
-      subs: subscriber[]
-    }
-    
-    const MOCK_MAILING_LISTS: mailingList[] = [
-      {
-        id: "0",
-        name: "default",
-        subs: [
-          {
-            id: "0",
-            firstName: "Jim",
-            lastName: "Jones",
-            email: "john@john.com",
-            createdAt: "Some time",
-            curSub: true
-          },
-          {
-            id: "1",
-            firstName: "Stacy",
-            lastName: "Second",
-            email: "stacy@stacy.com",
-            createdAt: "Never",
-            curSub: true
-          }
-        ]
-      },
-      {
-        id: "1",
-        name: "unique",
-        subs: [
-          {
-            id: "2",
-            firstName: "The",
-            lastName: "Third",
-            email: "third@gmail.com",
-            createdAt: "Always",
-            curSub: false
-          }
-        ]
-      }
-    ]
-
     const [modalOpened, setModalOpened] = useState(false);
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
