@@ -25,6 +25,7 @@ export function MailSubRow({
 
   const handleSubmit = async () => {
     setModalOpened(false);
+    setActiveModal(null);
     if (activeModal == "Remove Member") {
       const member: MailingListMemberInputDTO = {
         mailingListId: MailId,
@@ -32,8 +33,6 @@ export function MailSubRow({
       };
       await removeSubscriber(member);
     }
-
-    setActiveModal(null);
   };
 
   const handleClose = () => {

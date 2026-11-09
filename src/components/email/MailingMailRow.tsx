@@ -60,11 +60,10 @@ export function MailListRow({
 
   const handleSubmitDelete = async () => {
     setModalOpened(false);
+    setActiveModal(null);
     if (activeModal == "Delete List") {
       await remove(MailingList.id);
     }
-
-    setActiveModal(null);
     MailListSubInputform.reset();
     MailListSubInputform.setInitialValues({
       mailingListId: MailingList.id,
