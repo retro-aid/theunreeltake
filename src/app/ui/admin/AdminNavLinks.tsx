@@ -13,7 +13,7 @@ import {
   Send,
   Tag,
   Postcard,
-  Newspaper,
+  Envelope,
 } from "react-bootstrap-icons";
 import { usePathname } from "next/navigation";
 import { AuthContext } from "./AuthContext";
@@ -83,9 +83,9 @@ const data = [
     adminOnly: true,
   },
   {
-    link: "/dashboard/newsletter",
-    label: "Newsletter",
-    icon: Newspaper,
+    link: "/dashboard/email",
+    label: "Email",
+    icon: Envelope,
     disabled: false,
     adminOnly: true,
   },
