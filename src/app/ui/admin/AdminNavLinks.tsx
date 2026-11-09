@@ -83,8 +83,8 @@ const data = [
     adminOnly: true,
   },
   {
-    link: "/dashboard/newsletter",
-    label: "Newsletter",
+    link: "/dashboard/maillist",
+    label: "Mail List",
     icon: Newspaper,
     disabled: false,
     adminOnly: true,
