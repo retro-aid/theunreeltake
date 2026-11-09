@@ -14,6 +14,10 @@ export async function list() {
   return toResult(() => email.mailingLists.list());
 }
 
+export async function listExtra() {
+  return toResult(() => email.mailingLists.listExtra());
+}
+
 /** Server action for {@link email.mailingLists.get}. */
 export async function get(id: string) {
   return toResult(() => email.mailingLists.get(id));

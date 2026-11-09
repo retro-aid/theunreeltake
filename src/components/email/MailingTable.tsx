@@ -1,12 +1,14 @@
-import { Card, Title, Table, Button, Group, Modal, TextInput } from "@mantine/core"
+'use client'
+
+import { Card, Table, Button, Group, Modal, TextInput } from "@mantine/core"
 import { MailListRow } from "./MailingMailRow"
 import { useState } from "react"
 import { useForm } from "@mantine/form"
 import { zod4Resolver } from "mantine-form-zod-resolver"
-import { MailingListInputDTO, MailingListInputSchema } from "@/lib/schemas/email/mailing-lists-schemas"
+import { MailingListDetailOutputDTO, MailingListInputDTO, MailingListInputSchema, MailingListOutputDTO } from "@/lib/schemas/email/mailing-lists-schemas"
 import { create } from "@/lib/actions/email/mailing-lists-actions"
 
-export function MailingListTable(){
+export function MailingListTable({ MailingLists }: { MailingLists: MailingListDetailOutputDTO[]}){
     type subscriber = {
       id: string,
       firstName: string,
@@ -93,7 +95,7 @@ export function MailingListTable(){
         setActiveModal(null);
     };
 
-    const rows = MOCK_MAILING_LISTS.map((item) => (
+    const rows = MailingLists.map((item) => (
         <MailListRow key={item.id} MailingList={item}/>
     ))
     return (

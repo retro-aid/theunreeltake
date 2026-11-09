@@ -1,5 +1,7 @@
+'use client'
+
 import { removeSubscriber } from "@/lib/actions/email/mailing-lists-actions";
-import { MailingListMemberInputDTO } from "@/lib/schemas/email/mailing-lists-schemas";
+import { MailingListDetailOutputDTO, MailingListMemberInputDTO } from "@/lib/schemas/email/mailing-lists-schemas";
 import { Badge, Button, Group, Modal, Table } from "@mantine/core"
 import { useState } from "react";
 
@@ -12,7 +14,7 @@ type subscriber = {
     curSub: boolean,
 }
 
-export function MailSubRow({ Subscriber, MailId }: { Subscriber: subscriber, MailId: string}){
+export function MailSubRow({ Subscriber, MailId }: { Subscriber: MailingListDetailOutputDTO["subscribers"][number], MailId: string}){
     const [modalOpened, setModalOpened] = useState(false);
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
@@ -58,13 +60,12 @@ export function MailSubRow({ Subscriber, MailId }: { Subscriber: subscriber, Mai
             <Table.Td>{Subscriber.firstName}</Table.Td>
             <Table.Td>{Subscriber.lastName}</Table.Td>
             <Table.Td>{Subscriber.email}</Table.Td>
-            <Table.Td>{Subscriber.createdAt}</Table.Td>
             <Table.Td>
                 <Badge
-                    color={Subscriber.curSub === true ? "green" : "red"}
+                    color={Subscriber.unsubscribed === false ? "green" : "red"}
                         variant="light"
                         >
-                    {Subscriber.curSub === true ? "Subbed" : "Not Subbed"}
+                    {Subscriber.unsubscribed === false ? "Subbed" : "Not Subbed"}
                 </Badge>
             </Table.Td>
             <Table.Td>

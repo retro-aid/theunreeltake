@@ -1,10 +1,13 @@
+'use client'
+
 import { Table, Button, Modal, Group, TextInput } from "@mantine/core"
 import { useState } from "react";
 import { MailSubRow } from "./MailingSubRow";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { MailingListMemberInputDTO, MailingListMemberInputSchema } from "@/lib/schemas/email/mailing-lists-schemas";
-import { addSubscriber, remove } from "@/lib/actions/email/mailing-lists-actions";
+import { MailingListDetailOutputDTO, MailingListMemberInputDTO, MailingListMemberInputSchema, MailingListOutputDTO } from "@/lib/schemas/email/mailing-lists-schemas";
+import { addSubscriber, get, remove } from "@/lib/actions/email/mailing-lists-actions";
+import { SubTableModal } from "./MailingSubTableModal";
 
 type subscriber = {
     id: string,
@@ -20,7 +23,7 @@ type mailingList = {
     name: string,
     subs: subscriber[]
 }
-export function MailListRow({ MailingList }: { MailingList: mailingList}){
+export function MailListRow({ MailingList }: { MailingList: MailingListDetailOutputDTO}){
     const [modalOpened, setModalOpened] = useState(false);
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
@@ -30,10 +33,6 @@ export function MailListRow({ MailingList }: { MailingList: mailingList}){
       initialValues: { mailingListId: MailingList.id, email: "" },
       validate: zod4Resolver(MailingListMemberInputSchema),
     });
-
-    const subRows = MailingList.subs.map((item) => (
-        <MailSubRow key={item.id} Subscriber={item} MailId={MailingList.id} />
-    ));
     
     const handleSubmitAdd = async (values: typeof MailListSubInputform.values) => {
         setModalOpened(false);
@@ -79,23 +78,12 @@ export function MailListRow({ MailingList }: { MailingList: mailingList}){
         <>
             {activeModal == "See Members" && (
                 <Modal
-                    opened={modalOpened}
-                    onClose={handleClose}
-                    title={"See Members"}
-                    centered
-                    size="100%">
-                        <Table highlightOnHover verticalSpacing="sm">
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th>First Name</Table.Th>
-                                    <Table.Th>Last Name</Table.Th>
-                                    <Table.Th>Email</Table.Th>
-                                    <Table.Th>Created At</Table.Th>
-                                    <Table.Th>Currently Subscribed</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>{subRows}</Table.Tbody>
-                    </Table>
+                opened={modalOpened}
+                onClose={handleClose}
+                title={"See Members"}
+                centered
+                size="100%">
+                    <SubTableModal MailingList={MailingList}/>
                 </Modal>
             )}
 
