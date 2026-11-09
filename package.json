@@ -17,6 +17,7 @@
   "dependencies": {
     "@gfazioli/mantine-flip": "^2.5.9",
     "@google-analytics/data": "^7.3.0",
+    "@mantine/charts": "^9.7.5",
     "@mantine/core": "9.0.0",
     "@mantine/form": "9.0.0",
     "@mantine/hooks": "9.0.0",
@@ -44,6 +45,7 @@
     "react": "^19.2.3",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.2.3",
+    "recharts": "^3.10.1",
     "resend": "6.37.0",
     "vitest-mock-extended": "^5.1.1",
     "zod": "^4.0.0"

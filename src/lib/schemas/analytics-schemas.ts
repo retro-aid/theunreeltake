@@ -20,6 +20,7 @@ export const GARangeInputSchema = z.enum(["7d", "30d", "12m"]).default("30d");
 // Overall traffic numbers for a date range.
 export const GAOverviewOutputSchema = GAVisitorsSchema.extend({
   pageViews: z.number().int().nonnegative(),
+  avgEngagementSeconds: z.number().nonnegative(),
 });
 
 // Views and average time spent for one blog post.

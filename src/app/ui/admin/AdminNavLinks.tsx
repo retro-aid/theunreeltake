@@ -66,7 +66,7 @@ const data = [
     link: "/dashboard/analytics",
     label: "Analytics",
     icon: BarChartLine,
-    disabled: true,
+    disabled: false,
     adminOnly: false,
   },
   {
