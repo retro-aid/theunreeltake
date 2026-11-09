@@ -90,7 +90,7 @@ export async function list(): Promise<MailingListOutputDTO[]> {
 
 /**
  * Gets all mailing lists + each lists' subscribers
- * 
+ *
  * @returns An array of Mailing Lists and their subscribers
  * @throws If you're not an admin or Resend has a problem.
  */
@@ -99,19 +99,21 @@ export async function listExtra(): Promise<MailingListDetailOutputDTO[]> {
 
   let detailedList = [];
   const mls = MailingListOutputSchema.array().parse(await listAll());
-  for (let i = 0; i < mls.length; i++){
+  for (let i = 0; i < mls.length; i++) {
     const listId = MailingListIdInputSchema.parse(mls[i].id);
     const list = unwrap(await resend.segments.get(listId));
     const members = await listMembers(listId);
 
-    detailedList.push(MailingListDetailOutputSchema.parse({
-      ...list,
-      subscribers: members.map((member) => ({
-        ...member,
-        firstName: member.first_name,
-        lastName: member.last_name,
-      })),
-    }))
+    detailedList.push(
+      MailingListDetailOutputSchema.parse({
+        ...list,
+        subscribers: members.map((member) => ({
+          ...member,
+          firstName: member.first_name,
+          lastName: member.last_name,
+        })),
+      }),
+    );
   }
 
   return detailedList;

@@ -77,126 +77,126 @@ export function AdminCommentCard({
 
   return (
     <>
-      <ReplyActionModal //came from the cards.tsx 
+      <ReplyActionModal //came from the cards.tsx
         opened={replyOpened}
         onClose={closeReply}
         onConfirm={handleConfirmReply}
       />
-    <Card
-      withBorder
-      radius="md"
-      p="md"
-      shadow="none"
-      bg="white"
-      style={{ borderColor: "var(--mantine-color-gray-3)" }}
-    >
-      <Stack gap="xs">
-        {/* Header Row: User Info & Subtitles on the Left, Action Buttons in the Top-Right */}
-        <Group justify="space-between" align="flex-start" wrap="nowrap">
-          <Group
-            align="flex-start"
-            gap="md"
-            wrap="nowrap"
-            style={{ minWidth: 0, flex: 1 }}
-          >
-            <Avatar
-              src={null}
-              color={isAnonymous ? "gray" : "blue"}
-              radius="xl"
-              size="lg"
-              styles={{
-                placeholder: { fontSize: "0.95rem", fontWeight: 600 },
-              }}
+      <Card
+        withBorder
+        radius="md"
+        p="md"
+        shadow="none"
+        bg="white"
+        style={{ borderColor: "var(--mantine-color-gray-3)" }}
+      >
+        <Stack gap="xs">
+          {/* Header Row: User Info & Subtitles on the Left, Action Buttons in the Top-Right */}
+          <Group justify="space-between" align="flex-start" wrap="nowrap">
+            <Group
+              align="flex-start"
+              gap="md"
+              wrap="nowrap"
+              style={{ minWidth: 0, flex: 1 }}
             >
-              {initials}
-            </Avatar>
+              <Avatar
+                src={null}
+                color={isAnonymous ? "gray" : "blue"}
+                radius="xl"
+                size="lg"
+                styles={{
+                  placeholder: { fontSize: "0.95rem", fontWeight: 600 },
+                }}
+              >
+                {initials}
+              </Avatar>
 
-            <Stack gap={2} style={{ minWidth: 0, flex: 1 }}>
-              <Group gap="xs" align="baseline" wrap="wrap">
-                <Title order={4} fw={700} c="dark.9">
-                  {displayName}
-                </Title>
-                <Text size="xs" c="dimmed">
-                  • {formattedDate}
-                </Text>
-              </Group>
+              <Stack gap={2} style={{ minWidth: 0, flex: 1 }}>
+                <Group gap="xs" align="baseline" wrap="wrap">
+                  <Title order={4} fw={700} c="dark.9">
+                    {displayName}
+                  </Title>
+                  <Text size="xs" c="dimmed">
+                    • {formattedDate}
+                  </Text>
+                </Group>
 
-              <Group gap="xs" align="center" wrap="wrap">
-                <Text size="xs" fw={600} c="dark.6">
-                  {comment.post?.title}
-                </Text>
-                <Text size="xs" c="dimmed">
-                  • {comment.email ?? "No email given"}
-                </Text>
-                {shortId && (
-                  <>
-                    <Text size="xs" c="dimmed">
-                      •
-                    </Text>
-                    <Text size="xs" c="dimmed" ff="monospace">
-                      User ID: {shortId}
-                    </Text>
-                  </>
-                )}
-              </Group>
-            </Stack>
+                <Group gap="xs" align="center" wrap="wrap">
+                  <Text size="xs" fw={600} c="dark.6">
+                    {comment.post?.title}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    • {comment.email ?? "No email given"}
+                  </Text>
+                  {shortId && (
+                    <>
+                      <Text size="xs" c="dimmed">
+                        •
+                      </Text>
+                      <Text size="xs" c="dimmed" ff="monospace">
+                        User ID: {shortId}
+                      </Text>
+                    </>
+                  )}
+                </Group>
+              </Stack>
+            </Group>
+
+            <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
+              <Button
+                size="xs"
+                color="blue"
+                radius="sm"
+                px="xs"
+                onClick={() => router.push(`/blog/${comment.postSlug}`)}
+              >
+                View Post
+              </Button>
+              <Button
+                size="xs"
+                variant="default"
+                radius="sm"
+                px="xs"
+                onClick={openReply} // comes from the const created near the top
+              >
+                Reply
+              </Button>
+              <Button
+                size="xs"
+                variant="light"
+                color="red"
+                radius="sm"
+                px="xs"
+                onClick={() => onDeleteClick?.(comment.id)}
+                styles={{
+                  root: {
+                    backgroundColor: "var(--mantine-color-red-0)",
+                    border: "1px solid var(--mantine-color-red-2)",
+                  },
+                }}
+              >
+                Delete
+              </Button>
+            </Group>
           </Group>
 
-          <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
-            <Button
-              size="xs"
-              color="blue"
-              radius="sm"
-              px="xs"
-              onClick={() => router.push(`/blog/${comment.postSlug}`)}
-            >
-              View Post
-            </Button>
-            <Button
-              size="xs"
-              variant="default"
-              radius="sm"
-              px="xs"
-              onClick={openReply}// comes from the const created near the top
-            >
-              Reply
-            </Button>
-            <Button
-              size="xs"
-              variant="light"
-              color="red"
-              radius="sm"
-              px="xs"
-              onClick={() => onDeleteClick?.(comment.id)}
-              styles={{
-                root: {
-                  backgroundColor: "var(--mantine-color-red-0)",
-                  border: "1px solid var(--mantine-color-red-2)",
-                },
-              }}
-            >
-              Delete
-            </Button>
-          </Group>
-        </Group>
-
-        <Paper
-          p="sm"
-          radius="sm"
-          bg="gray.0"
-          withBorder
-          style={{ borderColor: "var(--mantine-color-gray-2)" }}
-        >
-          <Text
-            size="sm"
-            c="dark.8"
-            style={{ wordBreak: "break-word", lineHeight: 1.55 }}
+          <Paper
+            p="sm"
+            radius="sm"
+            bg="gray.0"
+            withBorder
+            style={{ borderColor: "var(--mantine-color-gray-2)" }}
           >
-            {comment.messageContent}
-          </Text>
-        </Paper>
-      </Stack>
-    </Card>
+            <Text
+              size="sm"
+              c="dark.8"
+              style={{ wordBreak: "break-word", lineHeight: 1.55 }}
+            >
+              {comment.messageContent}
+            </Text>
+          </Paper>
+        </Stack>
+      </Card>
     </>
   );
 }
