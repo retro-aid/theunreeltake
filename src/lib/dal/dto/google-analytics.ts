@@ -125,13 +125,13 @@ const fetchOverview = unstable_cache(
     });
 
     const values = report.rows?.[0]?.metricValues ?? [];
-    const visitors = toNumber(values[1]?.value)
+    const visitors = toNumber(values[1]?.value);
     const engagement = toNumber(values[2]?.value);
 
     return GAOverviewOutputSchema.parse({
       pageViews: toNumber(values[0]?.value),
-      visitors,// toNumber(values[1]?.value),
-      avgEngagementSeconds: average(engagement,visitors),
+      visitors, // toNumber(values[1]?.value),
+      avgEngagementSeconds: average(engagement, visitors),
     });
   },
   ["ga-overview"],

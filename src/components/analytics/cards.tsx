@@ -6,6 +6,7 @@ import { getTotalViewsAction } from "@/lib/actions/analytics-actions";
 import { Suspense } from "react";
 import { CardSkeleton } from "./CardSkeleton";
 import { getTotalActiveUsers } from "@/lib/dal/dto/analytics";
+import { getGAOverviewAction } from "@/lib/actions/analytics-actions";
 
 export function AmountCommentsCard() {
   const amountOfComments = getAmountOfCommentsAction("month");
@@ -36,7 +37,9 @@ export function PendingRequestsCard() {
 }
 
 export function ViewsCard() {
-  const totalViews = getTotalViewsAction();
+  const totalViews = getGAOverviewAction("12m").then(
+    (overview) => overview.pageViews,
+  );
 
   return (
     <Suspense fallback={<CardSkeleton />}>
