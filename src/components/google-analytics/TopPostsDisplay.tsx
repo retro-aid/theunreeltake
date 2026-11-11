@@ -1,4 +1,4 @@
-import { getGAPostStatsAction } from "@/lib/actions/analytics-actions"; // your actions path
+import { getGAPostStatsAction } from "@/lib/actions/analytics-actions";
 import type { GARangeOutput } from "@/lib/schemas/analytics-schemas";
 import { AnalyticsCard, load } from "./AnalyticsCard";
 import { TopPostsView } from "./TopPostsList";

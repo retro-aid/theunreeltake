@@ -7,7 +7,7 @@ import { AnalyticsCard, load } from "./AnalyticsCard";
  * Returns the locations of the visitors from Google Analytics.
  *
  * @param range - Sorts the information display based on Time (7 Days Ago, 30 Days Ago, 12 Months Ago)
- * @returns A list of
+ * @returns A list of countries from each visitor
  */
 export async function LocationList({ range }: { range: GARangeOutput }) {
   const { data, error } = await load(() => getGALocationsAction(range));
