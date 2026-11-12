@@ -9,6 +9,7 @@ import "@mantine/core/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@gfazioli/mantine-flip/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/charts/styles.css";
 
 import Head from "next/head";
 import type { Metadata } from "next";
