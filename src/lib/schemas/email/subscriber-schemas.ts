@@ -23,6 +23,10 @@ export type ListSubscriberOutputDTO = z.output<
   typeof ListSubscriberOutputSchema
 >;
 
+export type SubscriberListItemOutputDTO = z.output<
+  typeof ContactListItemSchema
+>;
+
 const SegmentListItemSchema = z.object({
   id: z.string(),
 });

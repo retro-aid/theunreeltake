@@ -107,8 +107,7 @@ export default function AdminNavLinks() {
   const pathname = usePathname();
 
   const authContext = useContext(AuthContext);
-  let isAdmin = false;
-  if (authContext.user.role == "admin") isAdmin = true;
+  const isAdmin = authContext.user.role === "admin";
 
   return (
     <>
@@ -122,7 +121,7 @@ export default function AdminNavLinks() {
               disabled={item.disabled}
               leftSection={<item.icon size={22} />}
               label={<Text fw={500}>{item.label}</Text>}
-              active={item.link === pathname}
+              active={pathname === item.link}
               href={item.link}
               key={item.label}
             />
