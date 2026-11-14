@@ -2,7 +2,6 @@ import { Paper, Group, Title } from "@mantine/core";
 import { ResendTableContent } from "@/components/email/ResendTableContent";
 import React, { Suspense } from "react";
 import { ResendTableSkeleton } from "@/components/email/ResendTableSkeleton";
-import { CreateSubscriberModal } from "@/components/email/CreateSubscriberModal";
 import type {
   PaginationInputDTO,
   ResendListResponse,
@@ -15,6 +14,7 @@ interface AsyncResendTableProps<T extends ResendListResponse> {
   headers: string[];
   listAction: (params: PaginationInputDTO) => Promise<UnreelResult<T>>;
   RowElement: React.ComponentType<{ item: T["data"][number] }>;
+  CreationModalElement?: React.ReactNode | undefined;
 }
 
 /**
@@ -38,7 +38,10 @@ export default function AsyncResendTable<T extends ResendListResponse>(
     headers,
     listAction,
     RowElement,
+    CreationModalElement,
   } = props;
+
+  const noCreationModal = !CreationModalElement;
 
   const totalCols = headers.length;
 
@@ -53,7 +56,7 @@ export default function AsyncResendTable<T extends ResendListResponse>(
         <Title order={2} p={0}>
           {title}
         </Title>
-        <CreateSubscriberModal />
+        {noCreationModal ? null : CreationModalElement}
       </Group>
 
       <Suspense

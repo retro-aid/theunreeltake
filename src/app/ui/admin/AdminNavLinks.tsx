@@ -90,13 +90,6 @@ const data = [
     disabled: false,
     adminOnly: true,
   },
-  {
-    link: "/dashboard/maillist",
-    label: "Mail List",
-    icon: Newspaper,
-    disabled: false,
-    adminOnly: true,
-  },
 ];
 
 /**

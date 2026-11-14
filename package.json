@@ -21,6 +21,7 @@
     "@mantine/core": "9.0.0",
     "@mantine/form": "9.0.0",
     "@mantine/hooks": "9.0.0",
+    "@mantine/modals": "9.0.0",
     "@mantine/notifications": "9.0.0",
     "@mantine/tiptap": "9.0.0",
     "@neondatabase/serverless": "^1.0.2",

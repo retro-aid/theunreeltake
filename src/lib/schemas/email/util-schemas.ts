@@ -28,6 +28,7 @@ export const PaginationSchema = z.discriminatedUnion("paginateOption", [
 ]);
 
 export type PaginationInputDTO = z.input<typeof PaginationSchema>;
+export type PaginationOutputDTO = z.output<typeof PaginationSchema>;
 
 export type ResendListResponse = {
   has_more: boolean;

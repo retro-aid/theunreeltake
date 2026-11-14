@@ -35,7 +35,7 @@ const ContactIdSchema = z.object({
   id: z.string(),
 });
 
-const ContactListItemSchema = z.object({
+export const ContactListItemSchema = z.object({
   id: z.string(),
   email: z.email(),
   first_name: z.string().nullable(),

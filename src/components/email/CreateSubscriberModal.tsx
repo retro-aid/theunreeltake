@@ -44,7 +44,7 @@ export function CreateSubscriberModal() {
     notifications.show({
       color: color,
       message: message,
-      autoClose: 1500,
+      autoClose: 5000,
     });
 
     close();

@@ -10,9 +10,9 @@ import {
   ListBroadcastOutputSchema,
 } from "@/lib/schemas/email/broadcast-schemas";
 
-import { requireAdmin } from "@/lib/dal/utils";
+import { convertToPaginationOptions, requireAdmin } from "@/lib/dal/utils";
 import { resend, unwrap } from "@/lib/dal/dto/email/resend";
-import { CreateBroadcastOptions, ListBroadcastsOptions } from "resend";
+import { CreateBroadcastOptions } from "resend";
 
 /**
  * Gets a list of broadcast objects from Resend
@@ -30,14 +30,7 @@ export async function list(
 
   const validatedParams = ListBroadcastInputSchema.parse(params);
 
-  const { paginateOption, limit } = validatedParams;
-
-  const options: ListBroadcastsOptions = {
-    limit: limit,
-  };
-
-  if (paginateOption === "after") options.after = validatedParams.after;
-  else if (paginateOption === "before") options.before = validatedParams.before;
+  const options = convertToPaginationOptions(validatedParams);
 
   const resolvedResponse = unwrap(await resend.broadcasts.list(options));
 
