@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { resendFrom } from "@/lib/dal/dto/email/resend";
 import { PaginationSchema } from "@/lib/schemas/email/util-schemas";
+import dayjs from "dayjs";
 
 export type CreateBroadcastInputDTO = z.input<
   typeof CreateBroadcastInputSchema
@@ -26,7 +27,9 @@ export const CreateBroadcastInputSchema = z.object({
   from: z.string().nonempty().default(resendFrom),
   subject: z.string(),
   html: z.string(),
-  scheduledAt: z.iso.datetime().default(() => new Date().toISOString()),
+  scheduledAt: z.iso
+    .datetime()
+    .default(() => dayjs(new Date()).add(1, "minute").toISOString()),
 });
 
 export const CreateBroadcastOutputSchema = z.object({

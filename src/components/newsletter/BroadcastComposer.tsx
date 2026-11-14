@@ -24,7 +24,6 @@ import {
 } from "@mantine/core";
 import { Clock, Envelope, PencilSquare, Send } from "react-bootstrap-icons";
 import BackLinkButton from "@/components/generic/BackLinkButton";
-import { ErrorNotification } from "@/components/email/ErrorNotification";
 import { SiteTextEditor } from "@/components/posts/SiteTextEditor";
 import { create as createBroadcast } from "@/lib/actions/email/broadcast-actions";
 import { get as getTemplate } from "@/lib/actions/email/templates-actions";
@@ -82,6 +81,7 @@ export function BroadcastComposer({
   const [templateContent, setTemplateContent] =
     useState<TemplateContent | null>(null);
   const [subject, setSubject] = useState("");
+  const [from, setFrom] = useState("");
   const [html, setHtml] = useState("");
   const [customMode, setCustomMode] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
@@ -132,11 +132,6 @@ export function BroadcastComposer({
         title: "Could not load template",
         message: result.error.message,
       });
-      ErrorNotification({
-        title: "Could not load template",
-        message: result.error.message,
-        httpCode: result.error.status,
-      });
       return;
     }
 
@@ -147,6 +142,7 @@ export function BroadcastComposer({
     setTemplateContent(content);
     setSubject(content.subject);
     setHtml(content.html);
+    setFrom(result.data.from ?? "");
   };
 
   const submitBroadcast = async (schedule?: string) => {
@@ -175,6 +171,7 @@ export function BroadcastComposer({
       segmentId,
       subject: content.subject.trim(),
       html: content.html,
+      from: from,
       ...(scheduledAtIso ? { scheduledAt: scheduledAtIso } : {}),
     });
     setIsSubmitting(false);
@@ -184,11 +181,6 @@ export function BroadcastComposer({
         color: "red",
         title: "Broadcast was not sent",
         message: result.error.message,
-      });
-      ErrorNotification({
-        title: "Broadcast was not sent",
-        message: result.error.message,
-        httpCode: result.error.status,
       });
       return;
     }
@@ -322,6 +314,16 @@ export function BroadcastComposer({
                       value={subject}
                       onChange={(event) => {
                         setSubject(event.currentTarget.value);
+                        setFeedback(null);
+                      }}
+                    />
+                    <TextInput
+                      label="From"
+                      description="The email to send from."
+                      placeholder="johndoe@example.com"
+                      value={from}
+                      onChange={(event) => {
+                        setFrom(event.currentTarget.value);
                         setFeedback(null);
                       }}
                     />
