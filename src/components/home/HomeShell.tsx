@@ -2,7 +2,7 @@
 
 import { AppShell } from "@mantine/core";
 import React from "react";
-import { HomeHeader } from "@/app/ui/home/HomeHeader";
+import { HomeHeader } from "@/components/home/HomeHeader";
 import { useHeadroom } from "@mantine/hooks";
 
 export function HomeShell({

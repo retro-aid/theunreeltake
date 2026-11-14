@@ -3,9 +3,9 @@
 import NextImage from "next/image";
 
 import { Image, Flex } from "@mantine/core";
-import { HomeBurgerMenu } from "@/app/ui/home/HomeBurgerMenu";
-import { WebNavLinks } from "@/app/ui/home/WebNavLinks";
-import { HomeHeaderButtons } from "@/app/ui/home/HomeHeaderButtons";
+import { HomeBurgerMenu } from "@/components/home/HomeBurgerMenu";
+import { WebNavLinks } from "@/components/home/WebNavLinks";
+import { HomeHeaderButtons } from "@/components/home/HomeHeaderButtons";
 
 export function HomeHeader() {
   return (

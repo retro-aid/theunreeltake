@@ -18,7 +18,7 @@ import React, {
 } from "react";
 import { SearchBar } from "@/components/generic/SearchBar";
 import { getAllPostsAction } from "@/lib/actions/post-actions";
-import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { AuthContext } from "@/components/admin/AuthContext";
 import type { PostDTO } from "@/lib/dal/dto/posts";
 import {
   ActionButtons,

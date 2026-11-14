@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { AuthContext } from "@/components/admin/AuthContext";
 import { Badge, Text, rem } from "@mantine/core";
 
 export default function RoleBadge() {

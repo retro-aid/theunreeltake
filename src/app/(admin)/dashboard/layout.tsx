@@ -1,6 +1,6 @@
 import React from "react";
-import { AdminShell } from "@/app/ui/admin/AdminShell";
-import { AuthContextProvider } from "@/app/ui/admin/AuthContext";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { AuthContextProvider } from "@/components/admin/AuthContext";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";

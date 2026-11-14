@@ -2,7 +2,7 @@
 
 import { Burger, Flex, Drawer, Image, ActionIcon } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { MobileNavLinks } from "@/app/ui/home/MobileNavLinks";
+import { MobileNavLinks } from "@/components/home/MobileNavLinks";
 import { X } from "react-bootstrap-icons";
 
 export function HomeBurgerMenu() {

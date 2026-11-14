@@ -1,6 +1,6 @@
 import { Avatar, Box, Group, Text, UnstyledButton } from "@mantine/core";
 import { useContext } from "react";
-import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { AuthContext } from "@/components/admin/AuthContext";
 
 import classes from "./UserButton.module.css";
 

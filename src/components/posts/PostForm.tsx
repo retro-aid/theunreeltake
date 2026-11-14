@@ -31,7 +31,7 @@ import { getPostTemplatesAction } from "@/lib/actions/template-actions";
 import type { TagDTO } from "@/lib/dal/dto/tags";
 import type { GetPostEditDTO } from "@/lib/dal/dto/posts";
 import { Eye } from "react-bootstrap-icons";
-import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { AuthContext } from "@/components/admin/AuthContext";
 import { PreviewPostModal } from "@/components/posts/PreviewPostModal";
 import type { PostContentData } from "@/components/posts/post-content";
 

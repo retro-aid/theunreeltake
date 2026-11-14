@@ -1,5 +1,5 @@
-import { ResetPassword } from "@/app/ui/admin/forms/ResetPassword";
-import { ForgotPassword } from "@/app/ui/admin/forms/ForgotPassword";
+import { ResetPassword } from "@/components/admin/forms/ResetPassword";
+import { ForgotPassword } from "@/components/admin/forms/ForgotPassword";
 
 export default async function ResetPasswordPage({
   searchParams,

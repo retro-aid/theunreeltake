@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { verifyInvitationToken } from "@/lib/actions";
-import { RegisterUser } from "@/app/ui/admin/forms/RegisterUser";
-import RegisterError from "@/app/ui/admin/forms/RegisterError";
+import { RegisterUser } from "@/components/admin/forms/RegisterUser";
+import RegisterError from "@/components/admin/forms/RegisterError";
 
 export default async function AccountRegisterPage({
   searchParams,

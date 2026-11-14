@@ -2,7 +2,7 @@
 
 import { Grid } from "@mantine/core";
 import { CatalogItem } from "@/app/api/catalog/route";
-import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
+import { MoviePostCard } from "@/components/home/MoviePostCard";
 
 /**
  * This function helps display the posts users can see when visiting the Catalog Page.

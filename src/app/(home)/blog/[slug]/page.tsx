@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { ViewTracker } from "@/app/ui/home/ViewTracker";
+import { ViewTracker } from "@/components/home/ViewTracker";
 import {
   Title,
   Grid,
@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { CommentGrid, VisitorCommentForm } from "@/components/comments";
 import { getRepliesOnPostAction } from "@/lib/actions/comment-actions";
-import { MoviePostCard } from "@/app/ui/home/MoviePostCard";
+import { MoviePostCard } from "@/components/home/MoviePostCard";
 import { PostContent, PostLayout } from "@/components/posts";
 
 export default async function BlogPostPage({

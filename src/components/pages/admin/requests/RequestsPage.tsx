@@ -9,8 +9,8 @@ import ReplyRequestModal from "@/components/media-requests/ReplyRequestModal";
 import DeleteRequestModal from "@/components/media-requests/DeleteRequestModal";
 
 import { SearchBar } from "@/components/generic/SearchBar";
-import RequestActionButtons from "@/app/ui/admin/RequestActionButtons";
-import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
+import RequestActionButtons from "@/components/admin/RequestActionButtons";
+import RefreshDataButton from "@/components/home/RefreshDataButton";
 
 import type { RequestDTO } from "@/lib/dal/dto/media-requests";
 import {

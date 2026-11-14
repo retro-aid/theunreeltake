@@ -2,8 +2,8 @@
 
 import { Flex, Group, Loader, Pagination, Container } from "@mantine/core";
 import { SearchBar } from "@/components/generic/SearchBar";
-import PostGrid from "@/app/ui/home/PostGrid";
-import CatalogActionButtons from "@/app/ui/home/CatalogActionButtons";
+import PostGrid from "@/components/home/PostGrid";
+import CatalogActionButtons from "@/components/home/CatalogActionButtons";
 import {
   Suspense,
   useCallback,
@@ -13,7 +13,7 @@ import {
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CatalogItem } from "@/app/api/catalog/route";
-import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
+import RefreshDataButton from "@/components/home/RefreshDataButton";
 import { PostPageData } from "@/app/api/catalog/route";
 import { allowedPostsPerPage } from "@/lib/constants";
 

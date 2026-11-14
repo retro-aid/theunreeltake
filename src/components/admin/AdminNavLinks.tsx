@@ -1,7 +1,7 @@
 "use client";
 
 import { NavLink, Text } from "@mantine/core";
-import classes from "@/app/ui/admin/NavbarSimple.module.css";
+import classes from "@/components/admin/NavbarSimple.module.css";
 import { useContext } from "react";
 import {
   BarChartLine,
