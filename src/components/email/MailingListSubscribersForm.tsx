@@ -16,6 +16,7 @@ import {
 } from "@/lib/actions/email/mailing-lists-actions";
 import { SubscriberListItemOutputDTO } from "@/lib/schemas/email/subscriber-schemas";
 import { list } from "@/lib/actions/email/subscribers-actions";
+import { modals } from "@mantine/modals";
 
 interface MailingListSubscribersFormProps {
   segmentId: string;
@@ -99,6 +100,8 @@ export function MailingListSubscribersForm(
       message: message,
       autoClose: 5000,
     });
+
+    modals.closeAll();
   };
 
   if (isLoading) return <Loader />;
@@ -108,6 +111,7 @@ export function MailingListSubscribersForm(
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Group align={"start"} my={"md"}>
           <Select
+            searchable
             data={selectionData}
             flex={1}
             key={"contactId"}
@@ -118,7 +122,10 @@ export function MailingListSubscribersForm(
           </Button>
         </Group>
       </form>
-      <SubscribersMailingListTable data={subscribersOnMailingList} />
+      <SubscribersMailingListTable
+        data={subscribersOnMailingList}
+        segmentId={props.segmentId}
+      />
     </>
   );
 }
