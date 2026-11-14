@@ -11,6 +11,7 @@ import {
   Stack,
   Grid,
   Text,
+  type StyleProp,
 } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import {
@@ -35,7 +36,7 @@ export interface ScrollableGridProps<T> {
   height?: number | string;
   layout?: "stack" | "grid";
   gridColProps?: {
-    span?: any;
+    span?: StyleProp<number | "auto" | "content">;
     style?: React.CSSProperties;
   };
   sortOptions?: ActionMenuOption[];

@@ -97,7 +97,7 @@ export function EmailEditorForm(props: EmailEditorFormProps) {
               label={"Start from a post template"}
               data={postTemplates}
               onChange={(_, option) => {
-                if (!props.postTemplates) return;
+                if (!props.postTemplates || !option) return;
 
                 const html =
                   props.postTemplates[option.value].htmlContent ?? "";

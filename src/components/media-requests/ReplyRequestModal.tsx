@@ -15,9 +15,9 @@ type ReplyRequestModalProps = {
   recipientName: string;
   message: string;
   sending: boolean;
-  onClose: () => void;
-  onMessageChange: (message: string) => void;
-  onSend: () => void;
+  onCloseAction: () => void;
+  onMessageChangeAction: (message: string) => void;
+  onSendAction: () => void;
 };
 
 /**
@@ -32,14 +32,14 @@ export default function ReplyRequestModal({
   recipientName,
   message,
   sending,
-  onClose,
-  onMessageChange,
-  onSend,
+  onCloseAction,
+  onMessageChangeAction,
+  onSendAction,
 }: ReplyRequestModalProps) {
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={onCloseAction}
       title={`Reply to ${recipientName}`}
       centered
     >
@@ -49,17 +49,21 @@ export default function ReplyRequestModal({
           label="Your response"
           placeholder="Type your reply..."
           value={message}
-          onChange={(event) => onMessageChange(event.currentTarget.value)}
+          onChange={(event) => onMessageChangeAction(event.currentTarget.value)}
           minRows={5}
           autosize
         />
 
         <Group justify="flex-end">
-          <Button variant="default" onClick={onClose}>
+          <Button variant="default" onClick={onCloseAction}>
             Cancel
           </Button>
 
-          <Button onClick={onSend} loading={sending} disabled={!message.trim()}>
+          <Button
+            onClick={onSendAction}
+            loading={sending}
+            disabled={!message.trim()}
+          >
             Send
           </Button>
         </Group>

@@ -5,7 +5,7 @@ import { list as listTemplates } from "@/lib/actions/email/templates-actions";
 export async function BroadcastPage() {
   const [templateResult, mailingListResult] = await Promise.all([
     listTemplates(),
-    listMailingLists(),
+    listMailingLists({ paginateOption: "none" }),
   ]);
 
   const loadErrors = [templateResult.error, mailingListResult.error]
@@ -19,7 +19,7 @@ export async function BroadcastPage() {
         label: template.name,
         status: template.status,
       }))}
-      segments={(mailingListResult.data ?? []).map((mailingList) => ({
+      segments={(mailingListResult.data?.data ?? []).map((mailingList) => ({
         value: mailingList.id,
         label: mailingList.name,
       }))}

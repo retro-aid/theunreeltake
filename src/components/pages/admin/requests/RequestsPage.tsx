@@ -172,9 +172,9 @@ export default function RequestsPage() {
             recipientName={selectedItem.name ?? selectedItem.email}
             message={message}
             sending={sending}
-            onClose={closeReply}
-            onMessageChange={setMessage}
-            onSend={handleSend}
+            onCloseAction={closeReply}
+            onMessageChangeAction={setMessage}
+            onSendAction={handleSend}
           />
 
           <DeleteRequestModal
