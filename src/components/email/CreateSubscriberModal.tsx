@@ -36,7 +36,15 @@ export function CreateSubscriberModal() {
   });
 
   const handleSubmit = async (formData: CreateSubscriberInputDTO) => {
+    const delay = 2000;
+
     const { error, data } = await create(formData);
+
+    if (!error) {
+      setTimeout(() => {
+        window.location.reload();
+      }, delay);
+    }
 
     const color = error ? "red" : "green";
     const message = error ? error.message : `${data.id} created!`;
@@ -44,7 +52,7 @@ export function CreateSubscriberModal() {
     notifications.show({
       color: color,
       message: message,
-      autoClose: 5000,
+      autoClose: delay,
     });
 
     close();

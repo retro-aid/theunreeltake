@@ -18,13 +18,21 @@ export function MailingListTableRow(props: MailingListTableRowProps) {
 
   const openSubscribersModal = () =>
     modals.open({
-      title: <Title order={4}>Subscribers For This List:</Title>,
+      title: "Subscribers For This List:",
       children: <MailingListSubscribersForm segmentId={id} />,
     });
 
   const handleRemove = async () => {
 
+    const delay = 2000;
+
     const { error, data } = await remove(id);
+
+    if (!error) {
+      setTimeout(() => {
+        window.location.reload();
+      }, delay);
+    }
 
     const color = error ? "red" : "green";
     const message = error
@@ -34,7 +42,7 @@ export function MailingListTableRow(props: MailingListTableRowProps) {
     notifications.show({
       color: color,
       message: message,
-      autoClose: 5000,
+      autoClose: delay,
     });
 
     modals.closeAll();

@@ -31,7 +31,15 @@ export function SubscriberTableRow(props: SubscriberTableRowProps) {
   const status = unsubscribed ? <X size={16} /> : <Check size={16} />;
 
   const handleDeleteAction = async () => {
+    const delay = 2000;
+
     const { error, data } = await removeSubscriber({ id }, pathname);
+
+    if (!error) {
+      setTimeout(() => {
+        window.location.reload();
+      }, delay);
+    }
 
     const color = error ? "red" : "green";
     const message = error ? error.message : `${data.contact} deleted!`;
@@ -39,7 +47,7 @@ export function SubscriberTableRow(props: SubscriberTableRowProps) {
     notifications.show({
       color: color,
       message: message,
-      autoClose: 1500,
+      autoClose: delay,
     });
   };
 
