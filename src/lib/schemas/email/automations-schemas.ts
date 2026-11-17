@@ -22,7 +22,7 @@ const EVENT_NAMES = Object.keys(AUTOMATION_EVENTS) as [
  * The fields every automation schema shares.
  */
 const AutomationSchema = z.object({
-  event: z.enum(EVENT_NAMES),
+  event: z.enum(EVENT_NAMES).nullable(),
   enabled: z.boolean(),
 });
 
