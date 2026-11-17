@@ -23,7 +23,6 @@ export function MailingListTableRow(props: MailingListTableRowProps) {
     });
 
   const handleRemove = async () => {
-
     const delay = 2000;
 
     const { error, data } = await remove(id);
@@ -35,9 +34,7 @@ export function MailingListTableRow(props: MailingListTableRowProps) {
     }
 
     const color = error ? "red" : "green";
-    const message = error
-      ? error.message
-      : `Deleted mailing list ${data.id}`;
+    const message = error ? error.message : `Deleted mailing list ${data.id}`;
 
     notifications.show({
       color: color,
@@ -46,7 +43,7 @@ export function MailingListTableRow(props: MailingListTableRowProps) {
     });
 
     modals.closeAll();
-  }
+  };
 
   return (
     <Table.Tr>
@@ -59,7 +56,7 @@ export function MailingListTableRow(props: MailingListTableRowProps) {
               <People />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label={"Delete"} position={"bottom"} withArrow>
+          <Tooltip label={"Delete List"} position={"bottom"} withArrow>
             <ActionIcon color={"red"} onClick={handleRemove}>
               <Trash />
             </ActionIcon>

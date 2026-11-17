@@ -1,13 +1,17 @@
 import "server-only";
-import { requireAdmin } from "@/lib/dal/utils";
+import { convertToPaginationOptions, requireAdmin } from "@/lib/dal/utils";
 import { AppError } from "@/lib/errors";
 import {
+  type EmailTemplateForm,
   EmailTemplateSchema,
   TemplateIdSchema,
-  type EmailTemplateForm,
   type TemplateVariableForm,
 } from "@/lib/schemas/email/templates-schemas";
 import { resend, unwrap } from "./resend";
+import {
+  PaginationInputDTO,
+  PaginationSchema,
+} from "@/lib/schemas/email/util-schemas";
 
 /**
  * Makes sure no other template currently uses this name.
@@ -62,10 +66,14 @@ async function publishTemplate(id: string) {
  * @returns A promise resolving to the templates' ID, name, status, and dates.
  * @throws If the user is not an admin or the Resend request fails.
  */
-export async function list() {
+export async function list(params: PaginationInputDTO) {
   await requireAdmin();
 
-  return unwrap(await resend.templates.list({ limit: 100 })).data;
+  const validatedParams = PaginationSchema.parse(params);
+
+  const options = convertToPaginationOptions(validatedParams);
+
+  return unwrap(await resend.templates.list(options));
 }
 
 /**

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import type { SubscriberListItemOutputDTO } from "@/lib/schemas/email/subscriber-schemas";
 import { remove as removeSubscriber } from "@/lib/actions/email/subscribers-actions";
 import { usePathname } from "next/navigation";
-import { ActionIcon, ThemeIcon, Table } from "@mantine/core";
+import { ActionIcon, ThemeIcon, Table, Tooltip } from "@mantine/core";
 import { Check, Trash, X } from "react-bootstrap-icons";
 import { notifications } from "@mantine/notifications";
 
@@ -66,16 +66,17 @@ export function SubscriberTableRow(props: SubscriberTableRowProps) {
         </ThemeIcon>
       </Table.Td>
       <Table.Td>
-        <ActionIcon
-          color={"red"}
-          variant={"filled"}
-          size={"md"}
-          radius={"sm"}
-          onClick={handleDeleteAction}
-          title={"Delete Subscriber"}
-        >
-          <Trash size={16} />
-        </ActionIcon>
+        <Tooltip label={"Delete Subscriber"} position={"bottom"} withArrow>
+          <ActionIcon
+            color={"red"}
+            variant={"filled"}
+            size={"md"}
+            radius={"sm"}
+            onClick={handleDeleteAction}
+          >
+            <Trash size={16} />
+          </ActionIcon>
+        </Tooltip>
       </Table.Td>
     </Table.Tr>
   );
