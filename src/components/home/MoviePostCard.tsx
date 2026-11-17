@@ -15,6 +15,7 @@ import {
   Flex,
   Popover,
   useMatches,
+  Grid,
 } from "@mantine/core";
 
 import classes from "./MoviePostCard.module.css";
@@ -107,26 +108,34 @@ export function MoviePostCard({ postData }: { postData: CatalogItem }) {
           h={"100%"}
           shadow={`3px 3px 10px ${theme.colors.gray[9]}`}
           bdrs={"sm"}
-          p={"sm"}
-          onClick={() => setIsFlipped(false)}
+          p={"md"}
         >
           <Group align={"start"} h={"100%"} wrap={"nowrap"} gap={"xs"}>
             <Flex direction={"column"} w={"100%"} h={"100%"}>
-              <Stack
-                align={"stretch"}
-                h={"100%"}
-                pb={"xs"}
-                px={rem(width / 20)}
-                gap={6}
-              >
-                <Text
-                  lh={1.3}
-                  fz={{ base: 16, sm: 15, md: 20, lg: 20 }}
-                  fw={"bold"}
-                  lineClamp={2}
-                >
-                  {postData.title}
-                </Text>
+              <Stack align={"stretch"} h={"100%"} pb={"xs"} gap={6}>
+                <Grid gap={"sm"}>
+                  <Grid.Col span={10}>
+                    <Text
+                      lh={1.3}
+                      fz={{ base: 16, sm: 15, md: 20, lg: 20 }}
+                      fw={"bold"}
+                      lineClamp={2}
+                    >
+                      {postData.title}
+                    </Text>
+                  </Grid.Col>
+
+                  <Grid.Col span={2}>
+                    <ActionIcon
+                      variant={"outline"}
+                      color={"gray"}
+                      bdrs={"sm"}
+                      onClick={() => setIsFlipped(false)}
+                    >
+                      <X size={20} />
+                    </ActionIcon>
+                  </Grid.Col>
+                </Grid>
 
                 {/*applied here to map over all tags without crashing */}
                 {allTags.length > 0 && (
@@ -193,28 +202,19 @@ export function MoviePostCard({ postData }: { postData: CatalogItem }) {
                   </Group>
                 )}
 
-                <Group gap={1} wrap="nowrap" align="center">
-                  <Person></Person>
-                  <Text
-                    size={rem(width / 16)}
-                    fz={{ base: 12, sm: 11, md: 12, lg: 12 }}
-                  >
-                    {postData.author.name}
-                  </Text>
+                <Group gap={"xs"} wrap="nowrap" align="center">
+                  <Person size={20} />
+                  <Text size={"sm"}>{postData.author.name}</Text>
                 </Group>
 
-                <Group gap={3} wrap="nowrap" align="center">
-                  <Calendar></Calendar>
-                  <Text
-                    size={rem(width / 16)}
-                    fz={{ base: 12, sm: 12, md: 12, lg: 12 }}
-                    lineClamp={1}
-                  >
+                <Group gap={"xs"} wrap="nowrap" align="center">
+                  <Calendar size={20} />
+                  <Text size={"sm"}>
                     {dayjs(postData.createdAt).format("MMM D, YYYY")}
                   </Text>
                 </Group>
 
-                <Text lineClamp={clamp} fz="xs" c="dimmed">
+                <Text lineClamp={clamp} fz="sm" c="dimmed">
                   {previewContent}
                 </Text>
               </Stack>

@@ -7,7 +7,7 @@ import {
   Fieldset,
   Flex,
   Group,
-  NativeSelect,
+  Select,
   Text,
   Textarea,
   TextInput,
@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { RequestFormSchema } from "@/lib/schemas/media-request-schemas";
 import { maxTextAreaLength, maxTextInputLength } from "@/lib/constants";
 import { submitRequestFormAction } from "@/lib/actions/media-request-actions";
@@ -34,11 +34,19 @@ import type { TagDTO } from "@/lib/dal/dto/tags";
  * @returns The media request form or a submission confirmation message.
  */
 export function RequestForm() {
+  const [loading, startTransition] = useTransition();
+
   const [mediaTags, setMediaTags] = useState(new Array<TagDTO>());
 
-  useEffect(() => {
-    getAllTagsAction().then(setMediaTags).catch(console.error);
-  }, []);
+  useEffect(
+    () =>
+      startTransition(async () => {
+        const tags = await getAllTagsAction();
+
+        setMediaTags(tags);
+      }),
+    [],
+  );
 
   const form = useForm({
     mode: "uncontrolled",
@@ -135,7 +143,10 @@ export function RequestForm() {
                 key={form.key("title")}
                 {...form.getInputProps("title")}
               />
-              <NativeSelect
+              <Select
+                allowDeselect={false}
+                loading={loading}
+                disabled={loading}
                 label="Type"
                 data={mediaTags.map((tag) => tag.displayName)}
                 mb="sm"

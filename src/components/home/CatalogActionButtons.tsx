@@ -1,7 +1,7 @@
 "use client";
 
 import { ActionIcon, Checkbox, Menu, Text, Tooltip } from "@mantine/core";
-import { CardText, Funnel } from "react-bootstrap-icons";
+import { CardText, Funnel, SortUp } from "react-bootstrap-icons";
 import { allowedPostsPerPage } from "@/lib/constants";
 import { getTagsAction } from "@/lib/actions/catalog-actions";
 import { useEffect, useState, useTransition } from "react";
@@ -60,7 +60,7 @@ export default function CatalogActionButtons({
         <Menu.Target>
           <Tooltip label={"Sort By"}>
             <ActionIcon color={"dark"} size={"lg"} variant={"outline"}>
-              <Funnel size={22} />
+              <SortUp size={22} />
             </ActionIcon>
           </Tooltip>
         </Menu.Target>
@@ -84,12 +84,7 @@ export default function CatalogActionButtons({
       >
         <Menu.Target>
           <Tooltip label={"Filter by"}>
-            <ActionIcon
-              variant={"outline"}
-              color={"dark"}
-              radius={"lg"}
-              aria-label={"Filter Button"}
-            >
+            <ActionIcon variant={"outline"} size={"lg"} color={"dark"}>
               <Funnel size={22} />
             </ActionIcon>
           </Tooltip>

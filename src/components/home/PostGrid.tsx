@@ -18,7 +18,7 @@ import { MoviePostCard } from "@/components/home/MoviePostCard";
 export default function PostGrid({ posts }: { posts: CatalogItem[] }) {
   function mapToPostcard(data: CatalogItem, index: number) {
     return (
-      <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4, lg: 3, xl: 2 }}>
+      <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4, lg: 3, xl: 3 }}>
         <MoviePostCard postData={data} />
       </Grid.Col>
     );

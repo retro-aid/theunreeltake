@@ -44,7 +44,7 @@ export function CreateTagForm() {
       onSubmit={createTagForm.onSubmit(handleSubmit)}
       onReset={createTagForm.reset}
     >
-      <Group align={"start"}>
+      <Group align={"end"}>
         <TextInput
           label={"Display Name"}
           description="Tag name would be visible to everyone"
@@ -63,7 +63,7 @@ export function CreateTagForm() {
           {...createTagForm.getInputProps("type")}
         />
 
-        <Group my={24}>
+        <Group>
           <Button leftSection={<PlusLg />} type={"submit"} miw={90}>
             Add
           </Button>

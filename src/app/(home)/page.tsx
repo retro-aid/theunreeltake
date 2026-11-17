@@ -12,14 +12,12 @@ import {
   Stack,
   Text,
   Title,
-  TextInput,
   Container,
   Paper,
 } from "@mantine/core";
 import { SearchBar } from "@/components/generic/SearchBar";
 import { useRouter } from "next/navigation";
-import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { NewsletterSignupForm } from "@/components/home/NewsletterSignupForm";
 
 export default function HomePage() {
   const router = useRouter();
@@ -33,19 +31,6 @@ export default function HomePage() {
 
     router.push(`/catalog?${urlParams.toString()}`);
   };
-
-  const form = useForm({
-    mode: "uncontrolled",
-    initialValues: {
-      email: "",
-    },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-    },
-  });
-
-  const [submitted, setSubmitted] = useState(false);
 
   return (
     <Container size={"lg"} px={{ base: "md", sm: "xl" }}>
@@ -206,46 +191,7 @@ export default function HomePage() {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, xs: 6 }} align={"center"}>
-          <Stack gap={"xs"} ta={"center"} mx={"md"}>
-            <Title order={2}>Never Miss a Review</Title>
-            <Text>Signup For Our Newsletter</Text>
-            {submitted ? (
-              <Text c={"green"}>Thanks for subscribing!</Text>
-            ) : (
-              <form
-                onSubmit={form.onSubmit((values) => {
-                  console.log(values);
-                  setSubmitted(true);
-                })}
-              >
-                <Stack gap={"xs"} ta={"center"} mx={"md"}>
-                  <Flex w={"100%"} justify={"center"}>
-                    <TextInput
-                      withAsterisk
-                      key={form.key("email")}
-                      {...form.getInputProps("email")}
-                      placeholder="you@example.com"
-                      radius="md"
-                      type="email"
-                      maw={300}
-                      w={"100%"}
-                    />
-                  </Flex>
-                  <Flex w={"100%"} justify={"center"}>
-                    <Button
-                      radius={"md"}
-                      type={"submit"}
-                      w={"100%"}
-                      maw={128}
-                      color={"dark"}
-                    >
-                      Submit
-                    </Button>
-                  </Flex>
-                </Stack>
-              </form>
-            )}
-          </Stack>
+          <NewsletterSignupForm />
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, xs: 6 }}>
