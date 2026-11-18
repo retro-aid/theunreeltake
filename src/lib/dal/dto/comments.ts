@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import * as crypto from "node:crypto";
 import { getCurrentSession } from "@/lib/dal/utils";
+import * as email from "@/lib/dal/dto/email";
 import dayjs from "dayjs";
 import type { Prisma } from "@/generated/prisma/client";
 
@@ -67,6 +68,10 @@ export async function createComment(
   }
 }
 
+/**
+ * URT-422 changes: update the reply so that it can reply to a comment or an existing reply on a post
+ * - If parentComment is already a reply, attach this new reply to the top-level root comment
+ */
 export async function createReply(
   parentCommentId: string,
   messageContent: string,
@@ -75,15 +80,20 @@ export async function createReply(
     const session = await getCurrentSession();
     const parentComment = await prisma.comment.findUniqueOrThrow({
       where: { id: parentCommentId },
-      select: { id: true, postId: true, postSlug: true, repliesToId: true },
+      select: {
+        id: true,
+        postId: true,
+        postSlug: true,
+        repliesToId: true,
+        email: true,
+        username: true,
+        post: { select: { title: true } },
+      },
     });
 
-    if (parentComment.repliesToId !== null) {
-      console.error("No Reply");
-      return null;
-    }
+    const rootCommentId = parentComment.repliesToId ?? parentComment.id;
 
-    return await prisma.comment.create({
+    const reply = await prisma.comment.create({
       data: {
         username: session.user.name,
         email: session.user.email ?? null,
@@ -91,9 +101,20 @@ export async function createReply(
         userId: session.user.id,
         postId: parentComment.postId,
         postSlug: parentComment.postSlug,
-        repliesToId: parentComment.id,
+        repliesToId: rootCommentId, // Attach to root
       },
     });
+
+    if (parentComment.email && parentComment.email !== session.user.email)
+      await email.events.commentReplied({
+        email: parentComment.email,
+        name: parentComment.username,
+        postTitle: parentComment.post.title,
+        postSlug: parentComment.postSlug,
+        message: messageContent,
+      });
+
+    return reply;
   } catch (error) {
     console.error("No reply", error);
     return null;
@@ -131,7 +152,7 @@ export async function deleteComment(id: string) {
 export async function getAdminComments(postId?: string) {
   const session = await getCurrentSession();
 
-  if(
+  if (
     !session.user.role ||
     (session.user.role !== "admin" && session.user.role !== "user")
   )
@@ -139,10 +160,9 @@ export async function getAdminComments(postId?: string) {
 
   let whereClause: Prisma.CommentWhereInput | undefined;
 
-  if(postId) {
+  if (postId) {
     whereClause = { postId: postId };
-  }
-  else if(session.user.role === "user") {
+  } else if (session.user.role === "user") {
     whereClause = { post: { author: { id: session.user.id } } };
   }
 
@@ -154,7 +174,7 @@ export async function getAdminComments(postId?: string) {
       },
     },
     omit: { repliesToId: true },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 }
 

@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import "server-only";
 
 export async function getAllQuestions() {
@@ -15,9 +14,10 @@ export async function getRandomQuestion() {
     const questions = await prisma.trivia.findMany({
       where: { published: true },
     });
+    if (questions.length === 0) return null;
     const chosenNum = Math.floor(Math.random() * questions.length);
     return questions[chosenNum];
-  } catch (e) {
+  } catch (error) {
     return null;
   }
 }
@@ -64,7 +64,6 @@ export async function questionAnswered(id: string, correct: number) {
     });
     return { error: null, success: true };
   } catch (e) {
-    console.log("Error");
     return { error: "Failed to update stats", success: false };
   }
 }
@@ -74,34 +73,35 @@ export async function createTriviaQuestion(
   answer: string,
   category: string,
 ) {
-  const data = {
-    id: crypto.randomUUID(),
-    question: question,
-    answer: answer,
-    category: category,
-    difficulty: "Unknown",
-    correct: 0,
-    asked: 0,
-    published: false,
-  };
+  try {
+    const data = {
+      id: crypto.randomUUID(),
+      question: question,
+      answer: answer,
+      category: category,
+      difficulty: "Unknown",
+      correct: 0,
+      asked: 0,
+      published: false,
+    };
 
-  await prisma.trivia.create({
-    data: data,
-  });
-
-  revalidatePath("/dashboard/trivia");
+    await prisma.trivia.create({
+      data: data,
+    });
+    return { error: null, success: true };
+  } catch (error) {
+    return { error: "Failed to create question", success: false };
+  }
 }
 
 export async function deleteQuestion(id: string) {
   try {
-    const deleteUser = await prisma.trivia.delete({
+    await prisma.trivia.delete({
       where: { id },
     });
-    revalidatePath("/dashboard/trivia");
-    return { data: deleteUser, error: "none" };
-  } catch (e) {
-    console.error("Database Error: ", e);
-    return { data: null, error: "Question not found" };
+    return { error: null, success: true };
+  } catch (error) {
+    return { error: "Failed to delete question", success: false };
   }
 }
 
@@ -122,12 +122,8 @@ export async function updateQuestion(
         category: category,
       },
     });
-
-    revalidatePath("/dashboard/trivia");
-    console.log("success");
     return { error: null, success: true };
   } catch (error) {
-    console.log("oops");
     return { error: "Failed to update question", success: false };
   }
 }
@@ -142,12 +138,8 @@ export async function publishQuestion(id: string) {
         published: true,
       },
     });
-
-    revalidatePath("/dashboard/trivia");
-    console.log("success");
     return { error: null, success: true };
   } catch (error) {
-    console.log("oops");
     return { error: "Failed to publish question", success: false };
   }
 }

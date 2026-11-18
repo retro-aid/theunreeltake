@@ -11,6 +11,7 @@ import {
   Divider,
   Badge,
   Button,
+  Stack,
 } from "@mantine/core";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -29,95 +30,57 @@ export function PostCard({ template }: { template: PostTemplate }) {
     await deletePostTemplateAction(template.id);
     setOpened(false);
   };
+
+  const badge = (
+    <Badge color={template.isPublic ? "green" : "red"} variant="filled">
+      {template.isPublic ? "Public" : "Private"}
+    </Badge>
+  );
+
   return (
     <>
-      <Card shadow={"sm"} padding={"lg"} w={"249"} h={"242"} withBorder>
-        <Card.Section>
-          <Box p="xs">
-            {!template.isPublic && (
-              <Badge
-                color="red"
-                pos="absolute"
-                mt={"192"}
-                ml={"15"}
-                variant="filled"
-              >
-                Private
-              </Badge>
-            )}
-            {template.isPublic && (
-              <Badge
-                color="green"
-                pos="absolute"
-                mt={"192"}
-                ml={"15"}
-                variant="filled"
-              >
-                Public
-              </Badge>
-            )}
-
-            <Text
-              fz="20"
-              fw="700"
-              mt={"5"}
-              ml={"10"}
-              ta={"center"}
-              truncate="end"
-            >
+      <Card shadow={"sm"} p={"md"} h={"12rem"} withBorder>
+        <Stack justify={"space-between"} flex={1} gap={"xs"}>
+          <Stack gap={"xs"}>
+            <Text fz={"lg"} fw={"600"} truncate="end">
               {template.title}
             </Text>
 
-            <Divider my="sm" />
+            <Divider />
 
-            <Text
-              fz="15"
-              fw="300"
-              mt={"5"}
-              ml={"10"}
-              ta={"left"}
-              style={{
-                textWrap: "balance",
-              }}
-            >
+            <Text fz={"sm"} c={"dimmed"} lineClamp={3}>
               {template.description}
             </Text>
+          </Stack>
+          <Group justify={"space-between"}>
+            {badge}
 
-            <Group
-              style={{
-                position: "absolute",
-                bottom: 15,
-                right: 15,
-              }}
-              gap={10}
-            >
+            <Group gap={"sm"}>
               <Tooltip label="Edit Template">
                 <ActionIcon
                   component={Link}
                   href={`/dashboard/templates/edit/${template.id}`}
                   variant={"filled"}
-                  size={"md"}
-                  bdrs={"xs"}
                   color={"black"}
+                  bdrs={"sm"}
                 >
-                  <PencilSquare size={16} />
+                  <PencilSquare />
                 </ActionIcon>
               </Tooltip>
 
               <Tooltip label="Delete Template">
                 <ActionIcon
                   variant={"filled"}
-                  size={"md"}
-                  bdrs={"xs"}
+                  bdrs={"sm"}
                   color={"red"}
                   onClick={() => setOpened(true)}
                 >
-                  <Trash size={16} />
+                  <Trash />
                 </ActionIcon>
               </Tooltip>
             </Group>
-          </Box>
-        </Card.Section>
+          </Group>
+        </Stack>
       </Card>
 
       <DeletePostModal
@@ -138,13 +101,9 @@ export function PostCard({ template }: { template: PostTemplate }) {
  */
 export function TemplateGrid({ data }: GridProps) {
   return (
-    <Grid>
+    <Grid m={"lg"}>
       {data.map((template) => (
-        <Grid.Col
-          key={template.id}
-          style={{ minWidth: 250 }}
-          span={{ base: 12, sm: 6, md: 3 }}
-        >
+        <Grid.Col key={template.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
           <PostCard template={template} />
         </Grid.Col>
       ))}

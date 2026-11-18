@@ -18,6 +18,13 @@ import {
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import { CulledAdminComment } from "@/lib/dal/dto/comments";
+/**
+ * URT-422 changes: added the new imports that is also used in cards.tsx to create the pop up to comment
+ * In addition, the ability to comment from a comment, so only in dashboard, you can reply to anyone.
+ */
+import { postReplyAction } from "@/lib/actions/comment-actions";
+import { useDisclosure } from "@mantine/hooks";
+import { ReplyActionModal } from "../generic/modals";
 
 export interface AdminCommentCardProps {
   comment: CulledAdminComment;
@@ -31,6 +38,8 @@ export function AdminCommentCard({
   onReply,
 }: AdminCommentCardProps) {
   const router = useRouter();
+  const [replyOpened, { open: openReply, close: closeReply }] =
+    useDisclosure(false);
 
   const rawName = comment.username?.trim();
   const isAnonymous =
@@ -57,121 +66,137 @@ export function AdminCommentCard({
     ? `${comment.userId.slice(0, 6)}...${comment.userId.slice(-5)}`
     : null;
 
+  /**
+   * URT-422 change: uses the same functionalities from the card.tsx for the pop up to comment
+   */
+  const handleConfirmReply = async (message: string) => {
+    await postReplyAction(comment.postSlug, comment.id, message);
+    onReply?.(comment);
+    closeReply();
+  };
+
   return (
-    <Card
-      withBorder
-      radius="md"
-      p="md"
-      shadow="none"
-      bg="white"
-      style={{ borderColor: "var(--mantine-color-gray-3)" }}
-    >
-      <Stack gap="xs">
-        {/* Header Row: User Info & Subtitles on the Left, Action Buttons in the Top-Right */}
-        <Group justify="space-between" align="flex-start" wrap="nowrap">
-          <Group
-            align="flex-start"
-            gap="md"
-            wrap="nowrap"
-            style={{ minWidth: 0, flex: 1 }}
-          >
-            <Avatar
-              src={null}
-              color={isAnonymous ? "gray" : "blue"}
-              radius="xl"
-              size="lg"
-              styles={{
-                placeholder: { fontSize: "0.95rem", fontWeight: 600 },
-              }}
+    <>
+      <ReplyActionModal //came from the cards.tsx
+        opened={replyOpened}
+        onClose={closeReply}
+        onConfirm={handleConfirmReply}
+      />
+      <Card
+        withBorder
+        radius="md"
+        p="md"
+        shadow="none"
+        bg="white"
+        style={{ borderColor: "var(--mantine-color-gray-3)" }}
+      >
+        <Stack gap="xs">
+          {/* Header Row: User Info & Subtitles on the Left, Action Buttons in the Top-Right */}
+          <Group justify="space-between" align="flex-start" wrap="nowrap">
+            <Group
+              align="flex-start"
+              gap="md"
+              wrap="nowrap"
+              style={{ minWidth: 0, flex: 1 }}
             >
-              {initials}
-            </Avatar>
+              <Avatar
+                src={null}
+                color={isAnonymous ? "gray" : "blue"}
+                radius="xl"
+                size="lg"
+                styles={{
+                  placeholder: { fontSize: "0.95rem", fontWeight: 600 },
+                }}
+              >
+                {initials}
+              </Avatar>
 
-            <Stack gap={2} style={{ minWidth: 0, flex: 1 }}>
-              <Group gap="xs" align="baseline" wrap="wrap">
-                <Title order={4} fw={700} c="dark.9">
-                  {displayName}
-                </Title>
-                <Text size="xs" c="dimmed">
-                  • {formattedDate}
-                </Text>
-              </Group>
+              <Stack gap={2} style={{ minWidth: 0, flex: 1 }}>
+                <Group gap="xs" align="baseline" wrap="wrap">
+                  <Title order={4} fw={700} c="dark.9">
+                    {displayName}
+                  </Title>
+                  <Text size="xs" c="dimmed">
+                    • {formattedDate}
+                  </Text>
+                </Group>
 
-              <Group gap="xs" align="center" wrap="wrap">
-                <Text size="xs" fw={600} c="dark.6">
-                  {comment.post?.title}
-                </Text>
-                <Text size="xs" c="dimmed">
-                  • {comment.email ?? "No email given"}
-                </Text>
-                {shortId && (
-                  <>
-                    <Text size="xs" c="dimmed">
-                      •
-                    </Text>
-                    <Text size="xs" c="dimmed" ff="monospace">
-                      User ID: {shortId}
-                    </Text>
-                  </>
-                )}
-              </Group>
-            </Stack>
+                <Group gap="xs" align="center" wrap="wrap">
+                  <Text size="xs" fw={600} c="dark.6">
+                    {comment.post?.title}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    • {comment.email ?? "No email given"}
+                  </Text>
+                  {shortId && (
+                    <>
+                      <Text size="xs" c="dimmed">
+                        •
+                      </Text>
+                      <Text size="xs" c="dimmed" ff="monospace">
+                        User ID: {shortId}
+                      </Text>
+                    </>
+                  )}
+                </Group>
+              </Stack>
+            </Group>
+
+            <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
+              <Button
+                size="xs"
+                color="blue"
+                radius="sm"
+                px="xs"
+                onClick={() => router.push(`/blog/${comment.postSlug}`)}
+              >
+                View Post
+              </Button>
+              <Button
+                size="xs"
+                variant="default"
+                radius="sm"
+                px="xs"
+                onClick={openReply} // comes from the const created near the top
+              >
+                Reply
+              </Button>
+              <Button
+                size="xs"
+                variant="light"
+                color="red"
+                radius="sm"
+                px="xs"
+                onClick={() => onDeleteClick?.(comment.id)}
+                styles={{
+                  root: {
+                    backgroundColor: "var(--mantine-color-red-0)",
+                    border: "1px solid var(--mantine-color-red-2)",
+                  },
+                }}
+              >
+                Delete
+              </Button>
+            </Group>
           </Group>
 
-          <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
-            <Button
-              size="xs"
-              color="blue"
-              radius="sm"
-              px="xs"
-              onClick={() => router.push(`/blog/${comment.postSlug}`)}
-            >
-              View Post
-            </Button>
-            <Button
-              size="xs"
-              variant="default"
-              radius="sm"
-              px="xs"
-              onClick={() => onReply?.(comment)}
-            >
-              Reply
-            </Button>
-            <Button
-              size="xs"
-              variant="light"
-              color="red"
-              radius="sm"
-              px="xs"
-              onClick={() => onDeleteClick?.(comment.id)}
-              styles={{
-                root: {
-                  backgroundColor: "var(--mantine-color-red-0)",
-                  border: "1px solid var(--mantine-color-red-2)",
-                },
-              }}
-            >
-              Delete
-            </Button>
-          </Group>
-        </Group>
-
-        <Paper
-          p="sm"
-          radius="sm"
-          bg="gray.0"
-          withBorder
-          style={{ borderColor: "var(--mantine-color-gray-2)" }}
-        >
-          <Text
-            size="sm"
-            c="dark.8"
-            style={{ wordBreak: "break-word", lineHeight: 1.55 }}
+          <Paper
+            p="sm"
+            radius="sm"
+            bg="gray.0"
+            withBorder
+            style={{ borderColor: "var(--mantine-color-gray-2)" }}
           >
-            {comment.messageContent}
-          </Text>
-        </Paper>
-      </Stack>
-    </Card>
+            <Text
+              size="sm"
+              c="dark.8"
+              style={{ wordBreak: "break-word", lineHeight: 1.55 }}
+            >
+              {comment.messageContent}
+            </Text>
+          </Paper>
+        </Stack>
+      </Card>
+    </>
   );
 }

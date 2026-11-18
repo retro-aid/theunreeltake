@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import type { PostEditDTO, PostDTO } from "./dto/posts";
 import { Prisma } from "@/generated/prisma/client";
 import { getCurrentSession } from "@/lib/dal/utils";
+import * as email from "@/lib/dal/dto/email";
 
 /**
  * Updates the author ID of a post.
@@ -185,7 +186,7 @@ export async function togglePublished(id: string) {
   try {
     const post = await prisma.post.findUnique({
       where: { id },
-      select: { published: true },
+      select: { published: true, title: true, slug: true },
     });
 
     if (!post) {
@@ -201,6 +202,8 @@ export async function togglePublished(id: string) {
         published: !post.published,
       },
     });
+
+    if (!post.published) email.events.postPublished(post);
 
     return {
       success: true,

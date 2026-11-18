@@ -20,12 +20,12 @@ import {
 import { ThreeDots, Trash, PencilSquare, Chat } from "react-bootstrap-icons";
 import { getAllUsers, deleteUser, updateUser } from "@/lib/actions";
 import { useState, useContext, useTransition, useEffect } from "react";
-import { AuthContext } from "@/app/ui/admin/AuthContext";
+import { AuthContext } from "@/components/admin/AuthContext";
 import { User } from "@/generated/prisma/client";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { EditUserSchema } from "@/lib/schemas";
 import { useForm } from "@mantine/form";
-import { InviteUserModal } from "../../app/ui/admin/InviteUserModal";
+import { InviteUserModal } from "@/components/admin/InviteUserModal";
 
 const PAGE_SIZE = 10;
 

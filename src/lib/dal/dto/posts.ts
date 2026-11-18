@@ -2,6 +2,7 @@ import "server-only";
 import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { getCurrentSession } from "@/lib/dal/utils";
+import * as email from "@/lib/dal/dto/email";
 
 const POST_ORDER_BY: Record<string, Prisma.PostOrderByWithRelationInput> = {
   "title-asc": { title: "asc" },
@@ -89,6 +90,11 @@ export type UpdatePostArgs = Omit<
 
 export async function updatePost(post: UpdatePostArgs) {
   try {
+    const before = await prisma.post.findUnique({
+      where: { id: post.id },
+      select: { published: true },
+    });
+
     await prisma.post.update({
       where: { id: post.id },
       data: {
@@ -105,6 +111,8 @@ export async function updatePost(post: UpdatePostArgs) {
         },
       },
     });
+
+    if (post.published && !before?.published) email.events.postPublished(post);
   } catch (e) {
     console.error(e);
   }
@@ -135,6 +143,8 @@ export async function createPost(post: CreatePostArgs) {
         },
       },
     });
+
+    if (post.published) email.events.postPublished(post);
   } catch (e) {
     console.error(e);
   }

@@ -8,9 +8,13 @@ import {
 
 import "@mantine/core/styles.css";
 import "@gfazioli/mantine-flip/styles.css";
+import "@mantine/notifications/styles.css";
 
 import Head from "next/head";
-import { HomeShell } from "@/app/ui/home/HomeShell";
+import { HomeShell } from "@/components/home/HomeShell";
+import { Notifications } from "@mantine/notifications";
+
+import { GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "The Unreel Take",
@@ -24,11 +28,13 @@ export default function HomeLayout({
 }>) {
   return (
     <html lang={"en"} {...mantineHtmlProps}>
+      <GoogleTagManager gtmId="GTM-5P9SX8T8" />
       <Head>
         <ColorSchemeScript />
       </Head>
       <body>
         <MantineProvider defaultColorScheme={"light"}>
+          <Notifications position="top-center" />
           <HomeShell>{children}</HomeShell>
         </MantineProvider>
       </body>

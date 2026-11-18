@@ -1,4 +1,4 @@
-import { AuthenticationTitle } from "@/app/ui/admin/AuthenticationTitle";
+import { AuthenticationTitle } from "@/components/admin/AuthenticationTitle";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";

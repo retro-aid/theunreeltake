@@ -23,11 +23,11 @@ export async function TagsPage() {
     <div>
       <h1>Manage Tags</h1>
       <Stack maw={"75%"}>
+        <CreateTagForm />
+
         <Paper radius={"md"} withBorder>
           <TagsTable data={tags} />
         </Paper>
-
-        <CreateTagForm />
       </Stack>
     </div>
   );

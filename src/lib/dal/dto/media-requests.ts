@@ -2,6 +2,7 @@ import "server-only";
 import prisma from "@/lib/prisma";
 import { Request } from "@/generated/prisma/client";
 import { RequestForm } from "@/lib/schemas/media-request-schemas";
+import * as email from "@/lib/dal/dto/email";
 import { Resend } from "resend";
 import { RequestStatus } from "@/generated/prisma/enums";
 import {
@@ -56,6 +57,13 @@ export async function submitRequestForm(data: RequestForm) {
         name: data.name?.trim() || null,
       },
     });
+
+    await email.events.requestSubmitted({
+      email: data.email,
+      name: data.name?.trim() || null,
+      title: data.title,
+    });
+
     return { e: null, success: true };
   } catch (e) {
     return { e: "Failed to submit form", success: false };

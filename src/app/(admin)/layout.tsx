@@ -4,13 +4,17 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 import "@mantine/core/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@gfazioli/mantine-flip/styles.css";
+import "@mantine/notifications/styles.css";
+import "@mantine/charts/styles.css";
 
 import Head from "next/head";
 import type { Metadata } from "next";
+import { Notifications } from "@mantine/notifications";
 
 export const metadata: Metadata = {
   title: "The Unreel Take",
@@ -29,7 +33,8 @@ export default function RootAdminLayout({
       </Head>
       <body>
         <MantineProvider defaultColorScheme={"light"}>
-          {children}
+          <Notifications position={"bottom-right"} />
+          <ModalsProvider>{children}</ModalsProvider>
         </MantineProvider>
       </body>
     </html>

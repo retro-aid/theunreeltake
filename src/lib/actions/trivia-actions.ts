@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import {
   createTriviaQuestion,
   deleteQuestion,
@@ -27,11 +28,19 @@ export async function createTriviaQuestionAction(
   answer: string,
   category: string,
 ) {
-  return createTriviaQuestion(question, answer, category);
+  const createdQuestion = await createTriviaQuestion(
+    question,
+    answer,
+    category,
+  );
+  revalidatePath("/dashboard/trivia");
+  return createdQuestion;
 }
 
 export async function deleteQuestionAction(id: string) {
-  return deleteQuestion(id);
+  const deleteResult = deleteQuestion(id);
+  revalidatePath("/dashboard/trivia");
+  return deleteResult;
 }
 
 export async function updateQuestionAction(
@@ -40,9 +49,13 @@ export async function updateQuestionAction(
   answer: string,
   category: string,
 ) {
-  return updateQuestion(id, question, answer, category);
+  const updateResult = updateQuestion(id, question, answer, category);
+  revalidatePath("/dashboard/trivia");
+  return updateResult;
 }
 
 export async function publishQuestionAction(id: string) {
-  return publishQuestion(id);
+  const publishResult = publishQuestion(id);
+  revalidatePath("/dashboard/trivia");
+  return publishResult;
 }

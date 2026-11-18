@@ -13,8 +13,8 @@ import {
   Button,
   Paper,
 } from "@mantine/core";
-import { ChangePassword } from "@/app/ui/admin/forms/ChangePassword";
-import { ChangeUsername } from "@/app/ui/admin/forms/ChangeUsername";
+import { ChangePassword } from "@/components/admin/forms/ChangePassword";
+import { ChangeUsername } from "@/components/admin/forms/ChangeUsername";
 
 export default async function DashboardSettingsPage() {
   const session = await auth.api.getSession({

@@ -333,14 +333,15 @@ describe("getAdminComments", () => {
   });
 
   it("should return only comments on a specific post when given a postId", async () => {
-
     vi.mocked(getCurrentSession).mockResolvedValueOnce({
-      user: { role: "user"}
+      user: { role: "user" },
     } as never);
 
-    prisma.comment.findMany.mockResolvedValueOnce([{
-      postId: "test-post-id"
-    }] as never);
+    prisma.comment.findMany.mockResolvedValueOnce([
+      {
+        postId: "test-post-id",
+      },
+    ] as never);
 
     const comments = await getAdminComments("test-post-id");
 
