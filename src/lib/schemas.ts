@@ -66,7 +66,16 @@ export const LoginFormSchema = z.object({
 
 export const ChangePasswordSchema = z.object({
   currentPassword: z.string().nonempty({ error: "Required" }),
-  newPassword: z.string().nonempty({ error: "Required" }),
+  newPassword: z
+    .string()
+    .refine(
+      (val) => /[^a-zA-Z0-9]/.test(val),
+      "Must contain one special character",
+    )
+    .refine((val) => /[0-9]/.test(val), "Must contain one number")
+    .refine((val) => /[A-Z]/.test(val), "Must contain one uppercase letter")
+    .min(8, "Must be at least 8 characters")
+    .nonempty("Required"),
 });
 
 export const ForgotPasswordSchema = LoginFormSchema.pick({
