@@ -232,6 +232,8 @@ export async function update(
   const { event, enabled } = AutomationInputSchema.parse(automation);
   const changes: UpdateAutomationOptions = {};
 
+  await resend.automations.stop(automationId);
+
   if (enabled !== undefined) changes.status = enabled ? "enabled" : "disabled";
 
   if (event) {

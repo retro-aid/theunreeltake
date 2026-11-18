@@ -39,7 +39,7 @@ export function AutomationFormCard(props: AutomationFormCardProps) {
   });
 
   const handleSubmit = async (formData: typeof form.values) => {
-    const delay = 5000;
+    const delay = 2000;
 
     const { error, data } = await updateAutomation(id, {
       event: formData.event ?? undefined,
