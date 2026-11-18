@@ -4,7 +4,7 @@ import { list as listTemplates } from "@/lib/actions/email/templates-actions";
 
 export async function BroadcastPage() {
   const [templateResult, mailingListResult] = await Promise.all([
-    listTemplates(),
+    listTemplates({ paginateOption: "none" }),
     listMailingLists({ paginateOption: "none" }),
   ]);
 
@@ -14,7 +14,7 @@ export async function BroadcastPage() {
 
   return (
     <BroadcastComposer
-      templates={(templateResult.data ?? []).map((template) => ({
+      templates={(templateResult.data?.data ?? []).map((template) => ({
         value: template.id,
         label: template.name,
         status: template.status,
