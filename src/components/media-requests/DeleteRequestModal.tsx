@@ -5,8 +5,8 @@ import { Button, Group, Modal, Text } from "@mantine/core";
 type DeleteRequestModalProps = {
   opened: boolean;
   deleting: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
+  onCloseAction: () => void;
+  onConfirmAction: () => void;
 };
 
 /**
@@ -18,19 +18,24 @@ type DeleteRequestModalProps = {
 export default function DeleteRequestModal({
   opened,
   deleting,
-  onClose,
-  onConfirm,
+  onCloseAction,
+  onConfirmAction,
 }: DeleteRequestModalProps) {
   return (
-    <Modal opened={opened} onClose={onClose} title="Delete Request" centered>
+    <Modal
+      opened={opened}
+      onClose={onCloseAction}
+      title="Delete Request"
+      centered
+    >
       <Text size="sm">Are you sure you want to delete this request?</Text>
 
       <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose}>
+        <Button variant="default" onClick={onCloseAction}>
           Cancel
         </Button>
 
-        <Button color="red" onClick={onConfirm} loading={deleting}>
+        <Button color="red" onClick={onConfirmAction} loading={deleting}>
           Delete
         </Button>
       </Group>

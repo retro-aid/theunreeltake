@@ -180,8 +180,8 @@ export default function RequestsPage() {
           <DeleteRequestModal
             opened={deleteOpened}
             deleting={deleting}
-            onClose={closeDelete}
-            onConfirm={handleDelete}
+            onCloseAction={closeDelete}
+            onConfirmAction={handleDelete}
           />
         </>
       )}
