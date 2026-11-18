@@ -137,6 +137,7 @@ export function ScrollableGrid<T>({
         p="lg"
         bdrs="md"
         h={height}
+        w={"100%"}
         viewportRef={viewport}
         styles={{
           viewport: { paddingRight: "10px" },
