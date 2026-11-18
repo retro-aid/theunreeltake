@@ -12,6 +12,7 @@ import {
   Grid,
   Text,
   type StyleProp,
+  Flex,
 } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import {
@@ -150,14 +151,14 @@ export function ScrollableGrid<T>({
             ))}
           </Stack>
         ) : (
-          <Grid>
+          <Grid columnGap={0}>
             {currentPageItems.map((item) => (
               <Grid.Col
                 key={keyExtractor(item)}
                 span={gridColProps?.span ?? { base: 12, sm: 6, md: 3 }}
                 style={gridColProps?.style}
               >
-                {renderItem(item)}
+                <Flex justify={"center"}>{renderItem(item)}</Flex>
               </Grid.Col>
             ))}
           </Grid>
@@ -165,7 +166,7 @@ export function ScrollableGrid<T>({
       </ScrollArea>
 
       {pageSize > 0 && chunkedData.length > 1 && (
-        <Group justify="space-between" align="center" pt="lg">
+        <Group justify="space-between" align="center" pt="sm">
           <Text size="sm" c="dimmed">
             Page {page} of {chunkedData.length}
           </Text>

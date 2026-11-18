@@ -17,6 +17,8 @@ import {
   Tooltip,
   Button,
   Stack,
+  BackgroundImage,
+  Flex,
 } from "@mantine/core";
 import Link from "next/link";
 import { DeletePostModal } from "@/components/posts/DeletePostModal";
@@ -88,42 +90,32 @@ export function PostCard({
 
   return (
     <>
-      <Card shadow="sm" padding="lg" w="249" h="267" withBorder>
-        <Card.Section>
-          <Box p="xs" pos="relative">
-            <Text fz="18" fw="700" mt="5" ml="10" truncate="end">
-              {post.title}
-            </Text>
+      <Card shadow="sm" p={"md"} w="249" h="267" bdrs={"sm"} withBorder>
+        <Text fz={18} fw={700} truncate="end">
+          {post.title}
+        </Text>
+
+        <BackgroundImage
+          bdrs={"sm"}
+          h={121}
+          w={216}
+          src={post.posterUrl || "https://placehold.co/600x400?text=No+Poster"}
+        >
+          <Flex justify={"end"}>
             <Badge
+              size={"sm"}
+              bdrs={"sm"}
               color={post.published ? "green" : "red"}
-              pos="absolute"
-              mt={10}
-              right={20}
-              variant="filled"
+              m={4}
             >
               {post.published ? "PUBLISHED" : "DRAFT"}
             </Badge>
-            <Image
-              alt="Post Card"
-              bdrs="xs"
-              h="122"
-              w="217"
-              mt="5"
-              mx="5"
-              src={
-                post.posterUrl || "https://placehold.co/600x400?text=No+Poster"
-              }
-            />
+          </Flex>
+        </BackgroundImage>
 
-            {/* Left Action Icons: Edit, Comments, Analytics, Change Author */}
-            <Group
-              style={{
-                position: "absolute",
-                bottom: 59,
-                left: 15,
-              }}
-              gap={10}
-            >
+        <Stack mt={"xs"} gap={"xs"}>
+          <Group gap={0}>
+            <Group gap={"xs"}>
               <Tooltip
                 label={
                   <Stack gap={4}>
@@ -143,55 +135,42 @@ export function PostCard({
                 withArrow
               >
                 <ActionIcon
-                  variant="light"
                   size="md"
-                  bdrs="xs"
-                  color="black"
+                  bdrs="sm"
+                  color={"gray.9"}
                   aria-label="Post information"
                 >
                   <InfoCircle size={16} />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Edit Post">
+              <Tooltip label="Edit Post" withArrow>
                 <ActionIcon
                   component={Link}
                   href={`/dashboard/posts/edit/${post.id}`}
-                  variant="filled"
-                  size="md"
-                  bdrs="xs"
-                  color="black"
+                  bdrs="sm"
+                  color={"gray.9"}
                 >
                   <icons.Edit size={16} />
                 </ActionIcon>
               </Tooltip>
 
-              <Tooltip label="Comments">
+              <Tooltip label="Comments" withArrow>
                 <ActionIcon
                   component={Link}
                   href={`/dashboard/posts/comments/${post.id}`}
-                  variant="light"
-                  size="md"
-                  bdrs="xs"
-                  color="black"
+                  bdrs="sm"
+                  color={"gray.9"}
                 >
                   <icons.Chat size={16} />
                 </ActionIcon>
               </Tooltip>
 
-              <Tooltip label="Analytics">
-                <ActionIcon variant="light" size="md" bdrs="xs" color="black">
-                  <icons.Stats size={16} />
-                </ActionIcon>
-              </Tooltip>
-
               {/* URT-413 change: Admin-only Change Author Action Icon */}
               {isAdmin && UserIcon && (
-                <Tooltip label="Change Author">
+                <Tooltip label="Change Author" withArrow>
                   <ActionIcon
-                    variant="light"
-                    size="md"
-                    bdrs="xs"
-                    color="black"
+                    bdrs="sm"
+                    color={"gray.9"}
                     onClick={() => setAuthorModalOpened(true)}
                   >
                     <UserIcon size={16} />
@@ -199,35 +178,29 @@ export function PostCard({
                 </Tooltip>
               )}
             </Group>
+            <Group flex={1} justify={"end"}>
+              <Tooltip label="Delete Post" withArrow>
+                <ActionIcon
+                  bdrs="sm"
+                  color="red"
+                  onClick={() => setDeleteOpened(true)}
+                >
+                  <icons.Delete size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+          </Group>
 
-            {/* Delete Icon */}
-            <Tooltip label="Delete Post">
-              <ActionIcon
-                variant="filled"
-                size="md"
-                bdrs="xs"
-                color="red"
-                mx="195"
-                mt="8"
-                onClick={() => setDeleteOpened(true)}
-              >
-                <icons.Delete size={16} />
-              </ActionIcon>
-            </Tooltip>
-
-            <Button
-              fullWidth
-              variant="filled"
-              mt="8"
-              bdrs="xs"
-              onClick={handlePublish}
-              loading={isPublishing}
-              color={post.published ? "red" : "green"}
-            >
-              {post.published ? "Unpublish" : "Publish"}
-            </Button>
-          </Box>
-        </Card.Section>
+          <Button
+            fullWidth
+            bdrs="sm"
+            onClick={handlePublish}
+            loading={isPublishing}
+            color={post.published ? "red" : "green"}
+          >
+            {post.published ? "Unpublish" : "Publish"}
+          </Button>
+        </Stack>
       </Card>
 
       <DeletePostModal
