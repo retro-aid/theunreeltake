@@ -6,7 +6,14 @@ import { ChangePasswordForm, ChangePasswordSchema } from "@/lib/schemas";
 import { notifyPasswordChanged } from "@/lib/actions";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
-import { Box, Button, PasswordInput, Stack, Text, Title } from "@mantine/core";
+import {
+  Button,
+  List,
+  ListItem,
+  PasswordInput,
+  Stack,
+  Text,
+} from "@mantine/core";
 
 export function ChangePassword() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,6 +47,8 @@ export function ChangePassword() {
         setSuccess(false);
       }, 5000);
     }
+
+    changePasswordForm.reset();
   };
   /**
    * URT 386 changed:
@@ -52,13 +61,47 @@ export function ChangePassword() {
    * returns the same layout but with now the input description added for when a user wants to change password
    */
   return (
-    <Box mb="xl">
-      <Title order={4} mb="5">
-        Account Security
-      </Title>
-      <Text size="sm" c="dimmed" mb="md">
-        Manage your password and username
-      </Text>
+    <>
+      <form onSubmit={changePasswordForm.onSubmit(handleChangePassword)}>
+        <Stack gap={"md"}>
+          <Text size={"md"} c={"dimmed"}>
+            Password Requirements:
+          </Text>
+          <List c={"dimmed"}>
+            <ListItem>Must be at least 8 characters long</ListItem>
+            <ListItem>Must contain one uppercase letter</ListItem>
+            <ListItem>Must contain one number</ListItem>
+            <ListItem>Must contain one special character</ListItem>
+          </List>
+
+          <PasswordInput
+            flex={1}
+            maw={300}
+            placeholder="Current password"
+            radius="md"
+            key={changePasswordForm.key("currentPassword")}
+            {...changePasswordForm.getInputProps("currentPassword")}
+          />
+
+          <PasswordInput
+            flex={1}
+            maw={300}
+            placeholder="New password"
+            radius="md"
+            key={changePasswordForm.key("newPassword")}
+            {...changePasswordForm.getInputProps("newPassword")}
+          />
+
+          <Button
+            color={"gray.9"}
+            type="submit"
+            w={"fit-content"}
+            loading={changePasswordForm.submitting}
+          >
+            Change
+          </Button>
+        </Stack>
+      </form>
       {success && (
         <Text c="green" size="sm" mb="md">
           Password changed successfully!
@@ -69,39 +112,6 @@ export function ChangePassword() {
           {errorMessage}
         </Text>
       )}
-      <form onSubmit={changePasswordForm.onSubmit(handleChangePassword)}>
-        <Stack gap="lg">
-          <PasswordInput
-            label="Current password"
-            placeholder="Enter current password"
-            radius="md"
-            size="md"
-            key="currentPassword"
-            {...changePasswordForm.getInputProps("currentPassword")}
-          />
-
-          <PasswordInput
-            label="New password"
-            description="Password should include capital/lowercase letters, numbers, and symbols"
-            placeholder="Enter new password"
-            radius="md"
-            size="md"
-            key="newPassword"
-            {...changePasswordForm.getInputProps("newPassword")}
-          />
-
-          <Button
-            color="black"
-            type="submit"
-            radius="xl"
-            size="md"
-            w="fit-content"
-            loading={changePasswordForm.submitting}
-          >
-            Change Password
-          </Button>
-        </Stack>
-      </form>
-    </Box>
+    </>
   );
 }

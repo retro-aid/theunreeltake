@@ -17,7 +17,7 @@ import {
   Menu,
   ActionIcon,
 } from "@mantine/core";
-import { ThreeDots, Trash, PencilSquare, Chat } from "react-bootstrap-icons";
+import { ThreeDots, Trash, PencilSquare } from "react-bootstrap-icons";
 import { getAllUsers, deleteUser, updateUser } from "@/lib/actions";
 import { useState, useContext, useTransition, useEffect } from "react";
 import { AuthContext } from "@/components/admin/AuthContext";
@@ -76,31 +76,35 @@ export function UserTable() {
   const rows = pagedData.map((user) => (
     <Table.Tr key={user.id}>
       <Table.Td>
+        <Avatar src={user.image} alt={user.name} radius="xl" ml={"md"}>
+          {user.name
+            ?.split(" ")
+            .slice(0, 2)
+            .map((x) => x[0])}
+        </Avatar>
+      </Table.Td>
+      <Table.Td>
+        <Text title={user.name}>{user.name}</Text>
+      </Table.Td>
+      <Table.Td>
+        <Text title={user.email}>{user.email}</Text>
+      </Table.Td>
+      <Table.Td>
         <Group>
-          <Avatar src={user.image} alt={user.name} radius="xl">
-            {user.name
-              ?.split(" ")
-              .slice(0, 2)
-              .map((x) => x[0])}
-          </Avatar>
-          <Text>{user.name}</Text>
+          <Badge
+            w={"100%"}
+            bdrs={"md"}
+            color={user.role === "admin" ? "red" : "blue"}
+          >
+            {user.role}
+          </Badge>
         </Group>
       </Table.Td>
-      <Table.Td>{user.email}</Table.Td>
       <Table.Td>
-        <Badge
-          color={user.role === "admin" ? "blue" : "gray"}
-          variant="light"
-          mr={"sm"}
-        >
-          {user.role}
-        </Badge>
-      </Table.Td>
-      <Table.Td>
-        <Group>
+        <Group justify={"right"} mr={"md"}>
           <Menu position="bottom-start">
             <Menu.Target>
-              <ActionIcon variant="subtle">
+              <ActionIcon variant="subtle" color={"gray.9"}>
                 <ThreeDots></ThreeDots>
               </ActionIcon>
             </Menu.Target>
@@ -116,8 +120,6 @@ export function UserTable() {
               >
                 Edit
               </Menu.Item>
-
-              <Menu.Item leftSection={<Chat />}>Message</Menu.Item>
 
               <Menu.Item
                 leftSection={<Trash />}
@@ -192,54 +194,58 @@ export function UserTable() {
           }}
           title="Edit User"
         >
-          <TextInput
-            label="Change Name"
-            description="Name will be visible to everyone"
-            placeholder="Name"
-            {...form.getInputProps("name")}
-          ></TextInput>
+          <Stack>
+            <TextInput
+              label="Change Name"
+              description="Name will be visible to everyone"
+              placeholder="Name"
+              {...form.getInputProps("name")}
+            ></TextInput>
 
-          <Select
-            label="Change Role"
-            description="Role change would change their access abilities"
-            placeholder="Role"
-            data={["Admin", "User"]}
-            {...form.getInputProps("role")}
-          ></Select>
+            <Select
+              label="Change Role"
+              description="Role change would change their access abilities"
+              placeholder="Role"
+              data={["Admin", "User"]}
+              {...form.getInputProps("role")}
+            ></Select>
 
-          <Button
-            variant="default"
-            onClick={() => {
-              setModalOpened(false);
-              setActiveModal(null);
-            }}
-          >
-            Cancel
-          </Button>
+            <Group>
+              <Button
+                onClick={async () => {
+                  const validation = form.validate();
+                  if (validation.hasErrors) return;
 
-          <Button
-            onClick={async () => {
-              const validation = form.validate();
-              if (validation.hasErrors) return;
+                  const { name, role } = form.getValues();
+                  if (!selectedUserId) return;
+                  const result = await updateUser(selectedUserId, name, role);
+                  console.log(result);
+                  if (!result.success) {
+                    alert("Failed to update user");
+                    return;
+                  }
+                  setModalOpened(false);
+                  setActiveModal(null);
+                }}
+              >
+                Save
+              </Button>
 
-              const { name, role } = form.getValues();
-              if (!selectedUserId) return;
-              const result = await updateUser(selectedUserId, name, role);
-              console.log(result);
-              if (!result.success) {
-                alert("Failed to update user");
-                return;
-              }
-              setModalOpened(false);
-              setActiveModal(null);
-            }}
-          >
-            Save
-          </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  setModalOpened(false);
+                  setActiveModal(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </Group>
+          </Stack>
         </Modal>
       )}
 
-      <Box p="lg" maw={"1300"} w={"100%"} mx={"auto"}>
+      <Box maw={"900"} w={"100%"}>
         <Group justify="flex-end" mb={"lg"}>
           <Button
             color="dark"
@@ -255,27 +261,17 @@ export function UserTable() {
         ></InviteUserModal>
 
         <Stack style={{ flex: 1 }} gap="md">
-          <Paper
-            withBorder
-            radius="md"
-            shadow="md"
-            style={{
-              overflowX: "auto",
-              width: "100%",
-            }}
-          >
-            <Table
-              highlightOnHover
-              verticalSpacing="sm"
-              horizontalSpacing="lg"
-              style={{ whiteSpace: "nowrap" }}
-            >
-              <Table.Thead style={{ backgroundColor: "#ced4da" }}>
+          <Paper withBorder radius="md">
+            <Table highlightOnHover layout={"fixed"}>
+              <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>Username</Table.Th>
-                  <Table.Th>Email</Table.Th>
-                  <Table.Th>Role</Table.Th>
-                  <Table.Th>Actions</Table.Th>
+                  <Table.Th w={"7rem"}></Table.Th>
+                  <Table.Th w={"12rem"}>Name</Table.Th>
+                  <Table.Th w={"17rem"}>Email</Table.Th>
+                  <Table.Th w={"5.25rem"} ta={"center"}>
+                    Role
+                  </Table.Th>
+                  <Table.Th ta={"right"}>Actions</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>{rows}</Table.Tbody>
@@ -284,12 +280,11 @@ export function UserTable() {
         </Stack>
         <Group mt="lg" justify="space-between">
           <Pagination
-            color="dark"
             value={page}
             onChange={setPage}
             total={Math.ceil(users.length / PAGE_SIZE)}
           />
-          <Box>{pagedData.length} Users</Box>
+          <Box>Showing {pagedData.length} other users</Box>
         </Group>
       </Box>
     </>

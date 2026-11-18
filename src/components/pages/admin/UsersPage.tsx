@@ -1,4 +1,4 @@
-import { Box, Title } from "@mantine/core";
+import { Box, Container, Title } from "@mantine/core";
 import { UserTable } from "@/components/users/UserTable";
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/dal/utils";
@@ -12,9 +12,9 @@ export async function UsersPage() {
   if (session.user.role != "admin") redirect("/dashboard");
 
   return (
-    <Box>
-      <Title mb="xs">Users</Title>
+    <Container>
+      <Title>Users</Title>
       <UserTable />
-    </Box>
+    </Container>
   );
 }

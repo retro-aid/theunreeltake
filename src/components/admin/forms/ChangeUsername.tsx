@@ -1,12 +1,21 @@
 "use client";
 
-import { Button, TextInput, Text, Stack, Modal, Group } from "@mantine/core";
+import {
+  Button,
+  TextInput,
+  Text,
+  Stack,
+  Modal,
+  Group,
+  Flex,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { ChangeUsernameForm, ChangeUsernameSchema } from "@/lib/schemas";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { ExclamationTriangle } from "react-bootstrap-icons";
 
 export function ChangeUsername() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -35,7 +44,7 @@ export function ChangeUsername() {
 
     const newUsername = usernameForm.getValues().username;
 
-    const { data, error } = await authClient.updateUser({
+    const { error } = await authClient.updateUser({
       name: newUsername,
     });
 
@@ -65,28 +74,27 @@ export function ChangeUsername() {
   return (
     <>
       <form onSubmit={usernameForm.onSubmit(handleInitialSubmit)}>
-        <Stack gap={8} align="left">
-          <TextInput
-            maw={"300"}
-            w={"100%"}
-            size="md"
-            radius="md"
-            label="Username"
-            placeholder="New Username"
-            description="New username will be visible to everyone"
-            mb="md"
-            {...usernameForm.getInputProps("username")}
-          />
+        <Stack gap={"xs"}>
+          <Flex align={"center"} columnGap={6}>
+            <ExclamationTriangle color={"var(--mantine-color-yellow-7)"} />
+            <Text size={"md"} c={"yellow.7"}>
+              User name will be visible to everyone!
+            </Text>
+          </Flex>
 
-          <Button
-            color="black"
-            type="submit"
-            radius="xl"
-            size="md"
-            w="fit-content"
-          >
-            Change
-          </Button>
+          <Group align={"start"}>
+            <TextInput
+              maw={"300"}
+              w={"100%"}
+              placeholder="New Username"
+              key={usernameForm.key("username")}
+              {...usernameForm.getInputProps("username")}
+            />
+
+            <Button color={"gray.9"} type="submit">
+              Change
+            </Button>
+          </Group>
         </Stack>
       </form>
 
