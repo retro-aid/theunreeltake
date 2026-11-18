@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { ActionIcon, Menu, Text, Tooltip } from "@mantine/core";
 import { Filter, Funnel } from "react-bootstrap-icons";
-import RefreshDataButton from "@/app/ui/home/RefreshDataButton";
+import RefreshDataButton from "@/components/home/RefreshDataButton";
 
 export interface ActionMenuOption {
   label: string;

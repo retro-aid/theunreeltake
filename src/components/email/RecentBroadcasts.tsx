@@ -1,12 +1,9 @@
 import { Badge, Card, Group, Stack, Text } from "@mantine/core";
 import { Clock } from "react-bootstrap-icons";
+import { list as listBroadcastsAction } from "@/lib/actions/email/broadcast-actions";
 import type { ListBroadcastItemDTO } from "@/lib/schemas/email/broadcast-schemas";
 
 type BroadcastStatus = ListBroadcastItemDTO["status"];
-
-type RecentBroadcastsProps = {
-  broadcasts: ListBroadcastItemDTO[] | null;
-};
 
 /** Badge label and color for each broadcast status. */
 const STATUS_BADGE: Record<BroadcastStatus, { label: string; color: string }> =
@@ -65,15 +62,12 @@ function getTimeLabel(broadcast: ListBroadcastItemDTO) {
 /**
  * Shows a list of recent broadcasts with their status and time.
  *
- * @remarks
- * Takes the broadcasts as a prop so it can be used on the dashboard and the
- * email Activity tab. Pass `null` if loading them failed to show an error
- * message instead of the list.
- *
- * @param props - The broadcasts to show, or `null` if they failed to load.
  * @returns The recent broadcasts list.
  */
-export function RecentBroadcasts({ broadcasts }: RecentBroadcastsProps) {
+export async function RecentBroadcasts() {
+  const broadcastsRes = await listBroadcastsAction(5);
+  const broadcasts = broadcastsRes.data?.data ?? null;
+
   if (broadcasts === null) {
     return <Text c="red">Couldn&apos;t load recent broadcasts.</Text>;
   }
@@ -83,7 +77,7 @@ export function RecentBroadcasts({ broadcasts }: RecentBroadcastsProps) {
   }
 
   return (
-    <Card withBorder radius="md" p={0}>
+    <Card withBorder radius="md" p={0} shadow={"xs"}>
       <Stack gap={0}>
         {broadcasts.map((broadcast, index) => {
           const badge = STATUS_BADGE[broadcast.status];

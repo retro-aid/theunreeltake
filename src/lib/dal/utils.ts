@@ -2,6 +2,8 @@ import "server-only";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { AppError } from "@/lib/errors";
+import { PaginationOptions } from "resend";
+import { PaginationOutputDTO } from "@/lib/schemas/email/util-schemas";
 
 export async function getCurrentSession() {
   const session = await auth.api.getSession({
@@ -26,4 +28,19 @@ export async function requireAdmin() {
   if (session.user.role !== "admin") throw new AppError("Forbidden", 403);
 
   return session;
+}
+
+
+export function convertToPaginationOptions(paginationObject: PaginationOutputDTO): PaginationOptions {
+
+  const { paginateOption, limit } = paginationObject;
+
+  const options: PaginationOptions = {
+    limit: limit
+  };
+
+  if (paginateOption === "after") options.after = paginationObject.after;
+  else if (paginateOption === "before") options.before = paginationObject.before;
+
+  return options;
 }

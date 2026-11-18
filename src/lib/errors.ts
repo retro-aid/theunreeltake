@@ -40,8 +40,6 @@ export async function toResult<T>(
   try {
     return { data: await fn(), error: null };
   } catch (error) {
-    console.error(error);
-
     if (error instanceof z.ZodError)
       return {
         data: null,

@@ -6,12 +6,19 @@ import type {
 } from "@/lib/schemas/email/broadcast-schemas";
 import * as emailBroadcast from "@/lib/dal/dto/email/broadcast";
 import { AppError } from "@/lib/errors";
+import dayjs from "dayjs";
 
 vi.mock(import("server-only"), () => {
   return {};
 });
 
-vi.mock(import("@/lib/dal/utils"), () => ({ requireAdmin: vi.fn() }));
+vi.mock(import("@/lib/dal/utils"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    requireAdmin: vi.fn(),
+  };
+});
 
 const { broadcasts } = vi.hoisted(() => ({
   broadcasts: {
@@ -194,13 +201,16 @@ describe("create", () => {
     );
   });
 
-  it("defaults to now if a scheduledAt is not passed", async () => {
+  it("defaults to now + 1 minute if a scheduledAt is not passed", async () => {
     // Copy object and set scheduledAt to undefined
     const input = { ...mockCreateInput, scheduledAt: undefined };
 
     await emailBroadcast.create(input);
 
-    expect(broadcasts.create).toHaveBeenCalledWith(mockCreateOutput);
+    expect(broadcasts.create).toHaveBeenCalledWith({
+      ...mockCreateOutput,
+      scheduledAt: dayjs(fakeNow).add(1, "minute").toISOString(),
+    });
   });
 
   it("defaults to env variable if from is not passed", async () => {

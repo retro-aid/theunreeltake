@@ -11,7 +11,7 @@ import "@gfazioli/mantine-flip/styles.css";
 import "@mantine/notifications/styles.css";
 
 import Head from "next/head";
-import { HomeShell } from "@/app/ui/home/HomeShell";
+import { HomeShell } from "@/components/home/HomeShell";
 import { Notifications } from "@mantine/notifications";
 
 import { GoogleTagManager } from "@next/third-parties/google";

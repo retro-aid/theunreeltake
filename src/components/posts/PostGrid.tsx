@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 import type { PostDTO } from "@/lib/dal/dto/posts";
 import { ScrollableGrid } from "@/components/generic/ScrollableGrid";

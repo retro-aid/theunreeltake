@@ -3,14 +3,15 @@
 import * as email from "@/lib/dal/dto/email";
 import { toResult } from "@/lib/errors";
 import type { EmailTemplateForm } from "@/lib/schemas/email/templates-schemas";
+import { PaginationInputDTO } from "@/lib/schemas/email/util-schemas";
 
 const EMAIL_PAGES = "/dashboard/email";
 
 /**
  * Server action wrapper for {@link email.templates.list}.
  */
-export async function list() {
-  return toResult(() => email.templates.list());
+export async function list(params: PaginationInputDTO) {
+  return toResult(() => email.templates.list(params));
 }
 
 /**

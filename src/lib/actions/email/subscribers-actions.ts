@@ -7,6 +7,7 @@ import type {
   ListSubscribersInputDTO,
   RemoveSubscriberInputDTO,
 } from "@/lib/schemas/email/subscriber-schemas";
+import { revalidatePath } from "next/cache";
 
 /**
  * Server action wrapper for {@link email.subscribers.list}.
@@ -24,7 +25,12 @@ export async function list(params: ListSubscribersInputDTO) {
  * @returns The created contact in the standard `{ data, error }` shape.
  */
 export async function create(params: CreateSubscriberInputDTO) {
-  return toResult(() => email.subscribers.create(params));
+
+  const result = toResult(() => email.subscribers.create(params));
+
+  revalidatePath("/dashboard/email");
+
+  return result;
 }
 
 /**
@@ -33,6 +39,13 @@ export async function create(params: CreateSubscriberInputDTO) {
  * @param params.id Resend contact ID.
  * @returns The deleted contact in the standard `{ data, error }` shape.
  */
-export async function remove(params: RemoveSubscriberInputDTO) {
-  return toResult(() => email.subscribers.remove(params));
+export async function remove(
+  params: RemoveSubscriberInputDTO,
+  revalidate?: string,
+) {
+  const result = toResult(() => email.subscribers.remove(params));
+
+  if(revalidate) revalidatePath(revalidate);
+
+  return result;
 }

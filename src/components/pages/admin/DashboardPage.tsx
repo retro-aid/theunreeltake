@@ -15,8 +15,6 @@ import { getRecentUserReviewsAction } from "@/lib/actions/analytics-actions";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { AnalyticsDashboard } from "@/components/analytics";
-import { list as listBroadcastsAction } from "@/lib/actions/email/broadcast-actions";
-import { RecentBroadcasts } from "@/components/email";
 
 interface RecentPostItem {
   id: string;
@@ -29,8 +27,6 @@ interface RecentPostItem {
     name?: string | null;
   } | null;
 }
-const broadcastsRes = await listBroadcastsAction(5);
-const broadcasts = broadcastsRes.data?.data ?? null;
 
 export async function DashboardPage() {
   const contextData = await auth.api.getSession({
@@ -51,7 +47,6 @@ export async function DashboardPage() {
       <AnalyticsDashboard />
 
       <h2>Recent Reviews</h2>
-      
 
       {posts.length === 0 ? (
         <Flex justify="center" p="xl">
@@ -123,9 +118,6 @@ export async function DashboardPage() {
           ))}
         </SimpleGrid>
       )}
-      <h2>Recent Broadcasts</h2>
-      <RecentBroadcasts broadcasts={broadcasts} />
-
     </>
   );
 }
