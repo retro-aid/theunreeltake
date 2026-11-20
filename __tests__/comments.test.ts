@@ -127,7 +127,7 @@ describe("createComment", () => {
  *    Creates the reply with the session user's details and the parent's post
  *    Returns null when there is no logged-in user
  *    Returns null when the parent comment does not exist
- *    Refuses to reply to a comment that is itself a reply
+ *    Attaches a reply to a reply under the original top-level comment
  */
 describe("createReply", () => {
   const session = {
@@ -190,19 +190,22 @@ describe("createReply", () => {
     expect(prisma.comment.create).not.toHaveBeenCalled();
   });
 
-  it("refuses to reply to a comment that is already a reply", async () => {
+  it("attaches a reply to a reply under the original top-level comment", async () => {
+    const created = { id: "reply-2" } as Comment;
     vi.mocked(getCurrentSession).mockResolvedValueOnce(session as never);
     prisma.comment.findUniqueOrThrow.mockResolvedValueOnce({
       ...parent,
       id: "reply-1",
       repliesToId: "parent-1",
     } as never);
-    prisma.comment.create.mockResolvedValue({ id: "reply-2" } as Comment);
+    prisma.comment.create.mockResolvedValueOnce(created);
 
     const result = await createReply("reply-1", "Replying to a reply");
 
-    expect(result).toBeNull();
-    expect(prisma.comment.create).not.toHaveBeenCalled();
+    expect(result).toBe(created);
+    expect(prisma.comment.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ repliesToId: "parent-1" }),
+    });
   });
 });
 
