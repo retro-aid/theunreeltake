@@ -13,6 +13,7 @@ const { automations, events } = vi.hoisted(() => ({
     list: vi.fn(),
     get: vi.fn(),
     update: vi.fn(),
+    stop: vi.fn(),
   },
   events: { list: vi.fn(), create: vi.fn() },
 }));
@@ -225,6 +226,7 @@ describe("update", () => {
     const result = await email.automations.update(id, { enabled: false });
 
     expect(result).toStrictEqual({ id });
+    expect(automations.stop).toHaveBeenCalledWith(id);
     expect(automations.update).toHaveBeenCalledWith(id, {
       status: "disabled",
     });

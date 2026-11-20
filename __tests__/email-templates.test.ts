@@ -5,7 +5,10 @@ import * as emailTemplates from "@/lib/dal/dto/email/templates";
 vi.mock(import("server-only"), () => {
   return {};
 });
-vi.mock(import("@/lib/dal/utils"), () => ({ requireAdmin: vi.fn() }));
+vi.mock(import("@/lib/dal/utils"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  requireAdmin: vi.fn(),
+}));
 
 const { templates } = vi.hoisted(() => ({
   templates: {
@@ -36,6 +39,8 @@ const fields = {
 };
 
 const form = { ...fields, publish: true };
+/** The first page of results with the default page size. */
+const firstPage = { paginateOption: "none" } as const;
 /** Builds a successful Resend response. */
 const ok = (data: unknown) => ({ data, error: null });
 
@@ -54,7 +59,7 @@ const fail = (message: string, statusCode = 500) => ({
  */
 describe("admin access", () => {
   it.each([
-    ["list", () => emailTemplates.list()],
+    ["list", () => emailTemplates.list(firstPage)],
     ["get", () => emailTemplates.get(id)],
     ["create", () => emailTemplates.create(form)],
     ["update", () => emailTemplates.update(id, form)],
@@ -95,6 +100,8 @@ describe("empty ID", () => {
  *
  * Checks:
  *    Returns the list of templates from Resend
+ *    Asks Resend for the page after the given template
+ *    Rejects invalid pagination without calling Resend
  *    Rejects with Resend's error message
  */
 describe("list", () => {
@@ -102,16 +109,35 @@ describe("list", () => {
     const list = [{ id, name: form.name }];
     templates.list.mockResolvedValueOnce(ok({ data: list, has_more: false }));
 
-    const result = await emailTemplates.list();
+    const result = await emailTemplates.list(firstPage);
 
-    expect(result).toBe(list);
-    expect(templates.list).toHaveBeenCalledWith({ limit: 100 });
+    expect(result).toStrictEqual({ data: list, has_more: false });
+    expect(templates.list).toHaveBeenCalledWith({ limit: 25 });
+  });
+
+  it("asks Resend for the page after the given template", async () => {
+    await emailTemplates.list({
+      paginateOption: "after",
+      after: id,
+      limit: 10,
+    });
+
+    expect(templates.list).toHaveBeenCalledWith({ limit: 10, after: id });
+  });
+
+  it("rejects invalid pagination without calling Resend", async () => {
+    await expect(
+      emailTemplates.list({ paginateOption: "none", limit: 101 }),
+    ).rejects.toThrow();
+    expect(templates.list).not.toHaveBeenCalled();
   });
 
   it("rejects with Resend's error message", async () => {
     templates.list.mockResolvedValueOnce(fail("Invalid API key"));
 
-    await expect(emailTemplates.list()).rejects.toThrow("Invalid API key");
+    await expect(emailTemplates.list(firstPage)).rejects.toThrow(
+      "Invalid API key",
+    );
   });
 });
 
