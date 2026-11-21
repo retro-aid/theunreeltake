@@ -44,7 +44,7 @@ beforeEach(() => {
 });
 
 /**
- * Tests for getting page views, and unique visitors
+ * Tests for getting page views, visitors and average time in seconds
  *
  * Checks:
  *    returns the correct views and unique visiters
@@ -60,7 +60,7 @@ describe("getGAOverview", () => {
       {
         rows: [
           {
-            metricValues: [{ value: "6767" }, { value: "670" }],
+            metricValues: [{ value: "6767" }, { value: "670" }, { value: "6700" }],
           },
         ],
       },
@@ -68,7 +68,7 @@ describe("getGAOverview", () => {
 
     const getGAResults = await getGAOverview();
 
-    expect(getGAResults).toStrictEqual({ pageViews: 6767, visitors: 670 });
+    expect(getGAResults).toStrictEqual({ pageViews: 6767, visitors: 670, avgEngagementSeconds: 10 });
   });
 
   it.each([
@@ -99,7 +99,7 @@ describe("getGAOverview", () => {
 
     const getGAResults = await getGAOverview();
 
-    expect(getGAResults).toStrictEqual({ pageViews: 0, visitors: 0 });
+    expect(getGAResults).toStrictEqual({ pageViews: 0, visitors: 0, avgEngagementSeconds: 0 });
   });
 
   it("rejects when no one is logged in", async () => {
